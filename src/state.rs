@@ -19,8 +19,8 @@ fn get_transactions() -> Vec<Transaction> {
 impl State {
     pub fn new() -> Self {
         let transactions = get_transactions();
-        let wallets = vec!["rcu", "coinbase.com"];
-        let exchanges = vec!["coinbase.com", "blockfi"];
+        let wallets = vec!["rcu", "coinbase.com", "coinbase.pro"];
+        let exchanges = vec!["coinbase.com", "coinbase.pro", "blockfi"];
         let portfolios = vec![("Main Crypto", None)];
 
         Self {

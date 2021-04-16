@@ -1,6 +1,7 @@
 use crate::model;
 use crate::App;
 use chrono_tz::US::Pacific;
+use float_pretty_print::PrettyPrintFloat;
 use std::collections::HashMap;
 use tui::widgets::{Cell, Row};
 
@@ -64,8 +65,9 @@ struct PortfolioEntry {
 }
 
 fn calculate_portfolio<'s, 'l>(
-    p: &'s model::Portfolio,
+    _p: &'s model::Portfolio,
     transactions: &'s Vec<model::Transaction>,
+    app: &App,
 ) -> Vec<Row<'l>> {
     let mut currencies: HashMap<String, PortfolioEntry> = HashMap::new();
 
@@ -97,10 +99,17 @@ fn calculate_portfolio<'s, 'l>(
     result
         .into_iter()
         .map(|entry| {
+            let formatted = PrettyPrintFloat(entry.quantity);
+            let price = app
+                .get_system_data()
+                .get_price(&entry.currency_symbol, "USD")
+                .unwrap();
+            let price = model::Value::from((price * entry.quantity, "USD"));
+
             Row::new(vec![
                 Cell::from(entry.currency_symbol),
-                Cell::from(entry.quantity.to_string()),
-                Cell::from("0"),
+                Cell::from(format!("{}", formatted)),
+                Cell::from(price.format_with_precision(true, 2)),
                 Cell::from(format!("{}%", entry.roi)),
             ])
             .height(height as u16)
@@ -135,7 +144,7 @@ impl View {
                 .collect(),
             "Portfolio" => {
                 let portfolio = &app.state.portfolios[0];
-                calculate_portfolio(portfolio, &app.state.transactions)
+                calculate_portfolio(portfolio, &app.state.transactions, app)
             }
             "Transactions" => app
                 .state

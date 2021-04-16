@@ -1,4 +1,5 @@
 use chrono::prelude::*;
+use float_pretty_print::PrettyPrintFloat;
 use serde::{Deserialize, Serialize};
 
 pub struct Currency {
@@ -29,10 +30,11 @@ impl Value {
     }
 
     pub fn format(&self, short: bool) -> String {
+        let formatted = PrettyPrintFloat(self.quantity);
         if short && self.currency_symbol == "USD" {
-            format!("${}", self.quantity)
+            format!("${}", formatted)
         } else {
-            format!("{} {}", self.quantity, self.currency_symbol)
+            format!("{} {}", formatted, self.currency_symbol)
         }
     }
 }
@@ -159,6 +161,20 @@ impl From<(&str, Option<Vec<&str>>)> for Portfolio {
             currencies: input
                 .1
                 .map(|curr| curr.into_iter().map(Into::into).collect()),
+        }
+    }
+}
+
+pub struct Price {
+    pub pair: (String, String),
+    pub value: f64,
+}
+
+impl From<(&str, &str, f64)> for Price {
+    fn from(input: (&str, &str, f64)) -> Self {
+        Self {
+            pair: (input.0.to_string(), input.1.to_string()),
+            value: input.2,
         }
     }
 }
