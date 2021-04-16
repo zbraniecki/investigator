@@ -1,4 +1,5 @@
-use std::fmt::{Display, Formatter};
+use chrono::prelude::*;
+use serde::{Deserialize, Serialize};
 
 pub struct Currency {
     pub symbol: String,
@@ -12,46 +13,80 @@ impl From<&str> for Currency {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Value {
+    pub quantity: f64,
     pub currency_symbol: String,
-    pub quantity: usize,
 }
 
-impl Display for Value {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::result::Result<(), std::fmt::Error> {
-        write!(f, "{} {}", self.quantity, self.currency_symbol)
+impl Value {
+    pub fn format_with_precision(&self, short: bool, prec: usize) -> String {
+        if short && self.currency_symbol == "USD" {
+            format!("${:.1$}", self.quantity, prec)
+        } else {
+            format!("{} {:.2$}", self.quantity, self.currency_symbol, prec)
+        }
+    }
+
+    pub fn format(&self, short: bool) -> String {
+        if short && self.currency_symbol == "USD" {
+            format!("${}", self.quantity)
+        } else {
+            format!("{} {}", self.quantity, self.currency_symbol)
+        }
     }
 }
 
 impl From<(usize, &str)> for Value {
     fn from(input: (usize, &str)) -> Self {
         Self {
+            quantity: input.0 as f64,
             currency_symbol: input.1.to_string(),
-            quantity: input.0,
         }
     }
 }
 
-pub struct Transaction {
-    pub wallet_from_id: String,
-    pub wallet_to_id: String,
-    pub value_from: Value,
-    pub value_to: Value,
-    pub exchange_id: Option<String>,
-    pub fee: Option<Value>,
-    pub date: usize,
+impl From<(f64, &str)> for Value {
+    fn from(input: (f64, &str)) -> Self {
+        Self {
+            quantity: input.0,
+            currency_symbol: input.1.to_string(),
+        }
+    }
 }
 
-impl From<(&str, &str, Value, Value, Option<&str>, Option<Value>, usize)> for Transaction {
-    fn from(input: (&str, &str, Value, Value, Option<&str>, Option<Value>, usize)) -> Self {
+#[derive(Serialize, Deserialize)]
+pub struct TransactionValue {
+    pub wallet: String,
+    pub value: Value,
+}
+
+impl From<(&str, Value)> for TransactionValue {
+    fn from(input: (&str, Value)) -> Self {
         Self {
-            wallet_from_id: input.0.to_string(),
-            wallet_to_id: input.1.to_string(),
-            value_from: input.2,
-            value_to: input.3,
-            exchange_id: input.4.map(Into::into),
+            wallet: input.0.to_string(),
+            value: input.1,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Transaction {
+    pub from: TransactionValue,
+    pub to: TransactionValue,
+    pub exchange: Option<String>,
+    pub fee: Option<Value>,
+    pub ts: DateTime<Utc>,
+}
+
+impl From<(&str, &str, Value, Value, Option<&str>, Option<Value>, &str)> for Transaction {
+    fn from(input: (&str, &str, Value, Value, Option<&str>, Option<Value>, &str)) -> Self {
+        Self {
+            from: (input.0, input.2).into(),
+            to: (input.1, input.3).into(),
+            exchange: input.4.map(Into::into),
             fee: input.5,
-            date: input.6,
+            ts: input.6.parse().unwrap(),
         }
     }
 }
@@ -59,15 +94,27 @@ impl From<(&str, &str, Value, Value, Option<&str>, Option<Value>, usize)> for Tr
 pub struct Exchange {
     pub id: String,
     pub name: String,
+    pub short_name: Option<String>,
     pub url: String,
 }
 
-impl From<(&str, &str, &str)> for Exchange {
-    fn from(input: (&str, &str, &str)) -> Self {
+impl Exchange {
+    pub fn get_name(&self, short: bool) -> String {
+        if short {
+            self.short_name.clone().unwrap_or(self.name.clone())
+        } else {
+            self.name.clone()
+        }
+    }
+}
+
+impl From<(&str, &str, Option<&str>, &str)> for Exchange {
+    fn from(input: (&str, &str, Option<&str>, &str)) -> Self {
         Self {
             id: input.0.to_string(),
             name: input.1.to_string(),
-            url: input.2.to_string(),
+            short_name: input.2.map(ToString::to_string),
+            url: input.3.to_string(),
         }
     }
 }
@@ -75,15 +122,27 @@ impl From<(&str, &str, &str)> for Exchange {
 pub struct Wallet {
     pub id: String,
     pub name: String,
+    pub short_name: Option<String>,
     pub url: String,
 }
 
-impl From<(&str, &str, &str)> for Wallet {
-    fn from(input: (&str, &str, &str)) -> Self {
+impl Wallet {
+    pub fn get_name(&self, short: bool) -> String {
+        if short {
+            self.short_name.clone().unwrap_or(self.name.clone())
+        } else {
+            self.name.clone()
+        }
+    }
+}
+
+impl From<(&str, &str, Option<&str>, &str)> for Wallet {
+    fn from(input: (&str, &str, Option<&str>, &str)) -> Self {
         Self {
             id: input.0.to_string(),
             name: input.1.to_string(),
-            url: input.1.to_string(),
+            short_name: input.2.map(ToString::to_string),
+            url: input.3.to_string(),
         }
     }
 }

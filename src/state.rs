@@ -1,4 +1,5 @@
 use crate::model::*;
+use std::fs;
 
 pub struct State {
     pub wallets: Vec<String>,
@@ -7,19 +8,19 @@ pub struct State {
     pub portfolios: Vec<Portfolio>,
 }
 
+fn get_transactions() -> Vec<Transaction> {
+    let json = fs::read_to_string("data/transactions.json")
+        .expect("Something went wrong reading the file");
+    let mut result: Vec<Transaction> = serde_json::from_str(&json).unwrap();
+    result.sort_by(|a, b| a.ts.cmp(&b.ts).reverse());
+    result
+}
+
 impl State {
     pub fn new() -> Self {
+        let transactions = get_transactions();
         let wallets = vec!["rcu", "coinbase.com"];
         let exchanges = vec!["coinbase.com", "blockfi"];
-        let transactions = vec![(
-            "rcu",
-            "coinbase.com",
-            Value::from((100, "USD")),
-            Value::from((100, "USD")),
-            None,
-            None,
-            1001,
-        )];
         let portfolios = vec![("Main Crypto", None)];
 
         Self {

@@ -20,12 +20,27 @@ pub struct SystemData {
 impl SystemData {
     pub fn new() -> Self {
         let wallets = vec![
-            ("rcu", "Redwood CU", "https://online.redwoodcu.org"),
-            ("coinbase.com", "Coinbase.com", "https://www.coinbase.com"),
+            (
+                "rcu",
+                "Redwood CU",
+                Some("RCU"),
+                "https://online.redwoodcu.org",
+            ),
+            (
+                "coinbase.com",
+                "Coinbase.com",
+                Some("CB"),
+                "https://www.coinbase.com",
+            ),
         ];
         let exchanges = vec![
-            ("coinbase.com", "Coinbase.com", "https://www.coinbase.com"),
-            ("blockfi", "BlockFi", "https://www.blockfi.com"),
+            (
+                "coinbase.com",
+                "Coinbase.com",
+                Some("CB"),
+                "https://www.coinbase.com",
+            ),
+            ("blockfi", "BlockFi", None, "https://www.blockfi.com"),
         ];
         Self {
             wallets: wallets.into_iter().map(Into::into).collect(),
