@@ -1,8 +1,10 @@
 use crate::state::State;
+use crate::system::{System, SystemData};
 use crate::ui::UI;
 
 pub struct App {
     pub ui: UI,
+    pub system: System,
     pub state: State,
 }
 
@@ -10,6 +12,7 @@ impl App {
     pub fn new() -> Self {
         Self {
             ui: UI::new(),
+            system: System::new(),
             state: State::new(),
         }
     }
@@ -22,6 +25,10 @@ impl App {
             "Portfolio" => self.state.portfolios.len(),
             _ => 0,
         }
+    }
+
+    pub fn get_system_data(&self) -> &SystemData {
+        &self.system.data
     }
 
     pub fn next(&mut self) {

@@ -2,6 +2,7 @@ mod app;
 mod event;
 mod model;
 mod state;
+mod system;
 mod ui;
 mod views;
 
@@ -30,14 +31,12 @@ fn get_table<'s, 'l>(
     view: &'s views::View,
     app: &'s App,
 ) -> (Row<'l>, Vec<Row<'l>>, Vec<Constraint>) {
-    let normal_style = Style::default().bg(Color::White);
-
     let header_cells = view
         .columns
         .iter()
-        .map(|h| Cell::from(h.to_string()).style(Style::default().fg(Color::Black)));
+        .map(|h| Cell::from(h.to_string()).style(Style::default().fg(Color::White)));
     let header = Row::new(header_cells)
-        .style(normal_style)
+        .style(Style::default().add_modifier(Modifier::BOLD | Modifier::DIM))
         .height(1)
         .bottom_margin(1);
     let rows = view.get_rows(app);
@@ -65,7 +64,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .margin(1)
-                .constraints([Constraint::Percentage(10), Constraint::Percentage(90)].as_ref())
+                .constraints([Constraint::Min(3), Constraint::Percentage(95)].as_ref())
                 .split(f.size());
 
             let mut menu: Vec<Spans> = app
@@ -78,9 +77,17 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             let tabs = Tabs::new(menu)
                 .select(app.ui.state.active_menu_idx)
-                .block(Block::default().title("Menu").borders(Borders::ALL))
-                .style(Style::default().fg(Color::White))
-                .highlight_style(Style::default().fg(Color::Yellow))
+                .block(Block::default().borders(Borders::ALL))
+                .style(
+                    Style::default()
+                        .fg(Color::White)
+                        .add_modifier(Modifier::DIM),
+                )
+                .highlight_style(
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .remove_modifier(Modifier::DIM),
+                )
                 .divider(Span::raw("|"));
 
             f.render_widget(tabs, chunks[0]);
@@ -89,12 +96,15 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             let (header, rows, widths) = get_table(active_view, &app);
 
-            let selected_style = Style::default().add_modifier(Modifier::REVERSED);
+            let selected_style = Style::default().fg(Color::Yellow);
             let t = Table::new(rows)
                 .header(header)
-                .block(Block::default().borders(Borders::ALL).title("Table"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .border_style(Style::default().add_modifier(Modifier::DIM)),
+                )
                 .highlight_style(selected_style)
-                .highlight_symbol(">> ")
                 .widths(&widths);
 
             let mut view_state = app.ui.get_active_view_state();

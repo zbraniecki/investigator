@@ -1,22 +1,16 @@
 use crate::model::*;
 
 pub struct State {
-    pub wallets: Vec<Wallet>,
-    pub exchanges: Vec<Exchange>,
+    pub wallets: Vec<String>,
+    pub exchanges: Vec<String>,
     pub transactions: Vec<Transaction>,
     pub portfolios: Vec<Portfolio>,
 }
 
 impl State {
     pub fn new() -> Self {
-        let wallets = vec![
-            ("rcu", "Redwood CU", "https://online.redwoodcu.org"),
-            ("coinbase.com", "Coinbase.com", "https://www.coinbase.com"),
-        ];
-        let exchanges = vec![
-            ("coinbase.com", "Coinbase.com", "https://www.coinbase.com"),
-            ("blockfi", "BlockFi", "https://www.blockfi.com"),
-        ];
+        let wallets = vec!["rcu", "coinbase.com"];
+        let exchanges = vec!["coinbase.com", "blockfi"];
         let transactions = vec![(
             "rcu",
             "coinbase.com",

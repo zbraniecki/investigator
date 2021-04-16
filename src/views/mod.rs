@@ -52,8 +52,9 @@ impl View {
                 .exchanges
                 .iter()
                 .map(|item| {
+                    let exchange = app.get_system_data().get_exchange(item).unwrap();
                     let height = 1;
-                    let cells = get_row_from_exchange(item);
+                    let cells = get_row_from_exchange(exchange);
                     Row::new(cells).height(height as u16)
                 })
                 .collect(),
@@ -62,18 +63,15 @@ impl View {
                 .wallets
                 .iter()
                 .map(|item| {
+                    let wallet = app.get_system_data().get_wallet(item).unwrap();
                     let height = 1;
-                    let cells = get_row_from_wallet(item);
+                    let cells = get_row_from_wallet(wallet);
                     Row::new(cells).height(height as u16)
                 })
                 .collect(),
             "Portfolio" => {
                 let _portfolio = &app.state.portfolios[0];
                 let height = 1;
-                // "Symbol".to_string(),
-                // "Quantity".to_string(),
-                // "Value in USD".to_string(),
-                // "ROI".to_string(),
                 vec![Row::new(vec![
                     Cell::from("BTC"),
                     Cell::from("1"),
