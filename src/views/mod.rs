@@ -62,7 +62,11 @@ fn calculate_portfolio<'s, 'l>(
     transactions: &'s Vec<model::Transaction>,
     app: &App,
 ) -> Vec<Row<'l>> {
+    let reference_currency = "USD";
+
     p.calculate_state(transactions, app.get_system_data());
+
+    let total_value = p.total_value(reference_currency, app.get_system_data());
 
     let state = p.state.borrow();
     let currencies = state.as_ref().unwrap();
@@ -75,18 +79,17 @@ fn calculate_portfolio<'s, 'l>(
     result
         .into_iter()
         .map(|entry| {
-            let price = app
-                .get_system_data()
-                .get_price(&entry.value.currency_symbol, "USD")
-                .unwrap();
-            let price = model::Value::from((price * entry.value.quantity, "USD"));
-
+            let value_in_ref = entry
+                .value
+                .value_in(reference_currency, app.get_system_data());
+            let percent_value = value_in_ref.quantity / total_value.quantity * 100.0;
             let roi = entry.roi * 100.0;
 
             Row::new(vec![
                 Cell::from(entry.value.currency_symbol.clone()),
+                Cell::from(format!("{:.2}%", percent_value)),
                 Cell::from(format!("{}", PrettyPrintFloat(entry.value.quantity))),
-                Cell::from(price.format_with_precision(true, 2)),
+                Cell::from(value_in_ref.format_with_precision(true, 2)),
                 Cell::from(format!("{}%", PrettyPrintFloat(roi))),
             ])
             .height(height as u16)
@@ -176,6 +179,18 @@ impl View {
 pub fn get_all() -> Vec<View> {
     vec![
         View {
+            name: "Portfolio".to_string(),
+            columns: vec![
+                "Symbol".to_string(),
+                "%".to_string(),
+                "Quantity".to_string(),
+                "Value in USD".to_string(),
+                "ROI".to_string(),
+            ],
+            widths: vec![10, 10, 30, 30, 20],
+            menu_key: 'p',
+        },
+        View {
             name: "Exchanges".to_string(),
             columns: vec![
                 "Name".to_string(),
@@ -194,17 +209,6 @@ pub fn get_all() -> Vec<View> {
             ],
             widths: vec![20, 30, 50],
             menu_key: 'w',
-        },
-        View {
-            name: "Portfolio".to_string(),
-            columns: vec![
-                "Symbol".to_string(),
-                "Quantity".to_string(),
-                "Value in USD".to_string(),
-                "ROI".to_string(),
-            ],
-            widths: vec![10, 30, 30, 30],
-            menu_key: 'p',
         },
         View {
             name: "Transactions".to_string(),

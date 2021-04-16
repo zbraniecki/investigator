@@ -41,18 +41,26 @@ impl Value {
         }
     }
 
-    pub fn value_in(&self, symbol: &str, system_data: &SystemData) -> f64 {
-        let price = system_data
-            .get_price(&self.currency_symbol, symbol)
-            .unwrap();
-        self.quantity * price
+    pub fn value_in(&self, symbol: &str, system_data: &SystemData) -> Value {
+        if self.currency_symbol == symbol {
+            self.clone()
+        } else {
+            let price = system_data
+                .get_price(&self.currency_symbol, symbol)
+                .unwrap();
+            Value {
+                currency_symbol: symbol.to_string(),
+                quantity: self.quantity * price,
+            }
+        }
     }
 
     pub fn cmp(&self, other: &Value, system_data: &SystemData) -> std::cmp::Ordering {
         let value_a = self.value_in("USD", system_data);
         let value_b = other.value_in("USD", system_data);
         value_a
-            .partial_cmp(&value_b)
+            .quantity
+            .partial_cmp(&value_b.quantity)
             .unwrap_or(std::cmp::Ordering::Equal)
     }
 }
@@ -219,6 +227,18 @@ impl Portfolio {
         *state = Some(PortfolioState {
             entries: currencies,
         });
+    }
+
+    pub fn total_value(&self, symbol: &str, system_data: &SystemData) -> Value {
+        let mut result = 0.0;
+
+        let state = self.state.borrow();
+
+        for (_, entry) in &state.as_ref().unwrap().entries {
+            result += entry.value.value_in(symbol, system_data).quantity;
+        }
+
+        (result, symbol).into()
     }
 }
 
