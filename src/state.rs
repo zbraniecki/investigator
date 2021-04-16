@@ -16,12 +16,19 @@ fn get_transactions() -> Vec<Transaction> {
     result
 }
 
+fn get_portfolios() -> Vec<Portfolio> {
+    let json =
+        fs::read_to_string("data/portfolios.json").expect("Something went wrong reading the file");
+    let result: Vec<Portfolio> = serde_json::from_str(&json).unwrap();
+    result
+}
+
 impl State {
     pub fn new() -> Self {
         let transactions = get_transactions();
         let wallets = vec!["rcu", "coinbase.com", "coinbase.pro"];
         let exchanges = vec!["coinbase.com", "coinbase.pro", "blockfi"];
-        let portfolios = vec![("Main Crypto", None)];
+        let portfolios = get_portfolios();
 
         Self {
             wallets: wallets.into_iter().map(Into::into).collect(),

@@ -2,7 +2,6 @@ use crate::model;
 use crate::App;
 use chrono_tz::US::Pacific;
 use float_pretty_print::PrettyPrintFloat;
-use std::collections::HashMap;
 use tui::widgets::{Cell, Row};
 
 pub struct View {
@@ -58,49 +57,18 @@ fn get_row_from_transaction<'s, 'l>(t: &'s model::Transaction, app: &App) -> Vec
     ]
 }
 
-struct PortfolioEntry {
-    currency_symbol: String,
-    quantity: f64,
-    roi: f64,
-}
-
 fn calculate_portfolio<'s, 'l>(
-    _p: &'s model::Portfolio,
+    p: &'s model::Portfolio,
     transactions: &'s Vec<model::Transaction>,
     app: &App,
 ) -> Vec<Row<'l>> {
-    let mut currencies: HashMap<String, PortfolioEntry> = HashMap::new();
+    p.calculate_state(transactions, app.get_system_data());
 
-    currencies.insert(
-        "BTC".to_string(),
-        PortfolioEntry {
-            currency_symbol: "BTC".to_string(),
-            quantity: 0.0,
-            roi: 0.0,
-        },
-    );
+    let state = p.state.borrow();
+    let currencies = state.as_ref().unwrap();
 
-    for t in transactions {
-        if t.to.value.currency_symbol == "BTC" {
-            let current_price = app
-                .get_system_data()
-                .get_price(&t.to.value.currency_symbol, &t.from.value.currency_symbol)
-                .unwrap();
-            let value = t.to.value.quantity * current_price;
-            let paid = t.from.value.quantity;
-            let roi = value / paid;
-            let mut entry = currencies.get_mut("BTC").unwrap();
-            entry.roi += roi - 1.0;
-            entry.quantity += t.to.value.quantity;
-        }
-    }
-
-    let mut result: Vec<_> = currencies.into_iter().map(|(_, v)| v).collect();
-    result.sort_by(|a, b| {
-        a.roi
-            .partial_cmp(&b.roi)
-            .unwrap_or(std::cmp::Ordering::Equal)
-    });
+    let mut result: Vec<_> = currencies.entries.iter().map(|(_, v)| v).collect();
+    result.sort_by(|a, b| a.value.cmp(&b.value, app.get_system_data()));
     result.reverse();
 
     let height = 1;
@@ -109,15 +77,15 @@ fn calculate_portfolio<'s, 'l>(
         .map(|entry| {
             let price = app
                 .get_system_data()
-                .get_price(&entry.currency_symbol, "USD")
+                .get_price(&entry.value.currency_symbol, "USD")
                 .unwrap();
-            let price = model::Value::from((price * entry.quantity, "USD"));
+            let price = model::Value::from((price * entry.value.quantity, "USD"));
 
             let roi = entry.roi * 100.0;
 
             Row::new(vec![
-                Cell::from(entry.currency_symbol),
-                Cell::from(format!("{}", PrettyPrintFloat(entry.quantity))),
+                Cell::from(entry.value.currency_symbol.clone()),
+                Cell::from(format!("{}", PrettyPrintFloat(entry.value.quantity))),
                 Cell::from(price.format_with_precision(true, 2)),
                 Cell::from(format!("{}%", PrettyPrintFloat(roi))),
             ])

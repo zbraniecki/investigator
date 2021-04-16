@@ -1,6 +1,9 @@
+use crate::system::SystemData;
 use chrono::prelude::*;
 use float_pretty_print::PrettyPrintFloat;
 use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
+use std::collections::HashMap;
 
 pub struct Currency {
     pub symbol: String,
@@ -36,6 +39,21 @@ impl Value {
         } else {
             format!("{} {}", formatted, self.currency_symbol)
         }
+    }
+
+    pub fn value_in(&self, symbol: &str, system_data: &SystemData) -> f64 {
+        let price = system_data
+            .get_price(&self.currency_symbol, symbol)
+            .unwrap();
+        self.quantity * price
+    }
+
+    pub fn cmp(&self, other: &Value, system_data: &SystemData) -> std::cmp::Ordering {
+        let value_a = self.value_in("USD", system_data);
+        let value_b = other.value_in("USD", system_data);
+        value_a
+            .partial_cmp(&value_b)
+            .unwrap_or(std::cmp::Ordering::Equal)
     }
 }
 
@@ -149,9 +167,59 @@ impl From<(&str, &str, Option<&str>, &str)> for Wallet {
     }
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct PortfolioEntryState {
+    pub value: Value,
+    pub roi: f64,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct PortfolioState {
+    pub entries: HashMap<String, PortfolioEntryState>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Portfolio {
     pub name: String,
     pub currencies: Option<Vec<String>>,
+    pub state: RefCell<Option<PortfolioState>>,
+}
+
+impl Portfolio {
+    pub fn calculate_state(&self, transactions: &[Transaction], system_data: &SystemData) {
+        if self.state.borrow().is_some() {
+            return;
+        }
+
+        let mut currencies: HashMap<String, PortfolioEntryState> = HashMap::new();
+
+        currencies.insert(
+            "BTC".to_string(),
+            PortfolioEntryState {
+                value: (0.0, "BTC").into(),
+                roi: 0.0,
+            },
+        );
+
+        for t in transactions {
+            if t.to.value.currency_symbol == "BTC" {
+                let current_price = system_data
+                    .get_price(&t.to.value.currency_symbol, &t.from.value.currency_symbol)
+                    .unwrap();
+                let value = t.to.value.quantity * current_price;
+                let paid = t.from.value.quantity;
+                let roi = value / paid;
+                let mut entry = currencies.get_mut("BTC").unwrap();
+                entry.roi += roi - 1.0;
+                entry.value.quantity += t.to.value.quantity;
+            }
+        }
+        let mut state = self.state.borrow_mut();
+
+        *state = Some(PortfolioState {
+            entries: currencies,
+        });
+    }
 }
 
 impl From<(&str, Option<Vec<&str>>)> for Portfolio {
@@ -161,10 +229,12 @@ impl From<(&str, Option<Vec<&str>>)> for Portfolio {
             currencies: input
                 .1
                 .map(|curr| curr.into_iter().map(Into::into).collect()),
+            state: RefCell::new(None),
         }
     }
 }
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Price {
     pub pair: (String, String),
     pub value: f64,

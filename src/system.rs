@@ -1,4 +1,5 @@
 use crate::model::*;
+use std::fs;
 
 pub struct System {
     pub data: SystemData,
@@ -16,6 +17,13 @@ pub struct SystemData {
     pub exchanges: Vec<Exchange>,
     pub wallets: Vec<Wallet>,
     pub prices: Vec<Price>,
+}
+
+fn get_prices() -> Vec<Price> {
+    let json =
+        fs::read_to_string("data/prices.json").expect("Something went wrong reading the file");
+    let result: Vec<Price> = serde_json::from_str(&json).unwrap();
+    result
 }
 
 impl SystemData {
@@ -55,7 +63,7 @@ impl SystemData {
             ),
             ("blockfi", "BlockFi", None, "https://www.blockfi.com"),
         ];
-        let prices = vec![("BTC", "USD", 61427.02)];
+        let prices = get_prices();
         Self {
             wallets: wallets.into_iter().map(Into::into).collect(),
             exchanges: exchanges.into_iter().map(Into::into).collect(),
