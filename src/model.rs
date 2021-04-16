@@ -14,7 +14,7 @@ impl From<&str> for Currency {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct Value {
     pub quantity: f64,
     pub currency_symbol: String,
@@ -57,7 +57,7 @@ impl From<(f64, &str)> for Value {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct TransactionValue {
     pub wallet: String,
     pub value: Value,
@@ -72,7 +72,7 @@ impl From<(&str, Value)> for TransactionValue {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Transaction {
     pub from: TransactionValue,
     pub to: TransactionValue,

@@ -82,7 +82,15 @@ fn calculate_portfolio<'s, 'l>(
 
     for t in transactions {
         if t.to.value.currency_symbol == "BTC" {
+            let current_price = app
+                .get_system_data()
+                .get_price(&t.to.value.currency_symbol, &t.from.value.currency_symbol)
+                .unwrap();
+            let value = t.to.value.quantity * current_price;
+            let paid = t.from.value.quantity;
+            let roi = value / paid;
             let mut entry = currencies.get_mut("BTC").unwrap();
+            entry.roi += roi - 1.0;
             entry.quantity += t.to.value.quantity;
         }
     }
@@ -99,22 +107,55 @@ fn calculate_portfolio<'s, 'l>(
     result
         .into_iter()
         .map(|entry| {
-            let formatted = PrettyPrintFloat(entry.quantity);
             let price = app
                 .get_system_data()
                 .get_price(&entry.currency_symbol, "USD")
                 .unwrap();
             let price = model::Value::from((price * entry.quantity, "USD"));
 
+            let roi = entry.roi * 100.0;
+
             Row::new(vec![
                 Cell::from(entry.currency_symbol),
-                Cell::from(format!("{}", formatted)),
+                Cell::from(format!("{}", PrettyPrintFloat(entry.quantity))),
                 Cell::from(price.format_with_precision(true, 2)),
-                Cell::from(format!("{}%", entry.roi)),
+                Cell::from(format!("{}%", PrettyPrintFloat(roi))),
             ])
             .height(height as u16)
         })
         .collect()
+}
+
+fn get_transactions(app: &App) -> Vec<model::Transaction> {
+    let mut result = vec![];
+
+    let mut iter = app.state.transactions.iter().peekable();
+    while let Some(t1) = iter.next() {
+        if let Some(t2) = iter.peek() {
+            if t1.from == t2.to && t2.exchange.is_none() {
+                let mut fee = t1.fee.clone();
+                if let Some(f2) = &t2.fee {
+                    if let Some(ref mut f1) = &mut fee {
+                        if f1.currency_symbol == f2.currency_symbol {
+                            f1.quantity += f2.quantity;
+                        }
+                    }
+                }
+                result.push(model::Transaction {
+                    from: t2.from.clone(),
+                    to: t1.to.clone(),
+                    exchange: t1.exchange.clone(),
+                    fee,
+                    ts: t1.ts.clone(),
+                });
+                iter.next();
+                continue;
+            }
+        }
+        result.push(t1.clone());
+    }
+
+    result
 }
 
 impl View {
@@ -146,16 +187,17 @@ impl View {
                 let portfolio = &app.state.portfolios[0];
                 calculate_portfolio(portfolio, &app.state.transactions, app)
             }
-            "Transactions" => app
-                .state
-                .transactions
-                .iter()
-                .map(|item| {
-                    let height = 1;
-                    let cells = get_row_from_transaction(item, app);
-                    Row::new(cells).height(height as u16)
-                })
-                .collect(),
+            "Transactions" => {
+                let transactions = get_transactions(app);
+                transactions
+                    .iter()
+                    .map(|item| {
+                        let height = 1;
+                        let cells = get_row_from_transaction(item, app);
+                        Row::new(cells).height(height as u16)
+                    })
+                    .collect()
+            }
             _ => {
                 vec![]
             }
