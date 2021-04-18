@@ -1,9 +1,5 @@
 use crate::model::*;
-use std::{
-    fs,
-    collections::HashMap,
-    cell::RefCell,
-};
+use std::{cell::RefCell, collections::HashMap, fs};
 
 pub struct SessionState {
     pub wallets: Vec<String>,
@@ -33,19 +29,21 @@ fn get_allocations() -> Vec<Allocation> {
         fs::read_to_string("data/allocations.toml").expect("Something went wrong reading the file");
     let result: HashMap<String, HashMap<String, f64>> = toml::from_str(&source).unwrap();
 
-    result.into_iter().map(|(key, value)| {
-        Allocation {
+    result
+        .into_iter()
+        .map(|(key, value)| Allocation {
             name: key,
-            values: value
-        }
-    }).collect()
+            values: value,
+        })
+        .collect()
 }
 
 fn save_allocations(allocations: &[Allocation]) {
     use std::io::Write;
-    let result: HashMap<String, HashMap<String, f64>> = allocations.iter().map(|alloc| {
-        (alloc.name.clone(), alloc.values.clone())
-    }).collect();
+    let result: HashMap<String, HashMap<String, f64>> = allocations
+        .iter()
+        .map(|alloc| (alloc.name.clone(), alloc.values.clone()))
+        .collect();
     let serialized = toml::to_string(&result).unwrap();
     let mut file = std::fs::File::create("data/allocations.toml").expect("create failed");
     file.write_all(serialized.as_bytes()).expect("write failed");
@@ -84,5 +82,3 @@ impl Session {
         }
     }
 }
-
-

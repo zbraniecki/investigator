@@ -1,0 +1,11 @@
+name = "Transactions"
+columns = [
+  ["Bought", 10],
+  ["Paid", 19],
+  ["Price", 14],
+  ["Wallet", 8],
+  ["From", 8],
+  ["Exchange", 10],
+  ["Date", 20],
+]
+menu_key = "t"

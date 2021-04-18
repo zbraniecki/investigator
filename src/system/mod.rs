@@ -1,6 +1,6 @@
 use crate::model::*;
+use serde::{Deserialize, Serialize};
 use std::fs;
-use serde::{Serialize, Deserialize};
 
 pub struct System {
     pub data: SystemData,

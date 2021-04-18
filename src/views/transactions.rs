@@ -1,5 +1,6 @@
 use super::ViewType;
-use crate::{app::App, ui::event::HandleEventResult};
+use crate::{app::App, model, ui::event::HandleEventResult};
+use chrono_tz::US::Pacific;
 use float_pretty_print::PrettyPrintFloat;
 use serde::{Deserialize, Serialize};
 use std::{cell::RefCell, fs};
@@ -41,53 +42,10 @@ pub struct View {
 
 impl View {
     pub fn new() -> Self {
-        let name = "allocation";
+        let name = "transactions";
         let source = fs::read_to_string(&format!("res/ui/{}.toml", name))
             .expect("Something went wrong reading the file");
         toml::from_str(&source).unwrap()
-    }
-
-    pub fn update_input<B>(&self, selected_idx: usize, app: &App<B>)
-    where
-        B: Backend,
-    {
-        app.ui.input.activate();
-
-        let token = &app.system.data.tokens[selected_idx];
-        let mut session_state = app.session.state.borrow_mut();
-        let allocation = &mut session_state.allocations[0];
-
-        app.ui.input.set_value(
-            allocation
-                .values
-                .get(&token.symbol)
-                .copied()
-                .map(|v| v * 100.0),
-        );
-    }
-
-    pub fn update_value<B>(&self, selected_idx: usize, app: &App<B>)
-    where
-        B: Backend,
-    {
-        if app.ui.input.is_active() && app.ui.input.interacted() {
-            if let Some(v) = app.ui.input.value() {
-                let token = &app.system.data.tokens[selected_idx];
-                let mut session_state = app.session.state.borrow_mut();
-                let allocation = &mut session_state.allocations[0];
-
-                if let Some(value) = allocation.values.get_mut(&token.symbol) {
-                    *value = v / 100.0;
-                } else {
-                    allocation.values.insert(token.symbol.clone(), v / 100.0);
-                }
-            } else {
-                let token = &app.system.data.tokens[selected_idx];
-                let mut session_state = app.session.state.borrow_mut();
-                let allocation = &mut session_state.allocations[0];
-                allocation.values.remove(&token.symbol);
-            }
-        }
     }
 }
 
@@ -109,58 +67,17 @@ where
             .height(1)
             .bottom_margin(1);
 
-        let allocation = &app.session.state.borrow().allocations[0];
-
-        let mut values: Vec<_> = app
-            .system
-            .data
-            .tokens
+        let transactions = get_transactions(app);
+        let rows: Vec<_> = transactions
             .iter()
-            .map(|token| {
-                (
-                    token.symbol.clone(),
-                    allocation
-                        .values
-                        .iter()
-                        .find(|(name, _)| *name == &token.symbol)
-                        .map(|(_, value)| *value),
-                )
+            .map(|item| {
+                let height = 1;
+                let cells = get_row_from_transaction(item, app);
+                Row::new(cells).height(height as u16)
             })
             .collect();
 
-        // use std::cmp::Ordering;
-        // values.sort_by(|v1, v2| {
-        //     match (v1.1, v2.1) {
-        //         (Some(v1), Some(v2)) => v1.partial_cmp(&v2).unwrap_or(Ordering::Equal).reverse(),
-        //         (Some(_), None) => Ordering::Less,
-        //         (None, Some(_)) => Ordering::Greater,
-        //         (None, None) => Ordering::Equal,
-        //     }
-        // });
         let mut state = self.state.borrow_mut();
-
-        let active_row = state.table_state.selected();
-
-        let rows: Vec<_> = values
-            .iter()
-            .enumerate()
-            .map(|(idx, (symbol, value))| {
-                let value = if Some(idx) == active_row {
-                    app.ui
-                        .input
-                        .value()
-                        .map(|v| format!("{}%", PrettyPrintFloat(v)))
-                        .unwrap_or("_".to_string())
-                } else {
-                    if let Some(value) = value {
-                        format!("{}%", PrettyPrintFloat(*value * 100.0))
-                    } else {
-                        "_".to_string()
-                    }
-                };
-                Row::new(vec![Cell::from(symbol.to_string()), Cell::from(value)])
-            })
-            .collect();
         state.len = rows.len();
 
         let widths: Vec<Constraint> = self
@@ -190,7 +107,6 @@ where
 
                 let i = match state.table_state.selected() {
                     Some(i) => {
-                        self.update_value(i, app);
                         if i >= state.len - 1 {
                             0
                         } else {
@@ -200,7 +116,6 @@ where
                     None => 0,
                 };
                 state.table_state.select(Some(i));
-                self.update_input(i, app);
                 HandleEventResult::Handled
             }
             Key::Up => {
@@ -210,7 +125,6 @@ where
 
                 let i = match selected_idx {
                     Some(i) => {
-                        self.update_value(i, app);
                         if i == 0 {
                             state.len - 1
                         } else {
@@ -220,10 +134,81 @@ where
                     None => 0,
                 };
                 state.table_state.select(Some(i));
-                self.update_input(i, app);
                 HandleEventResult::Handled
             }
             _ => HandleEventResult::Bubbled,
         }
     }
+}
+
+fn get_transactions<B>(app: &App<B>) -> Vec<model::Transaction>
+where
+    B: Backend,
+{
+    let mut result = vec![];
+
+    let state = app.session.state.borrow();
+    let mut iter = state.transactions.iter().peekable();
+    while let Some(t1) = iter.next() {
+        if let Some(t2) = iter.peek() {
+            if t1.from == t2.to && t2.exchange.is_none() {
+                let mut fee = t1.fee.clone();
+                if let Some(f2) = &t2.fee {
+                    if let Some(ref mut f1) = &mut fee {
+                        if f1.currency_symbol == f2.currency_symbol {
+                            f1.quantity += f2.quantity;
+                        }
+                    }
+                }
+                result.push(model::Transaction {
+                    from: t2.from.clone(),
+                    to: t1.to.clone(),
+                    exchange: t1.exchange.clone(),
+                    fee,
+                    ts: t1.ts.clone(),
+                });
+                iter.next();
+                continue;
+            }
+        }
+        result.push(t1.clone());
+    }
+
+    result
+}
+
+fn get_row_from_transaction<'s, 'l, B>(t: &'s model::Transaction, app: &App<B>) -> Vec<Cell<'l>>
+where
+    B: Backend,
+{
+    let date =
+        t.ts.with_timezone(&Pacific)
+            .format("%Y-%m-%d %H:%M")
+            .to_string();
+    let system_data = &app.system.data;
+    let wallet_to = system_data.get_wallet(&t.to.wallet).unwrap();
+    let wallet_from = system_data.get_wallet(&t.from.wallet).unwrap();
+    let exchange = t
+        .exchange
+        .as_ref()
+        .map(|eid| system_data.get_exchange(&eid).unwrap());
+    let price = model::Value::from((
+        t.from.value.quantity / t.to.value.quantity,
+        t.from.value.currency_symbol.as_str(),
+    ))
+    .format_with_precision(true, 2);
+    vec![
+        Cell::from(t.to.value.format(false)),
+        Cell::from(t.from.value.format(false)),
+        Cell::from(price),
+        Cell::from(wallet_to.get_name(true)),
+        Cell::from(wallet_from.get_name(true)),
+        Cell::from(
+            exchange
+                .as_ref()
+                .map(|e| e.get_name(true))
+                .unwrap_or("".to_string()),
+        ),
+        Cell::from(date),
+    ]
 }

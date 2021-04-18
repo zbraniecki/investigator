@@ -6,6 +6,12 @@ use std::time::Duration;
 use termion::event::Key;
 use termion::input::TermRead;
 
+pub enum HandleEventResult {
+    Handled,
+    Bubbled,
+    Quit,
+}
+
 pub enum Event<I> {
     Input(I),
     Tick,

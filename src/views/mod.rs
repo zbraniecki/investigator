@@ -1,149 +1,40 @@
 mod allocation;
+mod exchanges;
+mod portfolio;
+mod transactions;
+mod wallets;
 
 // use crate::model;
 // use crate::App;
 // use chrono_tz::US::Pacific;
 // use float_pretty_print::PrettyPrintFloat;
 // use tui::widgets::{Cell, Row};
-use crate::{
-    App,
-    session::Session,
-    system::System,
-};
+use crate::{session::Session, system::System, ui::event::HandleEventResult, App};
 use serde::{Deserialize, Serialize};
+use termion::event::Key;
 use tui::{
     backend::Backend,
     layout::{Constraint, Rect},
     terminal::Frame,
     widgets::{Cell, Row, Table},
 };
-use termion::event::Key;
 
 pub trait ViewType<B>
 where
     B: Backend,
 {
     fn get_name(&self) -> &str;
-    fn render(&self, frame: &mut Frame<B>, area: Rect, session: &Session, system: &System);
-    fn handle_event(&self, event: &Key, session: &Session, system: &System);
+    fn render(&self, frame: &mut Frame<B>, area: Rect, app: &App<B>);
+    fn before_display(&self, app: &App<B>) {}
+    fn before_hide(&self, app: &App<B>) {}
+    fn handle_event(&self, event: &Key, app: &App<B>) -> HandleEventResult;
 }
-
-// fn get_row_from_exchange<'s, 'l>(t: &'s model::Exchange) -> Vec<Cell<'l>> {
-//     vec![
-//         Cell::from(t.name.to_string()),
-//         Cell::from(t.url.to_string()),
-//     ]
-// }
 
 // fn get_row_from_wallet<'s, 'l>(t: &'s model::Wallet) -> Vec<Cell<'l>> {
 //     vec![
 //         Cell::from(t.name.to_string()),
 //         Cell::from(t.url.to_string()),
 //     ]
-// }
-
-// fn get_row_from_transaction<'s, 'l>(t: &'s model::Transaction, app: &App) -> Vec<Cell<'l>> {
-//     let date =
-//         t.ts.with_timezone(&Pacific)
-//             .format("%Y-%m-%d %H:%M")
-//             .to_string();
-//     let wallet_to = app.get_system_data().get_wallet(&t.to.wallet).unwrap();
-//     let wallet_from = app.get_system_data().get_wallet(&t.from.wallet).unwrap();
-//     let exchange = t
-//         .exchange
-//         .as_ref()
-//         .map(|eid| app.get_system_data().get_exchange(&eid).unwrap());
-//     let price = model::Value::from((
-//         t.from.value.quantity / t.to.value.quantity,
-//         t.from.value.currency_symbol.as_str(),
-//     ))
-//     .format_with_precision(true, 2);
-//     vec![
-//         Cell::from(t.to.value.format(false)),
-//         Cell::from(t.from.value.format(false)),
-//         Cell::from(price),
-//         Cell::from(wallet_to.get_name(true)),
-//         Cell::from(wallet_from.get_name(true)),
-//         Cell::from(
-//             exchange
-//                 .as_ref()
-//                 .map(|e| e.get_name(true))
-//                 .unwrap_or("".to_string()),
-//         ),
-//         Cell::from(date),
-//     ]
-// }
-
-// fn calculate_portfolio<'s, 'l>(
-//     p: &'s model::Portfolio,
-//     transactions: &'s Vec<model::Transaction>,
-//     app: &App,
-// ) -> Vec<Row<'l>> {
-//     let reference_currency = "USD";
-
-//     p.calculate_state(transactions, app.get_system_data());
-
-//     let total_value = p.total_value(reference_currency, app.get_system_data());
-
-//     let state = p.state.borrow();
-//     let currencies = state.as_ref().unwrap();
-
-//     let mut result: Vec<_> = currencies.entries.iter().map(|(_, v)| v).collect();
-//     result.sort_by(|a, b| a.value.cmp(&b.value, app.get_system_data()));
-//     result.reverse();
-
-//     let height = 1;
-//     result
-//         .into_iter()
-//         .map(|entry| {
-//             let value_in_ref = entry
-//                 .value
-//                 .value_in(reference_currency, app.get_system_data());
-//             let percent_value = value_in_ref.quantity / total_value.quantity;
-//             let roi = entry.roi * percent_value * 100.0;
-
-//             Row::new(vec![
-//                 Cell::from(entry.value.currency_symbol.clone()),
-//                 Cell::from(format!("{:.2}%", percent_value * 100.0)),
-//                 Cell::from(format!("{}", PrettyPrintFloat(entry.value.quantity))),
-//                 Cell::from(value_in_ref.format_with_precision(true, 2)),
-//                 Cell::from(format!("{}%", PrettyPrintFloat(roi))),
-//             ])
-//             .height(height as u16)
-//         })
-//         .collect()
-// }
-
-// fn get_transactions(app: &App) -> Vec<model::Transaction> {
-//     let mut result = vec![];
-
-//     let mut iter = app.state.transactions.iter().peekable();
-//     while let Some(t1) = iter.next() {
-//         if let Some(t2) = iter.peek() {
-//             if t1.from == t2.to && t2.exchange.is_none() {
-//                 let mut fee = t1.fee.clone();
-//                 if let Some(f2) = &t2.fee {
-//                     if let Some(ref mut f1) = &mut fee {
-//                         if f1.currency_symbol == f2.currency_symbol {
-//                             f1.quantity += f2.quantity;
-//                         }
-//                     }
-//                 }
-//                 result.push(model::Transaction {
-//                     from: t2.from.clone(),
-//                     to: t1.to.clone(),
-//                     exchange: t1.exchange.clone(),
-//                     fee,
-//                     ts: t1.ts.clone(),
-//                 });
-//                 iter.next();
-//                 continue;
-//             }
-//         }
-//         result.push(t1.clone());
-//     }
-
-//     result
 // }
 
 // impl View {
@@ -197,53 +88,11 @@ pub fn get_all<B>() -> Vec<Box<dyn ViewType<B>>>
 where
     B: Backend,
 {
-    vec![Box::new(allocation::View::new())]
-    // vec![
-    //     View {
-    //         name: "Portfolio".to_string(),
-    //         columns: vec![
-    //             "Symbol".to_string(),
-    //             "%".to_string(),
-    //             "Quantity".to_string(),
-    //             "Value in USD".to_string(),
-    //             "ROI".to_string(),
-    //         ],
-    //         widths: vec![10, 10, 30, 30, 20],
-    //         menu_key: 'p',
-    //     },
-    //     View {
-    //         name: "Exchanges".to_string(),
-    //         columns: vec![
-    //             "Name".to_string(),
-    //             "URL".to_string(),
-    //             "Currencies".to_string(),
-    //         ],
-    //         widths: vec![20, 30, 50],
-    //         menu_key: 'e',
-    //     },
-    //     View {
-    //         name: "Wallets".to_string(),
-    //         columns: vec![
-    //             "Name".to_string(),
-    //             "URL".to_string(),
-    //             "Currencies".to_string(),
-    //         ],
-    //         widths: vec![20, 30, 50],
-    //         menu_key: 'w',
-    //     },
-    //     View {
-    //         name: "Transactions".to_string(),
-    //         columns: vec![
-    //             "Bought".to_string(),
-    //             "Paid".to_string(),
-    //             "Price".to_string(),
-    //             "Wallet".to_string(),
-    //             "From".to_string(),
-    //             "Exchange".to_string(),
-    //             "Date".to_string(),
-    //         ],
-    //         widths: vec![19, 19, 14, 8, 8, 10, 20],
-    //         menu_key: 't',
-    //     },
-    // ]
+    vec![
+        Box::new(allocation::View::new()),
+        Box::new(portfolio::View::new()),
+        Box::new(transactions::View::new()),
+        Box::new(exchanges::View::new()),
+        Box::new(wallets::View::new()),
+    ]
 }

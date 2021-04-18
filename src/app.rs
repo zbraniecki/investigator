@@ -1,5 +1,5 @@
-use crate::system::{System, SystemData};
 use crate::session::Session;
+use crate::system::{System, SystemData};
 use crate::ui::UI;
 use tui::backend::Backend;
 
