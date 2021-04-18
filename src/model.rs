@@ -5,18 +5,6 @@ use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-pub struct Currency {
-    pub symbol: String,
-}
-
-impl From<&str> for Currency {
-    fn from(input: &str) -> Self {
-        Self {
-            symbol: input.to_string(),
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize, Clone, PartialEq)]
 pub struct Value {
     pub quantity: f64,
@@ -267,4 +255,16 @@ impl From<(&str, &str, f64)> for Price {
             value: input.2,
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
+pub struct Token {
+    pub symbol: String,
+    pub name: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, PartialEq)]
+pub struct Allocation {
+    pub name: String,
+    pub values: HashMap<String, f64>,
 }

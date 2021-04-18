@@ -1,5 +1,6 @@
 use crate::model::*;
 use std::fs;
+use serde::{Serialize, Deserialize};
 
 pub struct System {
     pub data: SystemData,
@@ -17,6 +18,7 @@ pub struct SystemData {
     pub exchanges: Vec<Exchange>,
     pub wallets: Vec<Wallet>,
     pub prices: Vec<Price>,
+    pub tokens: Vec<Token>,
 }
 
 fn get_prices() -> Vec<Price> {
@@ -24,6 +26,17 @@ fn get_prices() -> Vec<Price> {
         fs::read_to_string("data/prices.json").expect("Something went wrong reading the file");
     let result: Vec<Price> = serde_json::from_str(&json).unwrap();
     result
+}
+
+fn get_tokens() -> Vec<Token> {
+    #[derive(Serialize, Deserialize)]
+    struct CurrencyList {
+        currency: Vec<Token>,
+    }
+    let source =
+        fs::read_to_string("data/tokens.toml").expect("Something went wrong reading the file");
+    let result: CurrencyList = toml::from_str(&source).unwrap();
+    result.currency
 }
 
 impl SystemData {
@@ -68,6 +81,7 @@ impl SystemData {
             wallets: wallets.into_iter().map(Into::into).collect(),
             exchanges: exchanges.into_iter().map(Into::into).collect(),
             prices: prices.into_iter().map(Into::into).collect(),
+            tokens: get_tokens(),
         }
     }
 
@@ -77,6 +91,10 @@ impl SystemData {
 
     pub fn get_exchange(&self, id: &str) -> Option<&Exchange> {
         self.exchanges.iter().find(|exchange| exchange.id == id)
+    }
+
+    pub fn get_token(&self, symbol: &str) -> Option<&Token> {
+        self.tokens.iter().find(|token| token.symbol == symbol)
     }
 
     pub fn get_price(&self, from: &str, to: &str) -> Option<f64> {

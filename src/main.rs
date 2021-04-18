@@ -1,7 +1,7 @@
 mod app;
 mod event;
 mod model;
-mod state;
+mod session;
 mod system;
 mod ui;
 mod views;
@@ -15,7 +15,7 @@ use tui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Span, Spans},
-    widgets::{Block, Borders, Cell, Row, Table, Tabs},
+    widgets::{Block, Borders, Tabs},
     Terminal,
 };
 
@@ -25,28 +25,6 @@ fn get_menu_item(name: &str) -> Spans {
         Span::styled(first, Style::default().add_modifier(Modifier::UNDERLINED)),
         Span::styled(rest, Style::default().fg(Color::White)),
     ])
-}
-
-fn get_table<'s, 'l>(
-    view: &'s views::View,
-    app: &'s App,
-) -> (Row<'l>, Vec<Row<'l>>, Vec<Constraint>) {
-    let header_cells = view
-        .columns
-        .iter()
-        .map(|h| Cell::from(h.to_string()).style(Style::default().fg(Color::White)));
-    let header = Row::new(header_cells)
-        .style(Style::default().add_modifier(Modifier::BOLD | Modifier::DIM))
-        .height(1)
-        .bottom_margin(1);
-    let rows = view.get_rows(app);
-
-    let widths: Vec<Constraint> = view
-        .widths
-        .iter()
-        .map(|width| Constraint::Percentage(*width as u16))
-        .collect();
-    (header, rows, widths)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -71,8 +49,9 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .ui
                 .views
                 .iter()
-                .map(|view| get_menu_item(&view.name))
+                .map(|view| get_menu_item(view.get_name()))
                 .collect();
+            menu.push(get_menu_item("Save"));
             menu.push(get_menu_item("Quit"));
 
             let tabs = Tabs::new(menu)
@@ -94,21 +73,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             let active_view = app.ui.get_active_view();
 
-            let (header, rows, widths) = get_table(active_view, &app);
-
-            let selected_style = Style::default().fg(Color::Yellow);
-            let t = Table::new(rows)
-                .header(header)
-                .block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .border_style(Style::default().add_modifier(Modifier::DIM)),
-                )
-                .highlight_style(selected_style)
-                .widths(&widths);
-
-            let mut view_state = app.ui.get_active_view_state();
-            f.render_stateful_widget(t, chunks[1], &mut view_state);
+            active_view.render(f, chunks[1], &app.session, &app.system);
         })?;
 
         match events.next()? {
@@ -116,11 +81,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 Key::Char('q') => {
                     break;
                 }
-                Key::Down => {
-                    app.next();
-                }
-                Key::Up => {
-                    app.previous();
+                Key::Char('s') => {
+                    app.session.state.borrow().save();
                 }
                 Key::Char('\t') => {
                     let views = &app.ui.views;
@@ -138,15 +100,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                         app.ui.state.active_menu_idx -= 1;
                     }
                 }
-                Key::Char(c) => {
-                    let views = &app.ui.views;
-                    for (idx, view) in views.iter().enumerate() {
-                        if view.menu_key == c {
-                            app.ui.state.active_menu_idx = idx;
-                        }
-                    }
+                key @ _ => {
+                    let active_view = app.ui.get_active_view();
+                    active_view.handle_event(&key, &app.session, &app.system);
                 }
-                _ => {}
             },
             Event::Tick => {}
         }

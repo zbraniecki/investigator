@@ -1,5 +1,6 @@
 use crate::views;
-use tui::widgets::TableState;
+use std::ops::Deref;
+use tui::{backend::Backend, widgets::TableState};
 
 pub struct UIState {
     pub active_menu_idx: usize,
@@ -15,12 +16,15 @@ impl UIState {
     }
 }
 
-pub struct UI {
-    pub views: Vec<views::View>,
+pub struct UI<B> {
+    pub views: Vec<Box<dyn views::ViewType<B>>>,
     pub state: UIState,
 }
 
-impl UI {
+impl<B> UI<B>
+where
+    B: Backend,
+{
     pub fn new() -> Self {
         let views = views::get_all();
         let len = views.len();
@@ -30,13 +34,9 @@ impl UI {
         }
     }
 
-    pub fn get_active_view(&self) -> &views::View {
+    pub fn get_active_view(&self) -> &dyn views::ViewType<B> {
         let idx = self.state.active_menu_idx;
-        self.views.get(idx).unwrap()
-    }
-
-    pub fn get_active_view_state(&mut self) -> &mut TableState {
-        let idx = self.state.active_menu_idx;
-        &mut self.state.view_states[idx]
+        let view: &Box<dyn views::ViewType<_>> = self.views.get(idx).unwrap();
+        view.deref()
     }
 }
