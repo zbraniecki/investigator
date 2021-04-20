@@ -1,0 +1,7 @@
+name = "Exchanges"
+columns = [
+  ["Name", 20],
+  ["URL", 40],
+  ["Currencies", 40],
+]
+menu_key = "e"

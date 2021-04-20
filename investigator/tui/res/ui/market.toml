@@ -1,0 +1,6 @@
+name = "Market"
+columns = [
+  ["Symbol", 10],
+  ["Price", 10]
+]
+menu_key = "m"

@@ -1,0 +1,15 @@
+[[price]]
+pair = ["BTC", "USD"]
+value = 54899.96
+
+[[price]]
+pair = ["ETH", "USD"]
+value = 2117.95
+
+[[price]]
+pair = ["DOT", "USD"]
+value = 32.98
+
+[[price]]
+pair = ["ATOM", "USD"]
+value = 18.51

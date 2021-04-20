@@ -1,0 +1,9 @@
+name = "Portfolio"
+columns = [
+  ["Symbol", 10],
+  ["%", 10],
+  ["Quantity", 30],
+  ["Value in USD", 30],
+  ["ROI", 20],
+]
+menu_key = "p"
