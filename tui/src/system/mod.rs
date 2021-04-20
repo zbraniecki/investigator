@@ -21,11 +21,22 @@ pub struct SystemData {
     pub tokens: Vec<Token>,
 }
 
-fn get_prices() -> Vec<Price> {
-    let json =
-        fs::read_to_string("data/prices.json").expect("Something went wrong reading the file");
-    let result: Vec<Price> = serde_json::from_str(&json).unwrap();
-    result
+async fn get_prices() -> Vec<Price> {
+    use hyper::body::HttpBody;
+    use tokio::io::stdout;
+    use tokio::io::AsyncWriteExt;
+    use hyper::Client;
+
+    let client = Client::new();
+
+    let uri = "http://127.0.0.1:8080".parse().unwrap();
+
+    let mut s = String::new();
+    let resp = client.get(uri).await.unwrap();
+
+    let res = hyper::body::to_bytes(resp.into_body()).await.unwrap();
+    
+    serde_json::from_slice(&res).unwrap()
 }
 
 fn get_tokens() -> Vec<Token> {
@@ -80,7 +91,8 @@ impl SystemData {
         Self {
             wallets: wallets.into_iter().map(Into::into).collect(),
             exchanges: exchanges.into_iter().map(Into::into).collect(),
-            prices: prices.into_iter().map(Into::into).collect(),
+            prices: vec![],
+            // prices: prices.into_iter().map(Into::into).collect(),
             tokens: get_tokens(),
         }
     }

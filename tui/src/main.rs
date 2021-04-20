@@ -58,3 +58,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+// #[tokio::main]
+// async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+//   We'll need an event loop here
+//     Ok(())
+// }

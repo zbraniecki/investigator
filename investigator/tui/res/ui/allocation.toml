@@ -1,6 +1,0 @@
-name = "Allocation"
-columns = [
-  ["Symbol", 10],
-  ["%", 10]
-]
-menu_key = "a"

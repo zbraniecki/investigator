@@ -242,7 +242,7 @@ impl From<(&str, Option<Vec<&str>>)> for Portfolio {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Price {
     pub pair: (String, String),
     pub value: f64,
