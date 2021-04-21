@@ -1,15 +1,143 @@
 [[price]]
-pair = ["BTC", "USD"]
-value = 54899.96
+pair = ["btc", "USD"]
+value = 55148.0
 
 [[price]]
-pair = ["ETH", "USD"]
-value = 2117.95
+pair = ["eth", "USD"]
+value = 2282.87
 
 [[price]]
-pair = ["DOT", "USD"]
-value = 32.98
+pair = ["xrp", "USD"]
+value = 1.38
 
 [[price]]
-pair = ["ATOM", "USD"]
-value = 18.51
+pair = ["ada", "USD"]
+value = 1.26
+
+[[price]]
+pair = ["dot", "USD"]
+value = 34.49
+
+[[price]]
+pair = ["ltc", "USD"]
+value = 258.13
+
+[[price]]
+pair = ["uni", "USD"]
+value = 31.41
+
+[[price]]
+pair = ["link", "USD"]
+value = 37.17
+
+[[price]]
+pair = ["xlm", "USD"]
+value = 0.507018
+
+[[price]]
+pair = ["sol", "USD"]
+value = 31.34
+
+[[price]]
+pair = ["xmr", "USD"]
+value = 387.14
+
+[[price]]
+pair = ["eos", "USD"]
+value = 6.5
+
+[[price]]
+pair = ["miota", "USD"]
+value = 2.17
+
+[[price]]
+pair = ["atom", "USD"]
+value = 20.37
+
+[[price]]
+pair = ["aave", "USD"]
+value = 351.43
+
+[[price]]
+pair = ["algo", "USD"]
+value = 1.25
+
+[[price]]
+pair = ["AVAX", "USD"]
+value = 26.98
+
+[[price]]
+pair = ["dai", "USD"]
+value = 0.998858
+
+[[price]]
+pair = ["ksm", "USD"]
+value = 358.73
+
+[[price]]
+pair = ["zec", "USD"]
+value = 240.62
+
+[[price]]
+pair = ["comp", "USD"]
+value = 469.9
+
+[[price]]
+pair = ["grt", "USD"]
+value = 1.56
+
+[[price]]
+pair = ["bat", "USD"]
+value = 1.27
+
+[[price]]
+pair = ["sushi", "USD"]
+value = 12.38
+
+[[price]]
+pair = ["uma", "USD"]
+value = 26.33
+
+[[price]]
+pair = ["icx", "USD"]
+value = 2.19
+
+[[price]]
+pair = ["nano", "USD"]
+value = 9.03
+
+[[price]]
+pair = ["one", "USD"]
+value = 0.117708
+
+[[price]]
+pair = ["xsushi", "USD"]
+value = 14.13
+
+[[price]]
+pair = ["celo", "USD"]
+value = 6.05
+
+[[price]]
+pair = ["ocean", "USD"]
+value = 1.36
+
+[[price]]
+pair = ["trac", "USD"]
+value = 0.617861
+
+[[price]]
+pair = ["pols", "USD"]
+value = 2.97
+
+[[price]]
+pair = ["dag", "USD"]
+value = 0.069808
+
+[[price]]
+pair = ["sylo", "USD"]
+value = 0.01042891
+
+[[price]]
+pair = ["comp", "USD"]
+value = 0.00000199
