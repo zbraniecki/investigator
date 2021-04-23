@@ -13,7 +13,7 @@ coins = [
   "eos",
   "ksm",
   "nano",
-  "comp",
+  ["comp", "compound-governance-token"],
   "link",
   "zec",
   "aave",

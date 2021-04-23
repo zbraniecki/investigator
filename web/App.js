@@ -1,40 +1,24 @@
+import "./styles.css";
+
 import React from "react";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
-import Table from "./Table";
+import Market from "./Market";
+import Portfolio from "./Portfolio";
 
-// import "./styles.css";
+export default () => (
+  <Tabs>
+    <TabList>
+      <Tab>Market</Tab>
+      <Tab>Portfolio</Tab>
+    </TabList>
 
-const data = [
-  { a: "foo", b: "bar", c: "baz" },
-  { a: "foo", b: "bar", c: "baz" },
-  { a: "foo", b: "bar", c: "baz" },
-  { a: "foo", b: "bar", c: "baz" },
-  { a: "foo", b: "bar", c: "baz" }
-];
-
-export default function App() {
-  const columns = [
-    {
-      Header: "First name",
-      accessor: "a"
-    },
-    {
-      Header: "Last name",
-      accessor: "b"
-    },
-    {
-      Header: "Country",
-      accessor: "c"
-    }
-  ];
-
-  return (
-    <div className="App">
-      <Table
-        data={data}
-        columns={columns}
-        renderSubComponent={row => "Expanded row"}
-      />
-    </div>
-  );
-}
+    <TabPanel>
+      <Market />
+    </TabPanel>
+    <TabPanel>
+      <Portfolio />
+    </TabPanel>
+  </Tabs>
+);

@@ -1,4 +1,5 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer};
+use actix_cors::Cors;
 use serde::{Deserialize, Serialize};
 use std::fs;
 
@@ -46,9 +47,16 @@ struct Coin {
     pub name: String,
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+struct Holding {
+    pub symbol: String,
+    pub quantity: f64,
+}
+
 struct ServerState {
     pub prices: Vec<Price>,
     pub coins: Vec<Coin>,
+    pub portfolio: Vec<Holding>,
 }
 
 async fn fetch_prices(coins: &[Coin]) -> Vec<Price> {
@@ -170,6 +178,23 @@ fn read_supported_coins() -> Vec<CoinID> {
     }
 }
 
+async fn get_portfolio() -> Vec<Holding> {
+    #[derive(Serialize, Deserialize)]
+    struct HoldingList {
+        holding: Vec<Holding>,
+    }
+
+    let path = "res/portfolio.toml";
+
+    if !fs::metadata(path).is_ok() {
+        vec![]
+    } else {
+        let source = fs::read_to_string(path).expect("Something went wrong reading the file");
+        let result: HoldingList = toml::from_str(&source).unwrap();
+        result.holding
+    }
+}
+
 async fn get_supported_coins() -> Vec<Coin> {
     let all_coins = read_coins().await;
     let supported_coins = read_supported_coins();
@@ -204,19 +229,34 @@ async fn index(data: web::Data<ServerState>) -> HttpResponse {
         .body(serde_json::to_string(prices).unwrap())
 }
 
+#[get("/portfolio")]
+async fn serve_portfolio(data: web::Data<ServerState>) -> HttpResponse {
+    let portfolio = &data.portfolio;
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .body(serde_json::to_string(portfolio).unwrap())
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let coins = get_supported_coins().await;
     let prices = read_prices(&coins).await;
+    let portfolio = get_portfolio().await;
 
     HttpServer::new(move || {
+        let cors = Cors::default()
+            .allowed_origin("http://localhost:1234")
+            .supports_credentials();
         App::new()
+            .wrap(cors)
             .data(ServerState {
                 prices: prices.clone(),
                 coins: coins.clone(),
+                portfolio: portfolio.clone(),
             })
             .service(index)
             .service(get_coins)
+            .service(serve_portfolio)
     })
     .bind("127.0.0.1:8080")?
     .run()
