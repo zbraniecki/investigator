@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Table from "./Table";
 import styled from 'styled-components';
 
-
-async function getData() {
+async function getPriceData() {
   let url = "http://127.0.0.1:8080/prices";
 
-  let resp = await fetch(url, {});
+  let resp = await fetch(url);
   let json = await resp.json();
 
   return json.map((entry) => {
@@ -15,6 +14,95 @@ async function getData() {
       price: entry.value
     };
   });
+}
+
+function getPrice(prices, symbol) {
+  if (symbol == "usd") {
+    return 1;
+  }
+
+  for (let price of prices) {
+    if (price.symbol == symbol) {
+      return price.price;
+    }
+  }
+  return null;
+}
+
+async function getPortfolioData() {
+  let url = "http://127.0.0.1:8080/portfolio";
+  let prices = await getPriceData();
+
+  let resp = await fetch(url);
+  let json = await resp.json();
+
+  let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+  let nf = new Intl.NumberFormat(undefined);
+
+  let aggr = {};
+
+  for (let entry of json) {
+    let symbol = entry.symbol;
+    if (!aggr.hasOwnProperty(symbol)) {
+      aggr[symbol] = [entry.quantity];
+    } else {
+      aggr[symbol].push(entry.quantity);
+    }
+  }
+
+  let results = [];
+  let total = 0;
+
+  for (let [key, value] of Object.entries(aggr)) {
+    let sum = value.reduce((a, b) => a + b, 0);
+    let price = getPrice(prices, key);
+    total += sum * price;
+
+    let subRows = value.map((v) => {
+      return {
+        symbol: "",
+        quantity: nf.format(v),
+        value: cf.format(price * v),
+      };
+    });
+    subRows.sort((a, b) => {
+      return b.quantity - a.quantity;
+    });
+
+    if (subRows.length < 2) {
+      subRows = undefined;
+    }
+
+    results.push({
+      symbol: key,
+      quantity: nf.format(sum),
+      value: price * sum,
+      subRows,
+    });
+  }
+
+  results.sort((a, b) => {
+    return b.value - a.value;
+  });
+  results.forEach((entry) => {
+    entry.value = cf.format(entry.value)
+  });
+  return [results, cf.format(total)];
+}
+
+async function getData() {
+  let url = "http://127.0.0.1:8080/target";
+
+  let resp = await fetch(url);
+  let json = await resp.json();
+
+  let result = json.map((entry) => {
+    return {
+      symbol: entry.symbol,
+      percent: entry.percent
+    };
+  });
+  return [result, ""];
 }
 
 const Styles = styled.div`
@@ -80,31 +168,30 @@ export default function Market() {
         accessor: "symbol",
       },
       {
-        Header: 'Exchange',
-        accessor: "exchange",
-      },
-      {
-        Header: 'Price',
-        accessor: "price",
+        Header: 'Percent',
+        accessor: "percent",
       },
     ],
     []
   );
 
   const [data, setData] = useState([]);
+  const [total, setTotal] = useState("");
 
   useEffect(() => {
     onRefresh();
   }, []);
 
   function onRefresh() {
-    getData().then(newData => {
+    getData().then(([newData, newTotal]) => {
       setData(newData);
+      setTotal(newTotal);
     });
   }
 
   return (
     <Styles>
+      <span>Total: {total}</span>
       <Table
         columns={columns}
         data={data}
