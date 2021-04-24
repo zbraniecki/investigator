@@ -2,6 +2,7 @@ use actix_web::{get, web, App, HttpResponse, HttpServer};
 use actix_cors::Cors;
 use serde::{Deserialize, Serialize};
 use std::fs;
+use chrono::prelude::*;
 
 static PRICE_URL: &str = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids={IDS}&order=market_cap_desc&per_page=100&page=1&sparkline=false";
 static COIN_LIST_URL: &str = "https://api.coingecko.com/api/v3/coins/list?include_platform=false";
@@ -62,7 +63,7 @@ struct Target {
 }
 
 struct ServerState {
-    pub prices: Vec<Price>,
+    pub prices: PriceList,
     pub coins: Vec<Coin>,
     pub portfolio: Vec<Holding>,
     pub target: Vec<Target>,
@@ -104,24 +105,27 @@ async fn fetch_prices(coins: &[Coin]) -> Vec<Price> {
         .collect()
 }
 
-async fn read_prices(coins: &[Coin]) -> Vec<Price> {
-    #[derive(Serialize, Deserialize)]
-    struct PriceList {
-        price: Vec<Price>,
-    }
+#[derive(Serialize, Deserialize, Clone)]
+struct PriceList {
+    // more meta - source etc.
+    last_updated: DateTime<Utc>,
+    price: Vec<Price>,
+}
 
+async fn read_prices(coins: &[Coin]) -> PriceList {
     let path = "res/prices.toml";
 
     if !fs::metadata(path).is_ok() {
         let prices = fetch_prices(coins).await;
-        let price_list = PriceList { price: prices };
+        let last_updated: DateTime<Utc> = Utc::now();
+        let price_list = PriceList { price: prices, last_updated };
         let toml_string = toml::to_string(&price_list).unwrap();
         fs::write(path, toml_string).expect("Could not write to file!");
-        price_list.price
+        price_list
     } else {
         let source = fs::read_to_string(path).expect("Something went wrong reading the file");
         let result: PriceList = toml::from_str(&source).unwrap();
-        result.price
+        result
     }
 }
 

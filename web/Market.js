@@ -7,14 +7,19 @@ async function getData() {
   let url = "http://127.0.0.1:8080/prices";
 
   let resp = await fetch(url, {});
-  let json = await resp.json();
+  let {price, last_updated} = await resp.json();
 
-  return json.map((entry) => {
+  let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+  let dtf = new Intl.DateTimeFormat(undefined, {dateStyle: "long", timeStyle: "long" });
+
+  let values = price.map((entry) => {
     return {
       symbol: entry.pair[0],
-      price: entry.value
+      price: cf.format(entry.value),
     };
   });
+  let date = new Date(last_updated);
+  return [values, dtf.format(date)];
 }
 
 const Styles = styled.div`
@@ -92,14 +97,16 @@ export default function Market() {
   );
 
   const [data, setData] = useState([]);
+  const [lastUpdate, setLastUpdate] = useState("");
 
   useEffect(() => {
     onRefresh();
   }, []);
 
   function onRefresh() {
-    getData().then(newData => {
+    getData().then(([newData, newLastUpdate]) => {
       setData(newData);
+      setLastUpdate(newLastUpdate);
     });
   }
 
@@ -109,6 +116,7 @@ export default function Market() {
         columns={columns}
         data={data}
       />
+      <p>Last update: {lastUpdate}</p>
       <button onClick={() => onRefresh()}>
         Click me
       </button>

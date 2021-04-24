@@ -1,159 +1,161 @@
+last_updated = "2021-04-24T16:59:17.665605804Z"
+
 [[price]]
 pair = ["btc", "USD"]
-value = 50481.0
+value = 49960.0
 
 [[price]]
 pair = ["eth", "USD"]
-value = 2312.89
-
-[[price]]
-pair = ["xrp", "USD"]
-value = 1.14
+value = 2243.33
 
 [[price]]
 pair = ["usdt", "USD"]
 value = 1.0
 
 [[price]]
+pair = ["xrp", "USD"]
+value = 1.07
+
+[[price]]
 pair = ["ada", "USD"]
-value = 1.17
-
-[[price]]
-pair = ["dot", "USD"]
-value = 32.26
-
-[[price]]
-pair = ["uni", "USD"]
-value = 32.56
-
-[[price]]
-pair = ["ltc", "USD"]
-value = 234.95
-
-[[price]]
-pair = ["link", "USD"]
-value = 34.08
-
-[[price]]
-pair = ["usdc", "USD"]
-value = 0.999975
-
-[[price]]
-pair = ["xlm", "USD"]
-value = 0.443548
-
-[[price]]
-pair = ["sol", "USD"]
-value = 36.79
-
-[[price]]
-pair = ["xmr", "USD"]
-value = 368.54
-
-[[price]]
-pair = ["eos", "USD"]
-value = 5.45
-
-[[price]]
-pair = ["miota", "USD"]
-value = 1.82
-
-[[price]]
-pair = ["atom", "USD"]
-value = 19.88
-
-[[price]]
-pair = ["aave", "USD"]
-value = 342.44
-
-[[price]]
-pair = ["dai", "USD"]
-value = 0.999477
-
-[[price]]
-pair = ["algo", "USD"]
-value = 1.16
-
-[[price]]
-pair = ["AVAX", "USD"]
-value = 23.7
-
-[[price]]
-pair = ["comp", "USD"]
-value = 590.22
-
-[[price]]
-pair = ["ksm", "USD"]
-value = 329.96
-
-[[price]]
-pair = ["zec", "USD"]
-value = 214.04
-
-[[price]]
-pair = ["sushi", "USD"]
-value = 11.51
-
-[[price]]
-pair = ["bat", "USD"]
-value = 1.14
-
-[[price]]
-pair = ["grt", "USD"]
-value = 1.38
-
-[[price]]
-pair = ["uma", "USD"]
-value = 23.17
-
-[[price]]
-pair = ["icx", "USD"]
-value = 1.86
-
-[[price]]
-pair = ["nano", "USD"]
-value = 8.18
-
-[[price]]
-pair = ["one", "USD"]
-value = 0.107464
-
-[[price]]
-pair = ["xsushi", "USD"]
-value = 13.12
-
-[[price]]
-pair = ["celo", "USD"]
-value = 5.58
-
-[[price]]
-pair = ["ocean", "USD"]
 value = 1.12
 
 [[price]]
+pair = ["dot", "USD"]
+value = 29.46
+
+[[price]]
+pair = ["uni", "USD"]
+value = 30.55
+
+[[price]]
+pair = ["ltc", "USD"]
+value = 228.48
+
+[[price]]
+pair = ["usdc", "USD"]
+value = 0.999226
+
+[[price]]
+pair = ["link", "USD"]
+value = 31.94
+
+[[price]]
+pair = ["sol", "USD"]
+value = 39.28
+
+[[price]]
+pair = ["xlm", "USD"]
+value = 0.428589
+
+[[price]]
+pair = ["xmr", "USD"]
+value = 373.18
+
+[[price]]
+pair = ["eos", "USD"]
+value = 5.21
+
+[[price]]
+pair = ["miota", "USD"]
+value = 1.7
+
+[[price]]
+pair = ["atom", "USD"]
+value = 18.89
+
+[[price]]
+pair = ["aave", "USD"]
+value = 322.49
+
+[[price]]
+pair = ["dai", "USD"]
+value = 1.0
+
+[[price]]
+pair = ["algo", "USD"]
+value = 1.11
+
+[[price]]
+pair = ["AVAX", "USD"]
+value = 22.26
+
+[[price]]
+pair = ["comp", "USD"]
+value = 555.13
+
+[[price]]
+pair = ["ksm", "USD"]
+value = 303.47
+
+[[price]]
+pair = ["zec", "USD"]
+value = 204.16
+
+[[price]]
+pair = ["sushi", "USD"]
+value = 10.86
+
+[[price]]
+pair = ["bat", "USD"]
+value = 1.06
+
+[[price]]
+pair = ["grt", "USD"]
+value = 1.29
+
+[[price]]
+pair = ["uma", "USD"]
+value = 21.18
+
+[[price]]
+pair = ["icx", "USD"]
+value = 1.69
+
+[[price]]
+pair = ["nano", "USD"]
+value = 7.51
+
+[[price]]
+pair = ["one", "USD"]
+value = 0.098085
+
+[[price]]
+pair = ["xsushi", "USD"]
+value = 12.47
+
+[[price]]
+pair = ["celo", "USD"]
+value = 5.55
+
+[[price]]
+pair = ["ocean", "USD"]
+value = 1.04
+
+[[price]]
 pair = ["reef", "USD"]
-value = 0.03362896
+value = 0.03153237
 
 [[price]]
 pair = ["trac", "USD"]
-value = 0.541983
+value = 0.504436
 
 [[price]]
 pair = ["dag", "USD"]
-value = 0.067736
+value = 0.068486
 
 [[price]]
 pair = ["pols", "USD"]
-value = 2.43
+value = 2.55
 
 [[price]]
 pair = ["powr", "USD"]
-value = 0.34039
+value = 0.332123
 
 [[price]]
 pair = ["sylo", "USD"]
-value = 0.00837433
+value = 0.00847423
 
 [[price]]
 pair = ["gs", "USD"]
-value = 0.953331
+value = 0.888889
