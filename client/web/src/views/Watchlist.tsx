@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Table from "./Table";
+import Table from "../components/Table";
 import styled from 'styled-components';
-
 
 async function getData(refresh = false) {
   let url = "http://127.0.0.1:8080/oracle/prices";

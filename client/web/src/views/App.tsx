@@ -1,29 +1,28 @@
-import "./styles.css";
-
 import React from "react";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-
-import Market from "./Market";
+import Watchlist from "./Watchlist";
 import Portfolio from "./Portfolio";
-import Allocation from "./Allocation";
+import Strategy from "./Strategy";
+
+import "../../styles/app.css";
 
 export default () => (
   <Tabs>
     <TabList>
-      <Tab>Market</Tab>
+      <Tab>Watchlist</Tab>
       <Tab>Portfolio</Tab>
       <Tab>Allocation</Tab>
     </TabList>
 
     <TabPanel>
-      <Market />
+      <Watchlist />
     </TabPanel>
     <TabPanel>
       <Portfolio />
     </TabPanel>
     <TabPanel>
-      <Allocation />
+      <Strategy />
     </TabPanel>
   </Tabs>
 );
