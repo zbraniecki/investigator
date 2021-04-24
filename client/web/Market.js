@@ -3,8 +3,11 @@ import Table from "./Table";
 import styled from 'styled-components';
 
 
-async function getData() {
-  let url = "http://127.0.0.1:8080/prices";
+async function getData(refresh = false) {
+  let url = "http://127.0.0.1:8080/oracle/prices";
+  if (refresh) {
+    url += "?refresh=true";
+  }
 
   let resp = await fetch(url, {});
   let {price, last_updated} = await resp.json();
@@ -100,11 +103,11 @@ export default function Market() {
   const [lastUpdate, setLastUpdate] = useState("");
 
   useEffect(() => {
-    onRefresh();
+    loadData(false);
   }, []);
 
-  function onRefresh() {
-    getData().then(([newData, newLastUpdate]) => {
+  function loadData(refresh = false) {
+    getData(refresh).then(([newData, newLastUpdate]) => {
       setData(newData);
       setLastUpdate(newLastUpdate);
     });
@@ -112,14 +115,16 @@ export default function Market() {
 
   return (
     <Styles>
-      <p>Last update: {lastUpdate}</p>
+      <p>
+        Last update: {lastUpdate}
+        <button onClick={() => loadData(true)}>
+          Refresh
+        </button>
+      </p>
       <Table
         columns={columns}
         data={data}
       />
-      <button onClick={() => onRefresh()}>
-        Click me
-      </button>
     </Styles>
   );
 }

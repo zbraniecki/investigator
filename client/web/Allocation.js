@@ -3,19 +3,17 @@ import Table from "./Table";
 import styled from 'styled-components';
 
 async function getPriceData() {
-  let url = "http://127.0.0.1:8080/prices";
+  let url = "http://127.0.0.1:8080/oracle/prices";
 
-  let resp = await fetch(url, {});
-  let {price, last_updated} = await resp.json();
+  let resp = await fetch(url);
+  let json = await resp.json();
 
-  let values = price.map((entry) => {
+  return json.map((entry) => {
     return {
       symbol: entry.pair[0],
-      price: entry.value,
+      price: entry.value
     };
   });
-  let date = new Date(last_updated);
-  return [values, date];
 }
 
 function getPrice(prices, symbol) {
@@ -31,9 +29,9 @@ function getPrice(prices, symbol) {
   return null;
 }
 
-async function getData() {
-  let url = "http://127.0.0.1:8080/portfolio";
-  let prices = (await getPriceData())[0];
+async function getPortfolioData() {
+  let url = "http://127.0.0.1:8081/account/portfolio";
+  let prices = await getPriceData();
 
   let resp = await fetch(url);
   let json = await resp.json();
@@ -90,6 +88,21 @@ async function getData() {
     entry.value = cf.format(entry.value)
   });
   return [results, cf.format(total)];
+}
+
+async function getData() {
+  let url = "http://127.0.0.1:8081/account/target";
+
+  let resp = await fetch(url);
+  let json = await resp.json();
+
+  let result = json.map((entry) => {
+    return {
+      symbol: entry.symbol,
+      percent: entry.percent
+    };
+  });
+  return [result, ""];
 }
 
 const Styles = styled.div`
@@ -155,12 +168,8 @@ export default function Market() {
         accessor: "symbol",
       },
       {
-        Header: 'Quantity',
-        accessor: "quantity",
-      },
-      {
-        Header: 'Value',
-        accessor: "value",
+        Header: 'Percent',
+        accessor: "percent",
       },
     ],
     []
