@@ -56,6 +56,8 @@ struct Holding {
 #[derive(Serialize, Deserialize, Clone)]
 struct Target {
     pub symbol: String,
+    #[serde(default)]
+    pub contains: Vec<String>,
     pub percent: f64,
 }
 
