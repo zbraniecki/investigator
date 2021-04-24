@@ -33,5 +33,11 @@ coins = [
   "xsushi",
   "dag",
   "trac",
-  "uma"
+  "uma",
+  "usdc",
+  "usdt",
+  "reef",
+  "AVAX",
+  "gs",
+  "powr",
 ]
