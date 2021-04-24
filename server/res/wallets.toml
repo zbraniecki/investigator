@@ -1,0 +1,25 @@
+[[wallet]]
+id = "blockfi"
+name = "BlockFI"
+url = "https://www.blockfi.com"
+
+[[wallet.currency]]
+symbol = "btc"
+apy = 0.06
+
+[[wallet.currency]]
+symbol = "ltc"
+apy = 0.065
+
+[[wallet.currency]]
+symbol = "eth"
+apy = 0.05
+
+[[wallet]]
+id = "kraken"
+name = "Kraken"
+url = "https://www.kraken.com"
+
+[[wallet.currency]]
+symbol = "eth2"
+apy = [0.05, 0.17]
