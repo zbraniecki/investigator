@@ -112,11 +112,11 @@ export default function Market() {
 
   return (
     <Styles>
+      <p>Last update: {lastUpdate}</p>
       <Table
         columns={columns}
         data={data}
       />
-      <p>Last update: {lastUpdate}</p>
       <button onClick={() => onRefresh()}>
         Click me
       </button>
