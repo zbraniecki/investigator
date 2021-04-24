@@ -45,7 +45,10 @@ pub struct Coin {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Holding {
     pub symbol: String,
+    pub alias: Option<String>,
     pub quantity: f64,
+    pub wallet: Option<String>,
+    pub locked: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

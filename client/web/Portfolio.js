@@ -46,9 +46,15 @@ async function getData() {
   for (let entry of json) {
     let symbol = entry.symbol;
     if (!aggr.hasOwnProperty(symbol)) {
-      aggr[symbol] = [entry.quantity];
+      aggr[symbol] = [{
+        quantity: entry.quantity,
+        wallet: entry.wallet,
+      }];
     } else {
-      aggr[symbol].push(entry.quantity);
+      aggr[symbol].push({
+        quantity: entry.quantity,
+        wallet: entry.wallet,
+      });
     }
   }
 
@@ -56,15 +62,16 @@ async function getData() {
   let total = 0;
 
   for (let [key, value] of Object.entries(aggr)) {
-    let sum = value.reduce((a, b) => a + b, 0);
+    let sum = value.reduce((a, b) => a + b.quantity, 0);
     let price = getPrice(prices, key);
     total += sum * price;
 
     let subRows = value.map((v) => {
       return {
         symbol: "",
-        quantity: nf.format(v),
-        value: cf.format(price * v),
+        quantity: nf.format(v.quantity),
+        wallet: v.wallet,
+        value: cf.format(price * v.quantity),
       };
     });
     subRows.sort((a, b) => {
@@ -161,6 +168,10 @@ export default function Market() {
       {
         Header: 'Value',
         accessor: "value",
+      },
+      {
+        Header: 'Wallet',
+        accessor: "wallet",
       },
     ],
     []
