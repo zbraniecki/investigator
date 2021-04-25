@@ -66,3 +66,9 @@ pub struct PriceList {
     #[serde(rename="price")]
     pub prices: Vec<Price>,
 }
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct WatchList {
+    pub name: String,
+    pub coins: Vec<String>,
+}

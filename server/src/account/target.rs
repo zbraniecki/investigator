@@ -1,10 +1,10 @@
 use actix_web::{web, HttpResponse};
-use crate::ServerState;
+use super::server;
 use crate::model;
 use serde::{Serialize, Deserialize};
 use std::fs;
 
-pub async fn get_view(data: web::Data<ServerState>) -> HttpResponse {
+pub async fn get_view(data: web::Data<server::State>) -> HttpResponse {
     let target = data.target.lock().unwrap();
     let response = serde_json::to_string(&*target).unwrap();
     HttpResponse::Ok()
@@ -22,7 +22,7 @@ async fn read_target() -> Vec<model::Target> {
         coin: Vec<model::Target>,
     }
 
-    let path = "res/target.toml";
+    let path = "res/account/target.toml";
 
     if !fs::metadata(path).is_ok() {
         vec![]

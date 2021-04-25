@@ -1,12 +1,12 @@
 use actix_web::{web, HttpResponse};
-use crate::ServerState;
+use super::server;
 use crate::model;
 use std::fs;
 use serde::{Deserialize, Serialize};
 
 static COIN_LIST_URL: &str = "https://api.coingecko.com/api/v3/coins/list?include_platform=false";
 
-pub async fn get_view(data: web::Data<ServerState>) -> HttpResponse {
+pub async fn get_view(data: web::Data<server::State>) -> HttpResponse {
     let coins = data.coins.lock().unwrap();
     let response = serde_json::to_string(&*coins).unwrap();
     HttpResponse::Ok()
@@ -40,7 +40,7 @@ pub async fn read_coins() -> Vec<model::Coin> {
         coin: Vec<model::Coin>,
     }
 
-    let path = "res/coins.toml";
+    let path = "res/oracle/coins.toml";
 
     if !fs::metadata(path).is_ok() {
         let coins = fetch_coins().await;
@@ -55,4 +55,3 @@ pub async fn read_coins() -> Vec<model::Coin> {
         result.coin
     }
 }
-

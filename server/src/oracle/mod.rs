@@ -1,5 +1,7 @@
+pub mod server;
 pub mod prices;
 pub mod coins;
+
 use actix_web::{web, Route};
 
 pub fn get_views() -> Vec<(&'static str, Route)> {

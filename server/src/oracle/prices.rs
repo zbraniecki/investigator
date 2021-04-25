@@ -1,5 +1,5 @@
 use actix_web::{web, HttpResponse};
-use crate::ServerState;
+use super::server;
 use crate::model;
 use chrono::prelude::*;
 use serde::{Serialize, Deserialize};
@@ -13,7 +13,7 @@ pub struct PriceViewQuery {
     refresh: bool
 }
 
-pub async fn get_view(data: web::Data<ServerState>, query: web::Query<PriceViewQuery>) -> HttpResponse {
+pub async fn get_view(data: web::Data<server::State>, query: web::Query<PriceViewQuery>) -> HttpResponse {
     let prices = if query.refresh {
         let mut prices = data.prices.lock().unwrap();
         update_data(&mut prices).await;
@@ -77,7 +77,7 @@ async fn fetch_prices(coins: &[model::Coin]) -> Vec<model::Price> {
 }
 
 async fn read_prices(coins: &[model::Coin]) -> model::PriceList {
-    let path = "res/prices.toml";
+    let path = "res/oracle/prices.toml";
 
     if !fs::metadata(path).is_ok() {
         let prices = fetch_prices(coins).await;
@@ -125,7 +125,7 @@ fn read_supported_coins() -> Vec<CoinID> {
         coins: Vec<CoinID>,
     }
 
-    let path = "res/supported_coins.toml";
+    let path = "res/oracle/supported_coins.toml";
 
     if !fs::metadata(path).is_ok() {
         vec![]

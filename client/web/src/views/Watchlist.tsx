@@ -1,27 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import Table from "../components/Table";
 import styled from 'styled-components';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-async function getData(refresh = false) {
+async function getPriceData() {
   let url = "http://127.0.0.1:8080/oracle/prices";
-  if (refresh) {
-    url += "?refresh=true";
-  }
 
   let resp = await fetch(url, {});
   let {price, last_updated} = await resp.json();
 
-  let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
-  let dtf = new Intl.DateTimeFormat(undefined, {dateStyle: "long", timeStyle: "long" });
-
   let values = price.map((entry) => {
     return {
       symbol: entry.pair[0],
-      price: cf.format(entry.value),
+      price: entry.value,
     };
   });
   let date = new Date(last_updated);
-  return [values, dtf.format(date)];
+  return [values, date];
+}
+
+function getPrice(prices, symbol) {
+  if (symbol == "usd") {
+    return 1;
+  }
+
+  for (let price of prices) {
+    if (price.symbol == symbol) {
+      return price.price;
+    }
+  }
+  return null;
+}
+
+
+async function getWatchlistData() {
+  let url = "http://127.0.0.1:8081/account/watchlist";
+  let prices = (await getPriceData())[0];
+
+  let resp = await fetch(url, {});
+  let watchlists = await resp.json();
+
+  let result = watchlists.map((entry) => {
+    return {
+      name: entry.name,
+      coins: entry.coins.map(coin => {
+        return {
+          'symbol': coin,
+          'price': getPrice(prices, coin),
+        };
+      }),
+    };
+  });
+  return result;
 }
 
 const Styles = styled.div`
@@ -54,7 +84,7 @@ const Styles = styled.div`
 `;
 
 
-export default function Market() {
+export default function Watchlist() {
   const columns = React.useMemo(
     () => [
       {
@@ -87,10 +117,6 @@ export default function Market() {
         accessor: "symbol",
       },
       {
-        Header: 'Exchange',
-        accessor: "exchange",
-      },
-      {
         Header: 'Price',
         accessor: "price",
       },
@@ -98,32 +124,36 @@ export default function Market() {
     []
   );
 
-  const [data, setData] = useState([]);
-  const [lastUpdate, setLastUpdate] = useState("");
+  const [watchlistData, setWatchlistData] = useState({
+    name: "",
+    coins: []
+  });
 
   useEffect(() => {
-    loadData(false);
+    loadData();
   }, []);
 
-  function loadData(refresh = false) {
-    getData(refresh).then(([newData, newLastUpdate]) => {
-      setData(newData);
-      setLastUpdate(newLastUpdate);
+  function loadData() {
+    getWatchlistData().then((newData) => {
+      let watchlist = newData[0];
+      setWatchlistData(watchlist);
     });
   }
 
   return (
     <Styles>
-      <p>
-        Last update: {lastUpdate}
-        <button onClick={() => loadData(true)}>
-          Refresh
-        </button>
-      </p>
-      <Table
-        columns={columns}
-        data={data}
-      />
+    <Tabs>
+      <TabList>
+        <Tab>{watchlistData.name}</Tab>
+      </TabList>
+
+      <TabPanel>
+        <Table
+          columns={columns}
+          data={watchlistData.coins}
+        />
+      </TabPanel>
+    </Tabs>
     </Styles>
   );
 }
