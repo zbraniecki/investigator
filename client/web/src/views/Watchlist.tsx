@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Table from "../components/Table";
-import styled from 'styled-components';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-
-async function getPriceData() {
-  let url = "http://127.0.0.1:8080/oracle/prices";
-
-  let resp = await fetch(url, {});
-  let {price, last_updated} = await resp.json();
-
-  let values = price.map((entry) => {
-    return {
-      symbol: entry.pair[0],
-      price: entry.value,
-    };
-  });
-  let date = new Date(last_updated);
-  return [values, date];
-}
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  getPrices,
+  fetchPricesThunk,
+} from '../reducers/prices';
+import {
+  getWatchlists,
+  fetchWatchlistsThunk,
+} from '../reducers/watchlist';
 
 function getPrice(prices, symbol) {
   if (symbol == "usd") {
@@ -25,64 +17,29 @@ function getPrice(prices, symbol) {
   }
 
   for (let price of prices) {
-    if (price.symbol == symbol) {
-      return price.price;
+    if (price.pair[0] == symbol) {
+      return price.value;
     }
   }
   return null;
 }
 
+function adaptDataForTable(assets = [], prices = []) {
+  let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
 
-async function getWatchlistData() {
-  let url = "http://127.0.0.1:8081/account/watchlist";
-  let prices = (await getPriceData())[0];
+  let result = assets
+    .map(asset => {
+      let price = getPrice(prices, asset);
+      return {
+      "symbol": asset,
+      "price": price,
+      };
+    })
+    .sort((a, b) => b.price - a.price);
 
-  let resp = await fetch(url, {});
-  let watchlists = await resp.json();
-
-  let result = watchlists.map((entry) => {
-    return {
-      name: entry.name,
-      coins: entry.coins.map(coin => {
-        return {
-          'symbol': coin,
-          'price': getPrice(prices, coin),
-        };
-      }),
-    };
-  });
+  result.forEach(asset => asset.price = cf.format(asset.price));
   return result;
 }
-
-const Styles = styled.div`
-  padding: 1rem;
-
-  table {
-    border-spacing: 0;
-    border: 1px solid white;
-
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
-    }
-
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid white;
-      border-right: 1px solid white;
-
-      :last-child {
-        border-right: 0;
-      }
-    }
-  }
-`;
-
 
 export default function Watchlist() {
   const columns = React.useMemo(
@@ -124,36 +81,31 @@ export default function Watchlist() {
     []
   );
 
-  const [watchlistData, setWatchlistData] = useState({
-    name: "",
-    coins: []
-  });
+  const prices = useSelector(getPrices);
+  const watchlists = useSelector(getWatchlists);
 
+  const dispatch = useDispatch();
   useEffect(() => {
-    loadData();
-  }, []);
-
-  function loadData() {
-    getWatchlistData().then((newData) => {
-      let watchlist = newData[0];
-      setWatchlistData(watchlist);
-    });
-  }
+    dispatch(fetchPricesThunk())
+    dispatch(fetchWatchlistsThunk())
+  }, [dispatch])
 
   return (
-    <Styles>
     <Tabs>
       <TabList>
-        <Tab>{watchlistData.name}</Tab>
+        {watchlists.map(wl => (
+          <Tab key={`tab-${wl.id}`}>{wl.name}</Tab>
+        ))}
       </TabList>
 
-      <TabPanel>
-        <Table
-          columns={columns}
-          data={watchlistData.coins}
-        />
-      </TabPanel>
+      {watchlists.map(wl => (
+        <TabPanel key={`tab-panel-${wl.id}`}>
+          <Table
+            columns={columns}
+            data={adaptDataForTable(wl.assets, prices)}
+          />
+        </TabPanel>
+      ))}
     </Tabs>
-    </Styles>
   );
 }

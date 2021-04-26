@@ -5,7 +5,7 @@ import Watchlist from "./Watchlist";
 import Portfolio from "./Portfolio";
 import Strategy from "./Strategy";
 
-import "../../styles/app.css";
+import "../../public/styles/app.css";
 
 export default () => (
   <Tabs>

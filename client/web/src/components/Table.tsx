@@ -1,6 +1,37 @@
 import React from "react";
 
 import { useTable, useExpanded } from "react-table";
+import styled from 'styled-components';
+
+const Styles = styled.div`
+  padding: 1rem;
+
+  table {
+    border-spacing: 0;
+    border: 1px solid white;
+
+    tr {
+      :last-child {
+        td {
+          border-bottom: 0;
+        }
+      }
+    }
+
+    th,
+    td {
+      margin: 0;
+      padding: 0.5rem;
+      border-bottom: 1px solid white;
+      border-right: 1px solid white;
+
+      :last-child {
+        border-right: 0;
+      }
+    }
+  }
+`;
+
 
 function Table({ columns: userColumns, data }) {
   const {
@@ -19,7 +50,7 @@ function Table({ columns: userColumns, data }) {
   )
 
   return (
-    <>
+    <Styles>
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map(headerGroup => (
@@ -43,7 +74,7 @@ function Table({ columns: userColumns, data }) {
           })}
         </tbody>
       </table>
-    </>
+    </Styles>
   )
 }
 
