@@ -1,141 +1,62 @@
 import React, { useState, useEffect } from 'react';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Table from "../components/Table";
-import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  getPrice,
+  getPrices,
+  fetchPricesThunk,
+} from '../reducers/prices';
+import {
+  getPortfolio,
+  getPortfolios,
+} from '../reducers/portfolio';
+import {
+  getStrategy,
+  fetchStrategyThunk,
+} from '../reducers/strategy';
+import {
+  computePortfolio
+} from './Portfolio';
 
-async function getPriceData() {
-  let url = "http://127.0.0.1:8080/oracle/prices";
-
-  let resp = await fetch(url);
-  let json = await resp.json();
-
-  return json.map((entry) => {
-    return {
-      symbol: entry.pair[0],
-      price: entry.value
-    };
-  });
+function getHolding(portfolio, symbol) {
+  return portfolio.find(holding => holding.symbol == symbol);
 }
 
-function getPrice(prices, symbol) {
-  if (symbol == "usd") {
-    return 1;
-  }
-
-  for (let price of prices) {
-    if (price.symbol == symbol) {
-      return price.price;
-    }
-  }
-  return null;
-}
-
-async function getPortfolioData() {
-  let url = "http://127.0.0.1:8081/account/portfolio";
-  let prices = await getPriceData();
-
-  let resp = await fetch(url);
-  let json = await resp.json();
-
-  let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
-  let nf = new Intl.NumberFormat(undefined);
-
-  let aggr = {};
-
-  for (let entry of json) {
-    let symbol = entry.symbol;
-    if (!aggr.hasOwnProperty(symbol)) {
-      aggr[symbol] = [entry.quantity];
-    } else {
-      aggr[symbol].push(entry.quantity);
-    }
-  }
-
-  let results = [];
+function computeTable(strat, port, prices = []) {
   let total = 0;
-
-  for (let [key, value] of Object.entries(aggr)) {
-    let sum = value.reduce((a, b) => a + b, 0);
-    let price = getPrice(prices, key);
-    total += sum * price;
-
-    let subRows = value.map((v) => {
-      return {
-        symbol: "",
-        quantity: nf.format(v),
-        value: cf.format(price * v),
-      };
-    });
-    subRows.sort((a, b) => {
-      return b.quantity - a.quantity;
-    });
-
-    if (subRows.length < 2) {
-      subRows = undefined;
-    }
-
-    results.push({
-      symbol: key,
-      quantity: nf.format(sum),
-      value: price * sum,
-      subRows,
-    });
-  }
-
-  results.sort((a, b) => {
-    return b.value - a.value;
+  let portfolio = computePortfolio(port, prices);
+  portfolio.forEach(entry => {
+    total += entry.value;
   });
-  results.forEach((entry) => {
-    entry.value = cf.format(entry.value)
-  });
-  return [results, cf.format(total)];
-}
 
-async function getData() {
-  let url = "http://127.0.0.1:8081/account/target";
+  let pf = new Intl.NumberFormat(undefined, {style: "percent", minimumFractionDigits: 2});
 
-  let resp = await fetch(url);
-  let json = await resp.json();
+  let total_drift = 0;
+  let results = strat.targets.map(target => {
+    let holding = getHolding(portfolio, target.symbol);
+    let curr_per = holding ?
+      (holding.value / total) : 0;
+    let drift = holding ?
+      Math.abs(target.percent - curr_per) : 0;
 
-  let result = json.map((entry) => {
+    total_drift += drift;
     return {
-      symbol: entry.symbol,
-      percent: entry.percent
+      "symbol": target.symbol,
+      "percent": target.percent,
+      "current_percent": curr_per,
+      "drift": drift,
     };
   });
-  return [result, ""];
+  results.forEach(target => {
+    target.percent = pf.format(target.percent);
+    target.current_percent = pf.format(target.current_percent);
+    target.drift = pf.format(target.drift);
+  });
+  return [results, pf.format(total_drift / 2)];
 }
 
-const Styles = styled.div`
-  padding: 1rem;
-
-  table {
-    border-spacing: 0;
-    border: 1px solid white;
-
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
-    }
-
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid white;
-      border-right: 1px solid white;
-
-      :last-child {
-        border-right: 0;
-      }
-    }
-  }
-`;
-
-
-export default function Market() {
+export default function Strategy() {
   const columns = React.useMemo(
     () => [
       {
@@ -168,37 +89,53 @@ export default function Market() {
         accessor: "symbol",
       },
       {
-        Header: 'Percent',
+        Header: 'Target %',
         accessor: "percent",
+      },
+      {
+        Header: 'Current %',
+        accessor: "current_percent",
+      },
+      {
+        Header: 'Drift',
+        accessor: "drift",
       },
     ],
     []
   );
 
-  const [data, setData] = useState([]);
-  const [total, setTotal] = useState("");
+  const prices = useSelector(getPrices);
+  const strategies = useSelector(getStrategy);
+  const portfolios = useSelector(getPortfolios);
 
+  const dispatch = useDispatch();
   useEffect(() => {
-    onRefresh();
-  }, []);
+    dispatch(fetchStrategyThunk())
+  }, [dispatch])
 
-  function onRefresh() {
-    getData().then(([newData, newTotal]) => {
-      setData(newData);
-      setTotal(newTotal);
-    });
+  function getPanel(strat, prices) {
+    let portfolio = getPortfolio(portfolios, strat.id);
+    let [data, drift] = computeTable(strat, portfolio, prices);
+    return (
+      <TabPanel key={`strategy-tab-panel-${strat.id}`}>
+        <span>Drift: {drift}</span>
+        <Table
+          columns={columns}
+          data={data}
+        />
+      </TabPanel>
+    );
   }
 
   return (
-    <Styles>
-      <span>Total: {total}</span>
-      <Table
-        columns={columns}
-        data={data}
-      />
-      <button onClick={() => onRefresh()}>
-        Click me
-      </button>
-    </Styles>
+    <Tabs>
+      <TabList>
+        {strategies.map(strat => (
+          <Tab key={`strategy-tab-${strat.id}`}>{strat.name}</Tab>
+        ))}
+      </TabList>
+
+      {strategies.map(strat => getPanel(strat, prices))}
+    </Tabs>
   );
 }

@@ -1,82 +1,60 @@
 import React, { useState, useEffect } from 'react';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Table from "../components/Table";
-import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  getPrice,
+  getPrices,
+  fetchPricesThunk,
+} from '../reducers/prices';
+import {
+  getPortfolios,
+  fetchPortfolioThunk,
+} from '../reducers/portfolio';
 
-async function getPriceData() {
-  let url = "http://127.0.0.1:8080/oracle/prices";
 
-  let resp = await fetch(url, {});
-  let {price, last_updated} = await resp.json();
-
-  let values = price.map((entry) => {
-    return {
-      symbol: entry.pair[0],
-      price: entry.value,
-    };
-  });
-  let date = new Date(last_updated);
-  return [values, date];
-}
-
-function getPrice(prices, symbol) {
-  if (symbol == "usd") {
-    return 1;
-  }
-
-  for (let price of prices) {
-    if (price.symbol == symbol) {
-      return price.price;
-    }
-  }
-  return null;
-}
-
-async function getData() {
-  let url = "http://127.0.0.1:8081/account/portfolio";
-  let prices = (await getPriceData())[0];
-
-  let resp = await fetch(url);
-  let json = await resp.json();
-
-  let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
-  let nf = new Intl.NumberFormat(undefined);
-
+export function computePortfolio(portfolio, prices) {
   let aggr = {};
 
-  for (let entry of json) {
-    let symbol = entry.symbol;
+  for (let holding of portfolio.holdings) {
+    let symbol = holding.symbol;
     if (!aggr.hasOwnProperty(symbol)) {
       aggr[symbol] = [{
-        quantity: entry.quantity,
-        wallet: entry.wallet,
+        quantity: holding.quantity,
+        wallet: holding.wallet,
       }];
     } else {
       aggr[symbol].push({
-        quantity: entry.quantity,
-        wallet: entry.wallet,
+        quantity: holding.quantity,
+        wallet: holding.wallet,
       });
     }
   }
 
   let results = [];
-  let total = 0;
 
   for (let [key, value] of Object.entries(aggr)) {
     let sum = value.reduce((a, b) => a + b.quantity, 0);
     let price = getPrice(prices, key);
-    total += sum * price;
 
     let subRows = value.map((v) => {
       return {
         symbol: "",
-        quantity: nf.format(v.quantity),
+        quantity: v.quantity,
         wallet: v.wallet,
-        value: cf.format(price * v.quantity),
+        value: price * v.quantity,
       };
-    });
-    subRows.sort((a, b) => {
-      return b.quantity - a.quantity;
-    });
+    }).sort((a, b) => b.quantity - a.quantity);
+
+    let wallet = new Set();
+    for (let row of subRows) {
+      if (row.wallet === null) {
+        continue;
+      }
+      if (row.value > price * sum * 0.1) {
+        wallet.add(row.wallet);
+      }
+    }
 
     if (subRows.length < 2) {
       subRows = undefined;
@@ -84,52 +62,39 @@ async function getData() {
 
     results.push({
       symbol: key,
-      quantity: nf.format(sum),
+      quantity: sum,
       value: price * sum,
+      wallet: Array.from(wallet).join(", "),
       subRows,
     });
   }
 
-  results.sort((a, b) => {
-    return b.value - a.value;
-  });
+  results.sort((a, b) => b.value - a.value);
+  return results;
+}
+
+function computeTable(portfolio = [], prices = []) {
+  let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+  let nf = new Intl.NumberFormat(undefined);
+
+  let total = 0;
+  let results = computePortfolio(portfolio, prices);
+
   results.forEach((entry) => {
+    total += entry.value;
+    entry.quantity = nf.format(entry.quantity);
     entry.value = cf.format(entry.value)
+    if (entry.subRows) {
+      entry.subRows.forEach((row) => {
+        row.quantity = nf.format(row.quantity);
+        row.value = cf.format(row.value);
+      });
+    }
   });
   return [results, cf.format(total)];
 }
 
-const Styles = styled.div`
-  padding: 1rem;
-
-  table {
-    border-spacing: 0;
-    border: 1px solid white;
-
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
-    }
-
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid white;
-      border-right: 1px solid white;
-
-      :last-child {
-        border-right: 0;
-      }
-    }
-  }
-`;
-
-
-export default function Market() {
+export default function Portfolio() {
   const columns = React.useMemo(
     () => [
       {
@@ -177,30 +142,36 @@ export default function Market() {
     []
   );
 
-  const [data, setData] = useState([]);
-  const [total, setTotal] = useState("");
+  const prices = useSelector(getPrices);
+  const portfolios = useSelector(getPortfolios);
 
+  const dispatch = useDispatch();
   useEffect(() => {
-    onRefresh();
-  }, []);
+    dispatch(fetchPortfolioThunk())
+  }, [dispatch])
 
-  function onRefresh() {
-    getData().then(([newData, newTotal]) => {
-      setData(newData);
-      setTotal(newTotal);
-    });
+  function getPanel(pf, prices) {
+    let [data, total] = computeTable(pf, prices);
+    return (
+      <TabPanel key={`portfolio-tab-panel-${pf.id}`}>
+        <span>Total: {total}</span>
+        <Table
+          columns={columns}
+          data={data}
+        />
+      </TabPanel>
+    );
   }
 
   return (
-    <Styles>
-      <span>Total: {total}</span>
-      <Table
-        columns={columns}
-        data={data}
-      />
-      <button onClick={() => onRefresh()}>
-        Click me
-      </button>
-    </Styles>
+    <Tabs>
+      <TabList>
+        {portfolios.map(pf => (
+          <Tab key={`portfolio-tab-${pf.id}`}>{pf.name}</Tab>
+        ))}
+      </TabList>
+
+      {portfolios.map(pf => getPanel(pf, prices))}
+    </Tabs>
   );
 }

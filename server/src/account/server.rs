@@ -7,19 +7,19 @@ use std::sync::{Arc, Mutex};
 #[derive(Clone)]
 pub struct State {
     pub watchlist: Arc<Mutex<Vec<model::WatchList>>>,
-    pub portfolio: Arc<Mutex<Vec<model::Holding>>>,
-    pub target: Arc<Mutex<Vec<model::Target>>>,
+    pub portfolio: Arc<Mutex<Vec<model::Portfolio>>>,
+    pub strategy: Arc<Mutex<Vec<model::Strategy>>>,
 }
 
 impl State {
     pub async fn new() -> Self {
         let watchlist = super::watchlist::get_data().await;
         let portfolio = super::portfolio::get_data().await;
-        let target = super::target::get_data().await;
+        let strategy = super::strategy::get_data().await;
         Self {
             watchlist: Arc::new(Mutex::new(watchlist)),
             portfolio: Arc::new(Mutex::new(portfolio)),
-            target: Arc::new(Mutex::new(target)),
+            strategy: Arc::new(Mutex::new(strategy)),
         }
     }
 }

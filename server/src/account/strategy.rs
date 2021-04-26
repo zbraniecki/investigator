@@ -5,35 +5,35 @@ use serde::{Serialize, Deserialize};
 use std::fs;
 
 pub async fn get_view(data: web::Data<server::State>) -> HttpResponse {
-    let portfolio = data.portfolio.lock().unwrap();
-    let response = serde_json::to_string(&*portfolio).unwrap();
+    let strategy = data.strategy.lock().unwrap();
+    let response = serde_json::to_string(&*strategy).unwrap();
     HttpResponse::Ok()
         .content_type("application/json")
         .body(response)
 }
 
-pub async fn get_data() -> Vec<model::Portfolio> {
-    read_portfolio().await
+pub async fn get_data() -> Vec<model::Strategy> {
+    read_strategy().await
 }
 
-async fn read_portfolio() -> Vec<model::Portfolio> {
+async fn read_strategy() -> Vec<model::Strategy> {
     #[derive(Serialize, Deserialize)]
-    struct HoldingList {
-        holding: Vec<model::Holding>,
+    struct StrategyList {
+        coin: Vec<model::Target>,
     }
 
-    let path = "res/account/portfolio.toml";
+    let path = "res/account/strategy.toml";
 
     if !fs::metadata(path).is_ok() {
         vec![]
     } else {
         let source = fs::read_to_string(path).expect("Something went wrong reading the file");
-        let result: HoldingList = toml::from_str(&source).unwrap();
+        let result: StrategyList = toml::from_str(&source).unwrap();
         vec![
-            model::Portfolio {
+            model::Strategy {
                 id: "crypto".to_string(),
                 name: "Crypto".to_string(),
-                holdings: result.holding,
+                targets: result.coin
             }
         ]
     }

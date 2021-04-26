@@ -73,3 +73,17 @@ pub struct WatchList {
     pub name: String,
     pub assets: Vec<String>,
 }
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Portfolio {
+    pub id: String,
+    pub name: String,
+    pub holdings: Vec<Holding>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Strategy {
+    pub id: String,
+    pub name: String,
+    pub targets: Vec<Target>,
+}

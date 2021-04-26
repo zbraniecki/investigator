@@ -4,25 +4,13 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import { useSelector, useDispatch } from 'react-redux'
 import {
   getPrices,
+  getPrice,
   fetchPricesThunk,
 } from '../reducers/prices';
 import {
   getWatchlists,
   fetchWatchlistsThunk,
 } from '../reducers/watchlist';
-
-function getPrice(prices, symbol) {
-  if (symbol == "usd") {
-    return 1;
-  }
-
-  for (let price of prices) {
-    if (price.pair[0] == symbol) {
-      return price.value;
-    }
-  }
-  return null;
-}
 
 function adaptDataForTable(assets = [], prices = []) {
   let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
@@ -94,12 +82,12 @@ export default function Watchlist() {
     <Tabs>
       <TabList>
         {watchlists.map(wl => (
-          <Tab key={`tab-${wl.id}`}>{wl.name}</Tab>
+          <Tab key={`watchlist-tab-${wl.id}`}>{wl.name}</Tab>
         ))}
       </TabList>
 
       {watchlists.map(wl => (
-        <TabPanel key={`tab-panel-${wl.id}`}>
+        <TabPanel key={`watchlist-tab-panel-${wl.id}`}>
           <Table
             columns={columns}
             data={adaptDataForTable(wl.assets, prices)}
