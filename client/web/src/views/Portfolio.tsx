@@ -18,15 +18,18 @@ export function computePortfolio(portfolio, prices) {
 
   for (let holding of portfolio.holdings) {
     let symbol = holding.symbol;
+    let wallet = holding.locked ?
+     `${holding.wallet} (${holding.locked})` :
+     holding.wallet;
     if (!aggr.hasOwnProperty(symbol)) {
       aggr[symbol] = [{
         quantity: holding.quantity,
-        wallet: holding.wallet,
+        wallet: wallet,
       }];
     } else {
       aggr[symbol].push({
         quantity: holding.quantity,
-        wallet: holding.wallet,
+        wallet: wallet,
       });
     }
   }
