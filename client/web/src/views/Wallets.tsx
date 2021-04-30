@@ -4,38 +4,69 @@ import Table from "../components/Table";
 import { useSelector, useDispatch } from 'react-redux'
 import {
   getPrices,
-  fetchPricesThunk,
 } from '../reducers/prices';
 import {
   getPortfolios,
-  fetchPortfolioThunk,
 } from '../reducers/portfolio';
 import {
   computePortfolio
 } from '../utils/portfolio';
+import {
+  getPrice
+} from '../utils/prices';
 
-function computeTable(portfolio = [], prices = []) {
+function computeTable(portfolio, prices) {
   let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
   let nf = new Intl.NumberFormat(undefined);
 
   let total = 0;
-  let results = computePortfolio(portfolio, prices);
 
-  results.forEach((entry) => {
-    total += entry.value;
-    entry.quantity = nf.format(entry.quantity);
-    entry.value = cf.format(entry.value)
-    if (entry.subRows) {
-      entry.subRows.forEach((row) => {
-        row.quantity = nf.format(row.quantity);
-        row.value = cf.format(row.value);
-      });
+  let exchanges = {};
+
+  portfolio.holdings.forEach(holding => {
+    let walletName = holding.wallet || "unknown";
+
+    if (exchanges.hasOwnProperty(walletName)) {
+      exchanges[walletName].push(holding);
+    } else {
+      exchanges[walletName] = [holding];
     }
   });
-  return [results, cf.format(total)];
+
+  let result = Object.entries(exchanges).map(([key, exchange]) => {
+    let value = 0;
+    let subRows = exchange.map(asset => {
+      let price = getPrice(prices, asset.symbol);
+      value += asset.quantity * price;
+      return {
+        "name": "",
+        "asset": asset.symbol,
+        "quantity": asset.quantity,
+        "value": asset.quantity * price,
+      };
+    }).sort((a, b) => b.value - a.value);
+
+    subRows.forEach(item => {
+      item.quantity = nf.format(item.quantity);
+      item.value = cf.format(item.value);
+    });
+    total += value;
+
+    return {
+      "name": key,
+      "value": value,
+      "subRows": subRows,
+    };
+  }).sort((a, b) => b.value - a.value);
+
+  result.forEach(item => {
+    item.value = cf.format(item.value);
+  });
+
+  return [result, cf.format(total)];
 }
 
-export default function Portfolio() {
+export default function Strategy() {
   const columns = React.useMemo(
     () => [
       {
@@ -64,8 +95,12 @@ export default function Portfolio() {
           ) : null,
       },
       {
-        Header: 'Symbol',
-        accessor: "symbol",
+        Header: 'Name',
+        accessor: "name",
+      },
+      {
+        Header: 'Asset',
+        accessor: "asset",
       },
       {
         Header: 'Quantity',
@@ -75,10 +110,6 @@ export default function Portfolio() {
         Header: 'Value',
         accessor: "value",
       },
-      {
-        Header: 'Wallet',
-        accessor: "wallet",
-      },
     ],
     []
   );
@@ -87,9 +118,6 @@ export default function Portfolio() {
   const portfolios = useSelector(getPortfolios);
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchPortfolioThunk())
-  }, [dispatch])
 
   function getPanel(pf, prices) {
     let [data, total] = computeTable(pf, prices);

@@ -4,6 +4,7 @@ import 'react-tabs/style/react-tabs.css';
 import Watchlist from "./Watchlist";
 import Portfolio from "./Portfolio";
 import Strategy from "./Strategy";
+import Wallets from "./Wallets";
 
 import "../../public/styles/app.css";
 
@@ -13,6 +14,7 @@ export default () => (
       <Tab>Watchlist</Tab>
       <Tab>Portfolio</Tab>
       <Tab>Allocation</Tab>
+      <Tab>Wallets</Tab>
     </TabList>
 
     <TabPanel>
@@ -23,6 +25,9 @@ export default () => (
     </TabPanel>
     <TabPanel>
       <Strategy />
+    </TabPanel>
+    <TabPanel>
+      <Wallets />
     </TabPanel>
   </Tabs>
 );

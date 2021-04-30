@@ -71,7 +71,8 @@ pub struct PriceList {
 pub struct WatchList {
     pub id: String,
     pub name: String,
-    pub assets: Vec<String>,
+    pub assets: Option<Vec<String>>,
+    pub portfolio: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

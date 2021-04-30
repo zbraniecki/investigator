@@ -3,7 +3,6 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Table from "../components/Table";
 import { useSelector, useDispatch } from 'react-redux'
 import {
-  getPrice,
   getPrices,
   fetchPricesThunk,
 } from '../reducers/prices';
@@ -17,7 +16,10 @@ import {
 } from '../reducers/strategy';
 import {
   computePortfolio
-} from './Portfolio';
+} from '../utils/portfolio';
+import {
+  getPrice
+} from '../utils/prices';
 
 function getHoldingValue(portfolio, target, prices) {
   if (target.contains.length == 0) {
