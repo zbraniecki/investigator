@@ -20,24 +20,40 @@ import {
   computePortfolio
 } from '../utils/portfolio';
 import {
-  getPrice
+  getPrice,
+  getPrice2,
 } from '../utils/prices';
 
 function computeTableFromPortfolio(portfolio, prices) {
   let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+  let percf = new Intl.NumberFormat(undefined, { style: 'percent', minimumFractionDigits: 2 });
   let pf = computePortfolio(portfolio, prices);
   let result = pf.map(asset => {
-    let price = getPrice(prices, asset.symbol);
+    let price = getPrice2(prices, asset.symbol);
+    let value = price ? price.value : 0;
+    let market_cap = price ? price.market_cap : 0;
+    let price_perc_24h = price ? price.price_change_percentage_24h : 0;
+    let mcap_perc_24h = price ? price.market_cap_change_percentage_24h : 0;
     return {
       "symbol": asset.symbol,
-      "price": cf.format(price),
+      "price": price.value,
+      "market_cap": market_cap,
+      "price_perc_24h": price_perc_24h,
+      "mcap_perc_24h": mcap_perc_24h,
     };
+  }).sort((a, b) => b.market_cap - a.market_cap);
+
+  result.forEach(asset => {
+    asset.price = cf.format(asset.price)
+    asset.price_perc_24h = percf.format(asset.price_perc_24h / 100);
+    asset.mcap_perc_24h = percf.format(asset.mcap_perc_24h / 100);
   });
   return result;
 }
 
 function computeTable(wl, portfolios, prices) {
   let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
+  let percf = new Intl.NumberFormat(undefined, { style: 'percent', minimumFractionDigits: 2 });
 
   if (wl.portfolio) {
     if (portfolios.length == 0) {
@@ -48,15 +64,25 @@ function computeTable(wl, portfolios, prices) {
   } else {
     let result = wl.assets
       .map(asset => {
-        let price = getPrice(prices, asset);
+        let price = getPrice2(prices, asset);
+        let value = price ? price.value : 0;
+        let market_cap = price ? price.market_cap : 0;
+        let price_perc_24h = price ? price.price_change_percentage_24h : 0;
+        let mcap_perc_24h = price ? price.market_cap_change_percentage_24h : 0;
         return {
           "symbol": asset,
-          "price": price,
+          "price": value,
+          "market_cap": market_cap,
+          "price_perc_24h": price_perc_24h,
+          "mcap_perc_24h": mcap_perc_24h,
         };
-      })
-      .sort((a, b) => b.price - a.price);
+      }).sort((a, b) => b.market_cap - a.market_cap);
 
-    result.forEach(asset => asset.price = cf.format(asset.price));
+    result.forEach(asset => {
+      asset.price = cf.format(asset.price)
+      asset.price_perc_24h = percf.format(asset.price_perc_24h / 100);
+      asset.mcap_perc_24h = percf.format(asset.mcap_perc_24h / 100);
+    });
     return result;
   }
 }
@@ -96,6 +122,14 @@ export default function Watchlist() {
       {
         Header: 'Price',
         accessor: "price",
+      },
+      {
+        Header: 'Price % 24h',
+        accessor: "price_perc_24h",
+      },
+      {
+        Header: 'Mcap % 24h',
+        accessor: "mcap_perc_24h",
       },
     ],
     []

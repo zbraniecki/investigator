@@ -33,6 +33,9 @@ use chrono::prelude::*;
 pub struct Price {
     pub pair: (String, String),
     pub value: f64,
+    pub market_cap: f64,
+    pub price_change_percentage_24h: f64,
+    pub market_cap_change_percentage_24h: f64,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

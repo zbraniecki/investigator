@@ -45,6 +45,9 @@ async fn fetch_prices(coins: &[model::Coin]) -> Vec<model::Price> {
     struct ExternalPrice {
         symbol: String,
         current_price: f64,
+        market_cap: f64,
+        price_change_percentage_24h: f64,
+        market_cap_change_percentage_24h: f64,
     }
     use actix_web::client::Client;
     let client = Client::default();
@@ -72,6 +75,9 @@ async fn fetch_prices(coins: &[model::Coin]) -> Vec<model::Price> {
         .map(|price| model::Price {
             pair: (price.symbol, "USD".to_string()),
             value: price.current_price,
+            market_cap: price.market_cap,
+            price_change_percentage_24h: price.price_change_percentage_24h,
+            market_cap_change_percentage_24h: price.market_cap_change_percentage_24h,
         })
         .collect()
 }
