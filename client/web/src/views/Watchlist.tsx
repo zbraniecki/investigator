@@ -36,7 +36,7 @@ function computeTableFromPortfolio(portfolio, prices) {
     let mcap_perc_24h = price ? price.market_cap_change_percentage_24h : 0;
     return {
       "symbol": asset.symbol,
-      "price": price.value,
+      "price": value,
       "market_cap": market_cap,
       "price_perc_24h": price_perc_24h,
       "mcap_perc_24h": mcap_perc_24h,
