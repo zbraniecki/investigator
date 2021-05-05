@@ -141,13 +141,16 @@ export default function Watchlist() {
   const watchlists = useSelector(getWatchlists);
 
   const dispatch = useDispatch();
+  const dispatchRefreshPrices = () => {
+    dispatch(fetchRefreshPricesThunk())
+  };
   useEffect(() => {
     dispatch(fetchPricesThunk())
     dispatch(fetchPortfolioThunk())
     dispatch(fetchWatchlistsThunk())
   }, [dispatch])
 
-  let getPanel = (wl, prices) => {
+  let getPanel = (wl, prices, dispatchRefreshPrices) => {
     let dtf = new Intl.DateTimeFormat(undefined, {dateStyle: "long", timeStyle: "long"});
 
     let data = computeTable(wl, portfolios, prices);
@@ -155,7 +158,7 @@ export default function Watchlist() {
     return (
       <TabPanel key={`watchlist-tab-panel-${wl.id}`}>
         <span>
-          Last updated: {dtf.format(last_updated)}
+          Last updated: {dtf.format(last_updated)} <button onClick={dispatchRefreshPrices}>Refresh</button>
         </span>
         <Table
           columns={columns}
@@ -173,7 +176,7 @@ export default function Watchlist() {
         ))}
       </TabList>
 
-      {watchlists.map(wl => getPanel(wl, prices))}
+      {watchlists.map(wl => getPanel(wl, prices, dispatchRefreshPrices))}
     </Tabs>
   );
 }
