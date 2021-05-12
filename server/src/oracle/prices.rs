@@ -30,9 +30,10 @@ pub async fn get_view(data: web::Data<server::State>, query: web::Query<PriceVie
 pub async fn update_data(price_list: &mut model::PriceList) {
     let last_updated: DateTime<Utc> = Utc::now();
     let coins = get_supported_coins().await;
-    let prices = fetch_prices(&coins).await;
-    price_list.prices = prices;
-    price_list.last_updated = last_updated;
+    if let Ok(prices) = fetch_prices(&coins).await {
+        price_list.prices = prices;
+        price_list.last_updated = last_updated;
+    }
 }
 
 pub async fn get_data() -> model::PriceList {
@@ -40,7 +41,7 @@ pub async fn get_data() -> model::PriceList {
     read_prices(&coins).await
 }
 
-async fn fetch_prices(coins: &[model::Coin]) -> Vec<model::Price> {
+async fn fetch_prices(coins: &[model::Coin]) -> Result<Vec<model::Price>, ()> {
     #[derive(Serialize, Deserialize, Clone)]
     struct ExternalPrice {
         symbol: String,
@@ -59,34 +60,37 @@ async fn fetch_prices(coins: &[model::Coin]) -> Vec<model::Price> {
         .join("%2C");
     let price_url = PRICE_URL.replace("{IDS}", &ids);
 
-    let mut resp = client
+    let resp = client
         .get(price_url)
         .header("User-Agent", "Actix-web")
         .send()
-        .await
-        .unwrap();
+        .await;
+    if let Ok(mut resp) = resp {
+        let body = resp.body().await.unwrap();
 
-    let body = resp.body().await.unwrap();
+        let prices: Vec<ExternalPrice> = serde_json::from_slice(&body).unwrap();
 
-    let prices: Vec<ExternalPrice> = serde_json::from_slice(&body).unwrap();
+        Ok(prices
+            .into_iter()
+            .map(|price| model::Price {
+                pair: (price.symbol, "USD".to_string()),
+                value: price.current_price,
+                market_cap: price.market_cap,
+                price_change_percentage_24h: price.price_change_percentage_24h,
+                market_cap_change_percentage_24h: price.market_cap_change_percentage_24h,
+            })
+            .collect())
+    } else {
+        Err(())
+    }
 
-    prices
-        .into_iter()
-        .map(|price| model::Price {
-            pair: (price.symbol, "USD".to_string()),
-            value: price.current_price,
-            market_cap: price.market_cap,
-            price_change_percentage_24h: price.price_change_percentage_24h,
-            market_cap_change_percentage_24h: price.market_cap_change_percentage_24h,
-        })
-        .collect()
 }
 
 async fn read_prices(coins: &[model::Coin]) -> model::PriceList {
     let path = "res/oracle/prices.toml";
 
     if !fs::metadata(path).is_ok() {
-        let prices = fetch_prices(coins).await;
+        let prices = fetch_prices(coins).await.unwrap_or_default();
         let last_updated: DateTime<Utc> = Utc::now();
         let price_list = model::PriceList { prices, last_updated };
         let toml_string = toml::to_string(&price_list).unwrap();
