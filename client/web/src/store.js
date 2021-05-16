@@ -4,6 +4,7 @@ import watchlistReducer from './reducers/watchlist';
 import pricesReducer from './reducers/prices';
 import portfolioReducer from './reducers/portfolio';
 import strategyReducer from './reducers/strategy';
+import walletsReducer from './reducers/wallets';
 
 export const store = configureStore({
   reducer: {
@@ -11,5 +12,6 @@ export const store = configureStore({
     watchlist: watchlistReducer,
     portfolio: portfolioReducer,
     strategy: strategyReducer,
+    wallets: walletsReducer,
   }
 });

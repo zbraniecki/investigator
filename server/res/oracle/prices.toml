@@ -1,323 +1,337 @@
-last_updated = "2021-05-05T01:23:42.417864746Z"
+last_updated = "2021-05-13T00:30:44.787155846Z"
 
 [[price]]
 pair = ["btc", "USD"]
-value = 55128.0
-market_cap = 1034090916014.0
-price_change_percentage_24h = -0.87203
-market_cap_change_percentage_24h = -0.60424
+value = 49406.0
+market_cap = 907885014890.0
+price_change_percentage_24h = -13.32495
+market_cap_change_percentage_24h = -15.1586
 
 [[price]]
 pair = ["eth", "USD"]
-value = 3393.54
-market_cap = 391972771439.0
-price_change_percentage_24h = 2.06418
-market_cap_change_percentage_24h = 2.29423
+value = 3888.42
+market_cap = 441333339130.0
+price_change_percentage_24h = -7.13881
+market_cap_change_percentage_24h = -8.91262
 
 [[price]]
 pair = ["xrp", "USD"]
-value = 1.47
-market_cap = 67826971030.0
-price_change_percentage_24h = -0.215
-market_cap_change_percentage_24h = 0.63599
+value = 1.3
+market_cap = 58878506304.0
+price_change_percentage_24h = -13.68192
+market_cap_change_percentage_24h = -15.49979
 
 [[price]]
 pair = ["usdt", "USD"]
-value = 1.0
-market_cap = 53266673817.0
-price_change_percentage_24h = 0.3139
-market_cap_change_percentage_24h = 2.00139
+value = 0.977423
+market_cap = 56629810887.0
+price_change_percentage_24h = -2.44618
+market_cap_change_percentage_24h = -1.6565
 
 [[price]]
 pair = ["ada", "USD"]
-value = 1.32
-market_cap = 42251461492.0
-price_change_percentage_24h = 0.59019
-market_cap_change_percentage_24h = 0.69676
+value = 1.63
+market_cap = 49678601265.0
+price_change_percentage_24h = -8.27028
+market_cap_change_percentage_24h = -12.23593
 
 [[price]]
 pair = ["dot", "USD"]
-value = 36.53
-market_cap = 36236636414.0
-price_change_percentage_24h = 1.38904
-market_cap_change_percentage_24h = 1.90848
-
-[[price]]
-pair = ["uni", "USD"]
-value = 43.23
-market_cap = 22656633460.0
-price_change_percentage_24h = 5.21986
-market_cap_change_percentage_24h = 6.31239
+value = 36.31
+market_cap = 35131356791.0
+price_change_percentage_24h = -6.27047
+market_cap_change_percentage_24h = -8.63168
 
 [[price]]
 pair = ["ltc", "USD"]
-value = 338.83
-market_cap = 22582265335.0
-price_change_percentage_24h = 20.05976
-market_cap_change_percentage_24h = 20.57752
+value = 320.8
+market_cap = 20831982599.0
+price_change_percentage_24h = -16.81166
+market_cap_change_percentage_24h = -18.70467
+
+[[price]]
+pair = ["uni", "USD"]
+value = 37.37
+market_cap = 18985593906.0
+price_change_percentage_24h = -3.62782
+market_cap_change_percentage_24h = -5.5185
 
 [[price]]
 pair = ["link", "USD"]
-value = 49.56
-market_cap = 20955215619.0
-price_change_percentage_24h = 23.08737
-market_cap_change_percentage_24h = 23.80283
+value = 42.54
+market_cap = 17609789275.0
+price_change_percentage_24h = -13.77443
+market_cap_change_percentage_24h = -15.77539
 
 [[price]]
 pair = ["usdc", "USD"]
-value = 1.0
-market_cap = 14985288400.0
-price_change_percentage_24h = -0.16809
-market_cap_change_percentage_24h = 1.60452
-
-[[price]]
-pair = ["vet", "USD"]
-value = 0.198768
-market_cap = 12735630181.0
-price_change_percentage_24h = -2.64375
-market_cap_change_percentage_24h = -3.61175
-
-[[price]]
-pair = ["sol", "USD"]
-value = 45.02
-market_cap = 12285566177.0
-price_change_percentage_24h = 1.09529
-market_cap_change_percentage_24h = 1.58492
+value = 1.01
+market_cap = 15720219307.0
+price_change_percentage_24h = 1.0737
+market_cap_change_percentage_24h = -0.5122
 
 [[price]]
 pair = ["xlm", "USD"]
-value = 0.52635
-market_cap = 12094429312.0
-price_change_percentage_24h = -0.52965
-market_cap_change_percentage_24h = -0.36167
+value = 0.584462
+market_cap = 13256373982.0
+price_change_percentage_24h = -19.47344
+market_cap_change_percentage_24h = -21.3135
 
 [[price]]
-pair = ["theta", "USD"]
-value = 10.77
-market_cap = 10777518493.0
-price_change_percentage_24h = -2.48242
-market_cap_change_percentage_24h = -1.99851
+pair = ["sol", "USD"]
+value = 43.63
+market_cap = 11614588482.0
+price_change_percentage_24h = -3.6873
+market_cap_change_percentage_24h = -5.39863
 
 [[price]]
-pair = ["neo", "USD"]
-value = 103.5
-market_cap = 7292182761.0
-price_change_percentage_24h = 1.21477
-market_cap_change_percentage_24h = 2.30978
-
-[[price]]
-pair = ["xmr", "USD"]
-value = 400.03
-market_cap = 7147763021.0
-price_change_percentage_24h = 0.5257
-market_cap_change_percentage_24h = 0.73493
+pair = ["vet", "USD"]
+value = 0.178647
+market_cap = 11086838925.0
+price_change_percentage_24h = -16.1892
+market_cap_change_percentage_24h = -20.03487
 
 [[price]]
 pair = ["eos", "USD"]
-value = 7.11
-market_cap = 6786939475.0
-price_change_percentage_24h = 9.63119
-market_cap_change_percentage_24h = 10.03496
+value = 10.6
+market_cap = 9800937463.0
+price_change_percentage_24h = -25.62547
+market_cap_change_percentage_24h = -30.15252
+
+[[price]]
+pair = ["theta", "USD"]
+value = 9.39
+market_cap = 9223580492.0
+price_change_percentage_24h = -13.3496
+market_cap_change_percentage_24h = -14.64239
+
+[[price]]
+pair = ["xmr", "USD"]
+value = 394.77
+market_cap = 7069662684.0
+price_change_percentage_24h = -13.64045
+market_cap_change_percentage_24h = -13.63704
+
+[[price]]
+pair = ["neo", "USD"]
+value = 97.41
+market_cap = 6870651015.0
+price_change_percentage_24h = -15.13917
+market_cap_change_percentage_24h = -15.13917
 
 [[price]]
 pair = ["aave", "USD"]
-value = 473.16
-market_cap = 6011912111.0
-price_change_percentage_24h = -3.54404
-market_cap_change_percentage_24h = -3.15628
-
-[[price]]
-pair = ["miota", "USD"]
-value = 1.96
-market_cap = 5432835416.0
-price_change_percentage_24h = -0.29466
-market_cap_change_percentage_24h = 0.10154
+value = 513.07
+market_cap = 6354933517.0
+price_change_percentage_24h = 11.24791
+market_cap_change_percentage_24h = 8.20749
 
 [[price]]
 pair = ["atom", "USD"]
-value = 21.94
-market_cap = 5238338092.0
-price_change_percentage_24h = -0.44414
-market_cap_change_percentage_24h = -0.08778
+value = 23.65
+market_cap = 5411051362.0
+price_change_percentage_24h = -12.18297
+market_cap_change_percentage_24h = -15.67342
 
 [[price]]
-pair = ["AVAX", "USD"]
-value = 32.37
-market_cap = 4160457573.0
-price_change_percentage_24h = -3.9343
-market_cap_change_percentage_24h = -3.67893
-
-[[price]]
-pair = ["algo", "USD"]
-value = 1.34
-market_cap = 3986156209.0
-price_change_percentage_24h = -2.58795
-market_cap_change_percentage_24h = -1.12745
+pair = ["miota", "USD"]
+value = 1.77
+market_cap = 4842251510.0
+price_change_percentage_24h = -16.76324
+market_cap_change_percentage_24h = -17.45056
 
 [[price]]
 pair = ["dai", "USD"]
-value = 1.0
-market_cap = 3967607140.0
-price_change_percentage_24h = 0.05525
-market_cap_change_percentage_24h = 1.43619
+value = 0.977931
+market_cap = 4538029503.0
+price_change_percentage_24h = -2.47351
+market_cap_change_percentage_24h = -1.54966
 
 [[price]]
-pair = ["comp", "USD"]
-value = 763.54
-market_cap = 3889849009.0
-price_change_percentage_24h = -5.76663
-market_cap_change_percentage_24h = -5.38908
+pair = ["AVAX", "USD"]
+value = 34.72
+market_cap = 4399360258.0
+price_change_percentage_24h = -7.04032
+market_cap_change_percentage_24h = -8.05417
 
 [[price]]
 pair = ["ksm", "USD"]
-value = 408.25
-market_cap = 3672808367.0
-price_change_percentage_24h = -0.16031
-market_cap_change_percentage_24h = 0.44151
+value = 482.19
+market_cap = 4242266368.0
+price_change_percentage_24h = 10.08598
+market_cap_change_percentage_24h = 7.33843
+
+[[price]]
+pair = ["comp", "USD"]
+value = 755.56
+market_cap = 3800547629.0
+price_change_percentage_24h = -13.40832
+market_cap_change_percentage_24h = -14.61092
+
+[[price]]
+pair = ["algo", "USD"]
+value = 1.31
+market_cap = 3768171376.0
+price_change_percentage_24h = -11.66326
+market_cap_change_percentage_24h = -15.95861
 
 [[price]]
 pair = ["zec", "USD"]
-value = 257.43
-market_cap = 2861223857.0
-price_change_percentage_24h = 8.53923
-market_cap_change_percentage_24h = 9.32005
+value = 298.56
+market_cap = 3135038511.0
+price_change_percentage_24h = -4.00541
+market_cap_change_percentage_24h = -6.96072
 
 [[price]]
 pair = ["sushi", "USD"]
-value = 13.39
-market_cap = 2230624565.0
-price_change_percentage_24h = -3.36702
-market_cap_change_percentage_24h = -2.91509
-
-[[price]]
-pair = ["grt", "USD"]
-value = 1.51
-market_cap = 1854688257.0
-price_change_percentage_24h = -1.60146
-market_cap_change_percentage_24h = -1.17465
+value = 15.65
+market_cap = 2558065362.0
+price_change_percentage_24h = 1.85814
+market_cap_change_percentage_24h = -0.38
 
 [[price]]
 pair = ["bat", "USD"]
-value = 1.22
-market_cap = 1819920713.0
-price_change_percentage_24h = -0.92535
-market_cap_change_percentage_24h = -1.02873
+value = 1.19
+market_cap = 1741867394.0
+price_change_percentage_24h = -15.17729
+market_cap_change_percentage_24h = -16.46472
+
+[[price]]
+pair = ["grt", "USD"]
+value = 1.31
+market_cap = 1577716447.0
+price_change_percentage_24h = -11.68014
+market_cap_change_percentage_24h = -12.9029
 
 [[price]]
 pair = ["uma", "USD"]
-value = 24.97
-market_cap = 1508526583.0
-price_change_percentage_24h = -1.31133
-market_cap_change_percentage_24h = -0.65227
-
-[[price]]
-pair = ["icx", "USD"]
-value = 2.26
-market_cap = 1402565186.0
-price_change_percentage_24h = -3.76272
-market_cap_change_percentage_24h = -2.68235
-
-[[price]]
-pair = ["one", "USD"]
-value = 0.131116
-market_cap = 1248724808.0
-price_change_percentage_24h = -2.93709
-market_cap_change_percentage_24h = -0.20395
+value = 25.91
+market_cap = 1564317864.0
+price_change_percentage_24h = -10.47295
+market_cap_change_percentage_24h = -10.45602
 
 [[price]]
 pair = ["nano", "USD"]
-value = 9.15
-market_cap = 1218658854.0
-price_change_percentage_24h = -3.95163
-market_cap_change_percentage_24h = -3.1844
+value = 11.24
+market_cap = 1409749329.0
+price_change_percentage_24h = 26.24392
+market_cap_change_percentage_24h = 18.60749
+
+[[price]]
+pair = ["icx", "USD"]
+value = 2.08
+market_cap = 1278573517.0
+price_change_percentage_24h = -17.13815
+market_cap_change_percentage_24h = -17.8943
+
+[[price]]
+pair = ["one", "USD"]
+value = 0.109994
+market_cap = 1044465414.0
+price_change_percentage_24h = -10.93717
+market_cap_change_percentage_24h = -11.04735
 
 [[price]]
 pair = ["xsushi", "USD"]
-value = 15.08
-market_cap = 790213908.0
-price_change_percentage_24h = -11.43443
-market_cap_change_percentage_24h = -4.30157
+value = 16.48
+market_cap = 934247639.0
+price_change_percentage_24h = 12.29842
+market_cap_change_percentage_24h = -4.38089
 
 [[price]]
 pair = ["ocean", "USD"]
-value = 1.34
-market_cap = 572444562.0
-price_change_percentage_24h = -2.52568
-market_cap_change_percentage_24h = -2.1446
-
-[[price]]
-pair = ["celo", "USD"]
-value = 5.09
-market_cap = 562240226.0
-price_change_percentage_24h = -4.56031
-market_cap_change_percentage_24h = -3.80685
-
-[[price]]
-pair = ["reef", "USD"]
-value = 0.03853612
-market_cap = 488479657.0
-price_change_percentage_24h = -0.0584
-market_cap_change_percentage_24h = 0.04364
+value = 1.2
+market_cap = 513318974.0
+price_change_percentage_24h = -15.56413
+market_cap_change_percentage_24h = -15.52664
 
 [[price]]
 pair = ["ewt", "USD"]
-value = 14.25
-market_cap = 476706409.0
-price_change_percentage_24h = -7.17811
-market_cap_change_percentage_24h = -6.87868
+value = 15.36
+market_cap = 503715952.0
+price_change_percentage_24h = 9.6652
+market_cap_change_percentage_24h = 5.6178
+
+[[price]]
+pair = ["celo", "USD"]
+value = 4.45
+market_cap = 490668592.0
+price_change_percentage_24h = -14.20979
+market_cap_change_percentage_24h = -14.57521
+
+[[price]]
+pair = ["reef", "USD"]
+value = 0.04063622
+market_cap = 487642462.0
+price_change_percentage_24h = -18.8905
+market_cap_change_percentage_24h = -24.59751
 
 [[price]]
 pair = ["nmr", "USD"]
-value = 67.41
-market_cap = 383371634.0
-price_change_percentage_24h = -2.23535
-market_cap_change_percentage_24h = -1.11965
-
-[[price]]
-pair = ["trac", "USD"]
-value = 0.64832
-market_cap = 234483228.0
-price_change_percentage_24h = -7.97477
-market_cap_change_percentage_24h = -7.47542
-
-[[price]]
-pair = ["pols", "USD"]
-value = 3.49
-market_cap = 232406163.0
-price_change_percentage_24h = -4.51764
-market_cap_change_percentage_24h = -4.22346
-
-[[price]]
-pair = ["dag", "USD"]
-value = 0.073979
-market_cap = 175616827.0
-price_change_percentage_24h = -1.0203
-market_cap_change_percentage_24h = -0.12942
-
-[[price]]
-pair = ["nu", "USD"]
-value = 0.47636
-market_cap = 166909220.0
-price_change_percentage_24h = -4.08693
-market_cap_change_percentage_24h = -2.98468
+value = 56.98
+market_cap = 322184836.0
+price_change_percentage_24h = -12.60829
+market_cap_change_percentage_24h = -13.03724
 
 [[price]]
 pair = ["powr", "USD"]
-value = 0.373386
-market_cap = 160604879.0
-price_change_percentage_24h = -5.23564
-market_cap_change_percentage_24h = -4.97614
+value = 0.472023
+market_cap = 202834431.0
+price_change_percentage_24h = 14.84705
+market_cap_change_percentage_24h = 14.88103
+
+[[price]]
+pair = ["dag", "USD"]
+value = 0.080493
+market_cap = 194620647.0
+price_change_percentage_24h = -7.1619
+market_cap_change_percentage_24h = -5.37987
+
+[[price]]
+pair = ["pols", "USD"]
+value = 2.77
+market_cap = 184326461.0
+price_change_percentage_24h = -9.59616
+market_cap_change_percentage_24h = -10.3063
+
+[[price]]
+pair = ["trac", "USD"]
+value = 0.523977
+market_cap = 183274553.0
+price_change_percentage_24h = -12.29135
+market_cap_change_percentage_24h = -15.22905
+
+[[price]]
+pair = ["nu", "USD"]
+value = 0.404256
+market_cap = 138734492.0
+price_change_percentage_24h = -11.85532
+market_cap_change_percentage_24h = -13.68116
 
 [[price]]
 pair = ["sylo", "USD"]
-value = 0.00826808
-market_cap = 21412880.0
-price_change_percentage_24h = 7.45268
-market_cap_change_percentage_24h = 8.67295
+value = 0.01091777
+market_cap = 26764423.0
+price_change_percentage_24h = -19.09752
+market_cap_change_percentage_24h = -22.29087
 
 [[price]]
 pair = ["gs", "USD"]
-value = 1.8
+value = 1.15
 market_cap = 0.0
-price_change_percentage_24h = -11.38022
+price_change_percentage_24h = -11.61581
+market_cap_change_percentage_24h = 0.0
+
+[[price]]
+pair = ["icp", "USD"]
+value = 270.34
+market_cap = 0.0
+price_change_percentage_24h = -28.94635
+market_cap_change_percentage_24h = 0.0
+
+[[price]]
+pair = ["icp", "USD"]
+value = 271.38
+market_cap = 0.0
+price_change_percentage_24h = -27.13373
 market_cap_change_percentage_24h = 0.0

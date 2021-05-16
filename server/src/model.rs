@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use chrono::prelude::*;
+use std::ops::Range;
 
 // {
 //   "id": "bitcoin",
@@ -90,4 +91,37 @@ pub struct Strategy {
     pub id: String,
     pub name: String,
     pub targets: Vec<Target>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Wallet {
+    pub id: String,
+    pub name: String,
+    pub currency: Vec<WalletCurrency>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+#[serde(untagged)]
+pub enum APY {
+    Single(f64),
+    Range(Range<f64>),
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub enum YieldType {
+    #[serde(rename="interest")]
+    Interest,
+    #[serde(rename="staking")]
+    Staking,
+    #[serde(rename="lending")]
+    Lending,
+    #[serde(rename="lp")]
+    LiquidityProvider,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct WalletCurrency {
+    pub symbol: String,
+    pub apy: APY,
+    pub yield_type: Option<YieldType>,
 }

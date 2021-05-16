@@ -7,15 +7,18 @@ use std::sync::{Arc, Mutex};
 pub struct State {
     pub coins: Arc<Mutex<Vec<model::Coin>>>,
     pub prices: Arc<Mutex<model::PriceList>>,
+    pub wallets: Arc<Mutex<Vec<model::Wallet>>>,
 }
 
 impl State {
     pub async fn new() -> Self {
         let coins = super::coins::get_data().await;
         let prices = super::prices::get_data().await;
+        let wallets = super::wallets::get_data().await;
         Self {
             coins: Arc::new(Mutex::new(coins)),
             prices: Arc::new(Mutex::new(prices)),
+            wallets: Arc::new(Mutex::new(wallets)),
         }
     }
 }

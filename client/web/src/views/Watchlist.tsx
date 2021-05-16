@@ -17,6 +17,10 @@ import {
   fetchPortfolioThunk,
 } from '../reducers/portfolio';
 import {
+  getWallets,
+  fetchWalletsThunk,
+} from '../reducers/wallets';
+import {
   computePortfolio
 } from '../utils/portfolio';
 import {
@@ -139,6 +143,7 @@ export default function Watchlist() {
   const pricesLastUpdated = useSelector(getPricesLastUpdated);
   const portfolios = useSelector(getPortfolios);
   const watchlists = useSelector(getWatchlists);
+  const wallets = useSelector(getWallets);
 
   const dispatch = useDispatch();
   const dispatchRefreshPrices = () => {
@@ -148,6 +153,7 @@ export default function Watchlist() {
     dispatch(fetchPricesThunk())
     dispatch(fetchPortfolioThunk())
     dispatch(fetchWatchlistsThunk())
+    dispatch(fetchWalletsThunk())
   }, [dispatch])
 
   let getPanel = (wl, prices, dispatchRefreshPrices) => {
