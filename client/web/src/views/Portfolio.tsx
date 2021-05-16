@@ -16,8 +16,14 @@ import {
   fetchWalletsThunk,
 } from '../reducers/wallets';
 import {
+  getDisplayValues,
+} from '../reducers/ui';
+import {
   computePortfolio
 } from '../utils/portfolio';
+import {
+  maskValue
+} from '../utils/ui';
 
 function calculateYield(entry, wallets) {
   if (entry.subRows) {
@@ -50,7 +56,7 @@ function getYield(asset, wallet, wallets) {
   return c.apy;
 }
 
-function computeTable(portfolio = [], prices = [], wallets = []) {
+function computeTable(portfolio = [], prices = [], wallets = [], displayValues = true) {
   let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
   let nf = new Intl.NumberFormat(undefined);
   let pnf = new Intl.NumberFormat(undefined, { style: 'percent' });
@@ -68,18 +74,22 @@ function computeTable(portfolio = [], prices = [], wallets = []) {
     let perc = entry.value / total;
     totalYd += yd * perc;
     entry.yield = yd === null ? "" : pnf.format(yd);
-    entry.quantity = nf.format(entry.quantity);
-    entry.value = cf.format(entry.value)
+    entry.quantity = maskValue(displayValues, nf.format(entry.quantity));
+    entry.value = maskValue(displayValues, cf.format(entry.value));
     if (entry.subRows) {
       entry.subRows.forEach((row) => {
         let yd = getYield(entry.symbol, row.wallet, wallets);
         row.yield = yd === null ? "" : pnf.format(yd);
-        row.quantity = nf.format(row.quantity);
-        row.value = cf.format(row.value);
+        row.quantity = maskValue(displayValues, nf.format(row.quantity));
+        row.value = maskValue(displayValues, cf.format(row.value));
       });
     }
   });
-  return [results, cf.format(total), pnf.format(totalYd)];
+  return [
+    results,
+    maskValue(displayValues, cf.format(total)),
+    pnf.format(totalYd)
+  ];
 }
 
 export default function Portfolio() {
@@ -137,6 +147,7 @@ export default function Portfolio() {
   const prices = useSelector(getPrices);
   const portfolios = useSelector(getPortfolios);
   const wallets = useSelector(getWallets);
+  const displayValues = useSelector(getDisplayValues);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -144,7 +155,7 @@ export default function Portfolio() {
   }, [dispatch])
 
   function getPanel(pf, prices) {
-    let [data, total, yd] = computeTable(pf, prices, wallets);
+    let [data, total, yd] = computeTable(pf, prices, wallets, displayValues);
     return (
       <TabPanel key={`portfolio-tab-panel-${pf.id}`}>
         <span>Total: {total}</span>

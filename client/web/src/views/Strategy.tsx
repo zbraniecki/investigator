@@ -18,8 +18,14 @@ import {
   computePortfolio
 } from '../utils/portfolio';
 import {
+  getDisplayValues,
+} from '../reducers/ui';
+import {
   getPrice
 } from '../utils/prices';
+import {
+  maskValue
+} from '../utils/ui';
 
 function getHoldingValue(portfolio, target, prices) {
   if (target.contains.length == 0) {
@@ -39,7 +45,7 @@ function getHoldingValue(portfolio, target, prices) {
   }
 }
 
-function computeTable(strat, port, prices) {
+function computeTable(strat, port, prices, displayValues) {
   let total = 0;
   let portfolio = computePortfolio(port, prices);
   portfolio.forEach(entry => {
@@ -79,9 +85,13 @@ function computeTable(strat, port, prices) {
     target.delta = target.delta > 0.2 ?
       <strong>{pf.format(target.delta)}</strong> :
       pf.format(target.delta);
-    target.usd_delta = target.usd_delta > 100 ?
-      <strong>{cf.format(target.usd_delta)}</strong> :
-      cf.format(target.usd_delta);
+    if (displayValues) {
+      target.usd_delta = target.usd_delta > 100 ?
+        <strong>{cf.format(target.usd_delta)}</strong> :
+        cf.format(target.usd_delta);
+    } else {
+      target.usd_delta = "*";
+    }
   });
   return [results, pf.format(drift / 2)];
 }
@@ -145,6 +155,7 @@ export default function Strategy() {
   const prices = useSelector(getPrices);
   const strategies = useSelector(getStrategy);
   const portfolios = useSelector(getPortfolios);
+  const displayValues = useSelector(getDisplayValues);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -153,7 +164,7 @@ export default function Strategy() {
 
   function getPanel(strat, prices) {
     let portfolio = getPortfolio(portfolios, strat.id);
-    let [data, drift] = computeTable(strat, portfolio, prices);
+    let [data, drift] = computeTable(strat, portfolio, prices, displayValues);
     return (
       <TabPanel key={`strategy-tab-panel-${strat.id}`}>
         <span>Drift: {drift}</span>
