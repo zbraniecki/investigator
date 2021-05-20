@@ -30,7 +30,7 @@ function calculateYield(entry, wallets) {
     let yd = null;
     for (let row of entry.subRows) {
       let perc = row.quantity / entry.quantity;
-      let subYd = getYield(entry.symbol, row.wallet, wallets);
+      let subYd = getYield(entry.symbol, row.wallet_name, wallets);
       if (subYd) {
         if (yd === null) {
             yd = 0.0;
@@ -59,7 +59,7 @@ function getYield(asset, wallet, wallets) {
 function computeTable(portfolio = [], prices = [], wallets = [], displayValues = true) {
   let cf = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD' });
   let nf = new Intl.NumberFormat(undefined);
-  let pnf = new Intl.NumberFormat(undefined, { style: 'percent' });
+  let pnf = new Intl.NumberFormat(undefined, { style: 'percent', minimumFractionDigits: 1 });
 
   let total = 0;
   let totalYd = 0.0;
@@ -78,7 +78,7 @@ function computeTable(portfolio = [], prices = [], wallets = [], displayValues =
     entry.value = maskValue(displayValues, cf.format(entry.value));
     if (entry.subRows) {
       entry.subRows.forEach((row) => {
-        let yd = getYield(entry.symbol, row.wallet, wallets);
+        let yd = getYield(entry.symbol, row.wallet_name, wallets);
         row.yield = yd === null ? "" : pnf.format(yd);
         row.quantity = maskValue(displayValues, nf.format(row.quantity));
         row.value = maskValue(displayValues, cf.format(row.value));

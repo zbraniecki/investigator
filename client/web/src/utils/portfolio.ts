@@ -14,11 +14,13 @@ export function computePortfolio(portfolio, prices) {
       aggr[symbol] = [{
         quantity: holding.quantity,
         wallet: wallet,
+        wallet_name: holding.wallet,
       }];
     } else {
       aggr[symbol].push({
         quantity: holding.quantity,
         wallet: wallet,
+        wallet_name: holding.wallet,
       });
     }
   }
@@ -34,6 +36,7 @@ export function computePortfolio(portfolio, prices) {
         symbol: "",
         quantity: v.quantity,
         wallet: v.wallet,
+        wallet_name: v.wallet_name,
         value: price * v.quantity,
       };
     }).sort((a, b) => b.quantity - a.quantity);
