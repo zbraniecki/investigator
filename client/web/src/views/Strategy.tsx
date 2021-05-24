@@ -76,6 +76,13 @@ function computeTable(strat, port, prices, displayValues) {
       "usd_delta": usd_delta,
     };
   });
+
+  results.sort((a, b) => {
+    if (a.percent != b.percent) {
+      return b.percent - a.percent;
+    }
+    return b.current_percent - a.current_percent;
+  });
   results.forEach(target => {
     target.percent = pf.format(target.percent);
     target.current_percent = pf.format(target.current_percent);
