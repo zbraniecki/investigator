@@ -7,7 +7,7 @@ table! {
 }
 
 table! {
-    prices (base, target) {
+    prices (base, target, ts) {
         base -> Text,
         target -> Text,
         ts -> Timestamp,
@@ -15,7 +15,4 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(
-    coins,
-    prices,
-);
+allow_tables_to_appear_in_same_query!(coins, prices,);

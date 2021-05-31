@@ -1,8 +1,8 @@
+use super::establish_connection;
+use crate::api;
+use crate::db;
 use std::time::Duration;
 use tokio::time::delay_for;
-use super::establish_connection;
-use crate::db;
-use crate::api;
 
 pub fn add_coin(args: &[String]) {
     let id = args.get(2).unwrap();
@@ -24,6 +24,8 @@ pub fn show_coins(_args: &[String]) {
         println!("----------");
         println!("Symbol: {}", coin.symbol.unwrap_or("-".to_string()));
         println!("Name: {}\n\n", coin.name.unwrap_or("-".to_string()));
+        let prices = db::fetch_prices(&connection, &coin.id, "USD");
+        println!("{:#?}", prices);
     }
 }
 

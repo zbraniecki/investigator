@@ -1,5 +1,5 @@
+use chrono::{DateTime, Duration, Local};
 use serde::{Deserialize, Serialize};
-use chrono::{Local, DateTime, Duration};
 
 static PRICES_URL: &str =
     "https://api.coingecko.com/api/v3/coins/{ID}/market_chart/range?vs_currency={CURRENCY}&from={FROM}&to={TO}";
@@ -9,10 +9,9 @@ pub struct CoinPrices {
     pub prices: Vec<(i64, f64)>,
 }
 
-pub async fn fetch_coin_prices(id: &str) -> Result<CoinPrices, ()> {
-    let currency = "USD";
+pub async fn fetch_coin_prices(id: &str, target: &str) -> Result<CoinPrices, ()> {
     let dt_end: DateTime<Local> = Local::now();
-    let dt_start: DateTime<Local> = dt_end - Duration::days(10);
+    let dt_start: DateTime<Local> = dt_end - Duration::days(3);
     let ts_end = dt_end.timestamp();
     let ts_start = dt_start.timestamp();
     use actix_web::client::Client;
@@ -20,7 +19,7 @@ pub async fn fetch_coin_prices(id: &str) -> Result<CoinPrices, ()> {
 
     let prices_url = PRICES_URL
         .replace("{ID}", id)
-        .replace("{CURRENCY}", currency)
+        .replace("{CURRENCY}", target)
         .replace("{FROM}", &ts_start.to_string())
         .replace("{TO}", &ts_end.to_string());
 

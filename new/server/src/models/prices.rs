@@ -2,7 +2,7 @@ use crate::schema::prices;
 use chrono;
 use chrono::prelude::*;
 
-#[derive(Queryable, Clone)]
+#[derive(Queryable, Clone, Debug)]
 pub struct Price {
     pub base: String,
     pub target: String,
@@ -10,7 +10,7 @@ pub struct Price {
     pub value: f64,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Debug)]
 #[table_name = "prices"]
 pub struct NewPrice<'a> {
     pub base: &'a str,

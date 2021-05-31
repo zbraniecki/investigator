@@ -3,10 +3,10 @@ extern crate diesel;
 extern crate dotenv;
 
 pub mod api;
+pub mod commands;
 pub mod db;
 pub mod models;
 pub mod schema;
-pub mod commands;
 
 use std::env;
 
