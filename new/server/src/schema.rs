@@ -1,8 +1,8 @@
 table! {
     coins (id) {
         id -> Text,
-        symbol -> Text,
-        name -> Text,
+        symbol -> Nullable<Text>,
+        name -> Nullable<Text>,
     }
 }
 
@@ -15,7 +15,4 @@ table! {
     }
 }
 
-allow_tables_to_appear_in_same_query!(
-    coins,
-    prices,
-);
+allow_tables_to_appear_in_same_query!(coins, prices,);

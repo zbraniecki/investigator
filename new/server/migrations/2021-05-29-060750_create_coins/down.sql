@@ -1,1 +1,1 @@
-DROP TABLE coins
+DROP TABLE IF EXISTS coins

@@ -1,12 +1,13 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-static INFO_URL: &str = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids={IDS}&order=market_cap_desc&per_page=100&page=1&sparkline=false";
+static INFO_URL: &str =
+    "https://api.coingecko.com/api/v3/coins/{ID}?tickers=false&market_data=false";
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct CoinInfo {
-    id: String,
-    symbol: String,
-    name: String,
+    pub id: String,
+    pub symbol: String,
+    pub name: String,
 }
 
 pub async fn fetch_coin_info(id: &str) -> Result<CoinInfo, ()> {

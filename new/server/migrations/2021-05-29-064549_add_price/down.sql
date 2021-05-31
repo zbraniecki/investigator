@@ -1,1 +1,1 @@
-DROP table price
+DROP TABLE IF EXISTS price
