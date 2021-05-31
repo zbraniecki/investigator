@@ -104,18 +104,4 @@ async fn main() {
         }
         Command::None => {}
     }
-    // println!("Displaying {} coins", results.len());
-    // for coin in results {
-    //     println!("{}", coin.id);
-    //     println!("----------");
-    //     println!("{}", coin.symbol);
-    //     println!("{}\n\n", coin.name);
-
-    //     let price = db::get_current_price(&connection, &coin.id, "usd");
-    //     if let Some(price) = price {
-    //         println!("USD: {}", price.value);
-    //     } else {
-    //         println!("USD: ???");
-    //     }
-    // }
 }
