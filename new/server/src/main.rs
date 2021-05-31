@@ -10,6 +10,8 @@ pub mod schema;
 use diesel::prelude::*;
 use dotenv::dotenv;
 use std::env;
+use std::time::Duration;
+use tokio::time::delay_for;
 
 fn establish_connection() -> SqliteConnection {
     dotenv().ok();
@@ -49,12 +51,25 @@ async fn fetch_coin_info(args: &[String]) {
     db::set_coin_info(&connection, id, &coin_info);
 }
 
+async fn fetch_coins_info(_args: &[String]) {
+    let connection = establish_connection();
+    let coins = db::get_coins(&connection);
+    for coin in coins {
+        print!("Fetching info for {}", &coin.id);
+        let coin_info = api::fetch_coin_info(&coin.id).await.unwrap();
+        db::set_coin_info(&connection, &coin.id, &coin_info);
+        println!("   DONE!");
+        delay_for(Duration::from_millis(1000)).await;
+    }
+}
+
 #[actix_web::main]
 async fn main() {
     #[derive(Debug)]
     enum Command {
         AddCoin,
         FetchCoinInfo,
+        FetchCoinsInfo,
         ShowCoins,
         RemoveCoin,
         None,
@@ -65,6 +80,7 @@ async fn main() {
         Some("add_coin") => Command::AddCoin,
         Some("show_coins") => Command::ShowCoins,
         Some("fetch_coin_info") => Command::FetchCoinInfo,
+        Some("fetch_coins_info") => Command::FetchCoinsInfo,
         Some("remove_coin") => Command::RemoveCoin,
         _ => Command::None,
     };
@@ -76,6 +92,9 @@ async fn main() {
         }
         Command::FetchCoinInfo => {
             fetch_coin_info(&args).await;
+        }
+        Command::FetchCoinsInfo => {
+            fetch_coins_info(&args).await;
         }
         Command::ShowCoins => {
             show_coins(&args);
