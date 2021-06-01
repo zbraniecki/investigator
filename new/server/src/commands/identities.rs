@@ -11,11 +11,12 @@ pub fn add_identity(args: &[String]) {
     db::create_identity(&connection, name, password);
 }
 
-// pub fn remove_coin(args: &[String]) {
-//     let id = args.get(2).unwrap();
-//     let connection = establish_connection();
-//     db::remove_coin(&connection, id);
-// }
+pub fn remove_identity(args: &[String]) {
+    let name = args.get(2).unwrap();
+    let connection = establish_connection();
+    let identity = db::get_identity_by_name(&connection, &name).unwrap();
+    db::remove_identity(&connection, identity.id);
+}
 
 pub fn show_identities(_args: &[String]) {
     let connection = establish_connection();

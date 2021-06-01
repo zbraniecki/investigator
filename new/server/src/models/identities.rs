@@ -1,6 +1,6 @@
 use crate::db::schema::identities;
 
-#[derive(Queryable)]
+#[derive(Queryable, Clone, Debug)]
 pub struct Identity {
     pub id: i32,
     pub name: String,

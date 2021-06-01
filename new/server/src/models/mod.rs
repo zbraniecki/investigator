@@ -1,7 +1,7 @@
 mod coins;
-mod prices;
 mod identities;
+mod prices;
 
 pub use coins::*;
-pub use prices::*;
 pub use identities::*;
+pub use prices::*;

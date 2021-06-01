@@ -33,9 +33,4 @@ table! {
 
 joinable!(sessions -> identities (identity));
 
-allow_tables_to_appear_in_same_query!(
-    coins,
-    identities,
-    prices,
-    sessions,
-);
+allow_tables_to_appear_in_same_query!(coins, identities, prices, sessions,);

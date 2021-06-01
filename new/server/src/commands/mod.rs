@@ -1,6 +1,6 @@
 mod coins;
-mod prices;
 mod identities;
+mod prices;
 
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -26,6 +26,7 @@ pub async fn handle_command(args: &[String]) {
         FetchCoinPrices,
 
         AddIdentity,
+        RemoveIdentity,
         ShowIdentities,
         None,
     }
@@ -37,6 +38,7 @@ pub async fn handle_command(args: &[String]) {
         Some("remove_coin") => Command::RemoveCoin,
         Some("fetch_coin_prices") => Command::FetchCoinPrices,
         Some("add_identity") => Command::AddIdentity,
+        Some("remove_identity") => Command::RemoveIdentity,
         Some("show_identities") => Command::ShowIdentities,
         _ => Command::None,
     };
@@ -63,6 +65,9 @@ pub async fn handle_command(args: &[String]) {
         }
         Command::AddIdentity => {
             identities::add_identity(&args);
+        }
+        Command::RemoveIdentity => {
+            identities::remove_identity(&args);
         }
         Command::ShowIdentities => {
             identities::show_identities(&args);
