@@ -3,18 +3,18 @@ use crate::models::Coin;
 use crate::models::NewCoin;
 use diesel::prelude::*;
 
-pub fn create_coin(conn: &SqliteConnection, id: &str, symbol: Option<&str>, name: Option<&str>) {
+pub fn create_coin(conn: &PgConnection, id: &str, symbol: Option<&str>, name: Option<&str>) {
     use crate::db::schema::coins;
 
     let new_coin = NewCoin { id, symbol, name };
 
-    diesel::insert_or_ignore_into(coins::table)
+    diesel::insert_into(coins::table)
         .values(&new_coin)
         .execute(conn)
         .expect("Error saving new post");
 }
 
-pub fn remove_coin(conn: &SqliteConnection, delete_id: &str) {
+pub fn remove_coin(conn: &PgConnection, delete_id: &str) {
     use crate::db::schema::coins::dsl::*;
 
     let _num_deleted = diesel::delete(coins.filter(id.eq(delete_id)))
@@ -22,7 +22,7 @@ pub fn remove_coin(conn: &SqliteConnection, delete_id: &str) {
         .expect("Error deleting coins");
 }
 
-pub fn get_coins(conn: &SqliteConnection) -> Vec<Coin> {
+pub fn get_coins(conn: &PgConnection) -> Vec<Coin> {
     use crate::db::schema::coins::dsl::*;
 
     let results = coins
@@ -32,7 +32,7 @@ pub fn get_coins(conn: &SqliteConnection) -> Vec<Coin> {
     results
 }
 
-pub fn set_coin_info(conn: &SqliteConnection, coin_id: &str, coin_info: &CoinInfo) {
+pub fn set_coin_info(conn: &PgConnection, coin_id: &str, coin_info: &CoinInfo) {
     use crate::db::schema::coins::dsl::*;
 
     diesel::update(coins.find(coin_id))

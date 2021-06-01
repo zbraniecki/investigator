@@ -5,7 +5,7 @@ use chrono::{NaiveDate, NaiveDateTime};
 
 pub async fn fetch_coin_prices(args: &[String]) {
     let id = args.get(2).unwrap();
-    let target = "USD";
+    let target = "usd";
     let coin_prices = api::fetch_coin_prices(&id, target).await.unwrap();
 
     let mut result: Vec<(NaiveDate, f64)> = vec![];

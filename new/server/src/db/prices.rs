@@ -3,7 +3,7 @@ use crate::models::Price;
 use chrono::NaiveDate;
 use diesel::prelude::*;
 
-pub fn clean_coin_prices<'a>(conn: &SqliteConnection, coin_id: &'a str) {
+pub fn clean_coin_prices<'a>(conn: &PgConnection, coin_id: &'a str) {
     use crate::db::schema::prices::dsl::*;
 
     let _num_deleted = diesel::delete(prices.filter(base.eq(coin_id)))
@@ -11,12 +11,7 @@ pub fn clean_coin_prices<'a>(conn: &SqliteConnection, coin_id: &'a str) {
         .expect("Error deleting prices");
 }
 
-pub fn set_coin_prices(
-    conn: &SqliteConnection,
-    base: &str,
-    target: &str,
-    prices: &[(NaiveDate, f64)],
-) {
+pub fn set_coin_prices(conn: &PgConnection, base: &str, target: &str, prices: &[(NaiveDate, f64)]) {
     use crate::db::schema::prices;
 
     for price in prices {
@@ -27,14 +22,14 @@ pub fn set_coin_prices(
             value: price.1,
         };
 
-        diesel::insert_or_ignore_into(prices::table)
+        diesel::insert_into(prices::table)
             .values(&new_price)
             .execute(conn)
             .expect("Error saving new post");
     }
 }
 
-pub fn fetch_prices(conn: &SqliteConnection, base_id: &str, target_id: &str) -> Option<Vec<Price>> {
+pub fn fetch_prices(conn: &PgConnection, base_id: &str, target_id: &str) -> Option<Vec<Price>> {
     use crate::db::schema::prices::dsl::*;
 
     let results = prices
@@ -46,7 +41,7 @@ pub fn fetch_prices(conn: &SqliteConnection, base_id: &str, target_id: &str) -> 
     Some(results)
 }
 pub fn get_current_price<'a>(
-    conn: &SqliteConnection,
+    conn: &PgConnection,
     base_query: &'a str,
     target_query: &'a str,
 ) -> Option<Price> {
