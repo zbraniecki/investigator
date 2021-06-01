@@ -1,2 +1,0 @@
-# DATABASE_URL=test.db
-DATABASE_URL=postgres://127.0.0.1/investigator_oracle
