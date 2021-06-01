@@ -2,4 +2,4 @@ CREATE TABLE IF NOT EXISTS coins (
   id VARCHAR NOT NULL PRIMARY KEY,
   symbol VARCHAR,
   name VARCHAR
-)
+);

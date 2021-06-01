@@ -1,4 +1,4 @@
-use crate::schema::coins;
+use crate::db::schema::coins;
 
 #[derive(Queryable)]
 pub struct Coin {

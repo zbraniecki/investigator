@@ -4,7 +4,7 @@ use chrono::NaiveDate;
 use diesel::prelude::*;
 
 pub fn clean_coin_prices<'a>(conn: &SqliteConnection, coin_id: &'a str) {
-    use crate::schema::prices::dsl::*;
+    use crate::db::schema::prices::dsl::*;
 
     let _num_deleted = diesel::delete(prices.filter(base.eq(coin_id)))
         .execute(conn)
@@ -17,7 +17,7 @@ pub fn set_coin_prices(
     target: &str,
     prices: &[(NaiveDate, f64)],
 ) {
-    use crate::schema::prices;
+    use crate::db::schema::prices;
 
     for price in prices {
         let new_price = NewPrice {
@@ -35,7 +35,7 @@ pub fn set_coin_prices(
 }
 
 pub fn fetch_prices(conn: &SqliteConnection, base_id: &str, target_id: &str) -> Option<Vec<Price>> {
-    use crate::schema::prices::dsl::*;
+    use crate::db::schema::prices::dsl::*;
 
     let results = prices
         .filter(base.eq(base_id))
@@ -50,7 +50,7 @@ pub fn get_current_price<'a>(
     base_query: &'a str,
     target_query: &'a str,
 ) -> Option<Price> {
-    use crate::schema::prices::dsl::*;
+    use crate::db::schema::prices::dsl::*;
     use chrono::{DateTime, Local, NaiveDateTime};
 
     let now: DateTime<Local> = Local::now();

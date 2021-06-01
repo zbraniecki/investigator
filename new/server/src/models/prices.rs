@@ -1,4 +1,4 @@
-use crate::schema::prices;
+use crate::db::schema::prices;
 use chrono;
 use chrono::prelude::*;
 
