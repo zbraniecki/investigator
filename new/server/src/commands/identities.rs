@@ -25,7 +25,7 @@ pub fn show_identities(_args: &[String]) {
         println!("ID: {}", identity.id);
         println!("----------");
         println!("Name: {}", identity.name);
-        // let sessions = db::fetch_sessions(&connection, &identity.id);
-        // println!("{:#?}", sessions);
+        let sessions = db::get_sessions(&connection, identity.id);
+        println!("{:#?}", sessions);
     }
 }

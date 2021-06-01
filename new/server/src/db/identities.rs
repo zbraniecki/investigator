@@ -1,6 +1,5 @@
-// use crate::api::CoinInfo;
-use crate::models::Identity;
-use crate::models::NewIdentity;
+use crate::models::{Identity, Session};
+use crate::models::{NewIdentity, NewSession};
 use diesel::prelude::*;
 
 pub fn create_identity(conn: &PgConnection, name: &str, password: &str) {
@@ -50,4 +49,29 @@ pub fn get_identity_by_name(conn: &PgConnection, get_name: &str) -> Option<Ident
         .load::<Identity>(conn)
         .expect("Error loading coins");
     results.get(0).cloned()
+}
+
+pub fn create_session(conn: &PgConnection, identity_id: i32) {
+    use crate::db::schema::sessions;
+
+    let new_session = NewSession {
+        identity: identity_id,
+        expires: None,
+    };
+
+    diesel::insert_into(sessions::table)
+        .values(&new_session)
+        .execute(conn)
+        .expect("Error inserting session");
+}
+
+pub fn get_sessions(conn: &PgConnection, identity_id: i32) -> Vec<Session> {
+    use crate::db::schema::sessions::dsl::*;
+
+    let results = sessions
+        .filter(identity.eq(identity_id))
+        .order(id.desc())
+        .load::<Session>(conn)
+        .expect("Error loading coins");
+    results
 }
