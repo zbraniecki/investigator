@@ -1,5 +1,6 @@
 mod coins;
 mod prices;
+mod identities;
 
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -23,6 +24,9 @@ pub async fn handle_command(args: &[String]) {
         RemoveCoin,
 
         FetchCoinPrices,
+
+        AddIdentity,
+        ShowIdentities,
         None,
     }
     let cmd = match args.get(1).map(|s| s.as_str()) {
@@ -32,6 +36,8 @@ pub async fn handle_command(args: &[String]) {
         Some("fetch_coins_info") => Command::FetchCoinsInfo,
         Some("remove_coin") => Command::RemoveCoin,
         Some("fetch_coin_prices") => Command::FetchCoinPrices,
+        Some("add_identity") => Command::AddIdentity,
+        Some("show_identities") => Command::ShowIdentities,
         _ => Command::None,
     };
     println!("Command: {:?}", cmd);
@@ -54,6 +60,12 @@ pub async fn handle_command(args: &[String]) {
         }
         Command::FetchCoinPrices => {
             prices::fetch_coin_prices(&args).await;
+        }
+        Command::AddIdentity => {
+            identities::add_identity(&args);
+        }
+        Command::ShowIdentities => {
+            identities::show_identities(&args);
         }
         Command::None => {}
     }
