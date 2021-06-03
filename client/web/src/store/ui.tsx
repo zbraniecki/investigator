@@ -1,9 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+export enum Theme {
+  Automatic,
+  Light,
+  Dark,
+}
+
 export const uiSlice = createSlice({
   name: 'ui',
   initialState: {
-    theme: "dark",
+    theme: Theme.Automatic,
     displayValues: true,
   },
   reducers: {},
