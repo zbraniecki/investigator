@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   Theme,
   getTheme,
@@ -6,13 +7,44 @@ import { useSelector, useDispatch } from 'react-redux'
 
 export default () => {
   const theme = useSelector(getTheme);
+  const dispatch = useDispatch();
  
-  let icon = theme == Theme.Dark ? "dark" :
-    theme == Theme.Light ? "light" : "automatic";
+  function toggleTheme() {
+    let newTheme;
+    switch (theme) {
+      case Theme.Automatic:
+        newTheme = Theme.Light;
+        break;
+      case Theme.Light:
+        newTheme = Theme.Dark;
+        break;
+      case Theme.Dark:
+        newTheme = Theme.Automatic;
+        break;
+    }
+    dispatch({ type: "ui/set-theme", payload: newTheme});
+  }
+
+  let icon =
+    theme == Theme.Dark ? "🌑" :
+    theme == Theme.Light ? "🔆" : "🌓";
+  useEffect(() => {
+    switch (theme) {
+      case Theme.Light:
+        document.documentElement.setAttribute("data-theme", "light");
+        break;
+      case Theme.Dark:
+        document.documentElement.setAttribute("data-theme", "dark");
+        break;
+      case Theme.Automatic:
+        document.documentElement.removeAttribute("data-theme");
+        break;
+    }
+  });
   return (
-    <div>
+    <div class="settings-container">
       Theme:
-      <button>{icon}</button>
+      <button class="ui-theme-toggle" onClick={toggleTheme}>{icon}</button>
     </div>
   );
 }

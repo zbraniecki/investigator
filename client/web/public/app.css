@@ -1,9 +1,11 @@
 :root {
   --background-color-dark: #1f2035;
   --text-color-dark: #ffffff;
+  --primary-color-dark: #8b00ff;
 
   --background-color-light: #ffffff;
   --text-color-light: #000000;
+  --primary-color-light: #deb8ff;
 }
 
 body {
@@ -11,21 +13,22 @@ body {
   color: var(--text-color);
 }
 
-[data-theme="dark"] {
-  --primary-color: #455363;
+:root[data-theme="dark"] {
+  /* --primary-color: #455363; */
+  --primary-color: var(--primary-color-dark);
   --background-color: var(--background-color-dark);
   --text-color: var(--text-color-dark);
 }
 
-[data-theme="light"] {
-  --primary-color: #455363;
+:root[data-theme="light"] {
+  --primary-color: var(--primary-color-light);
   --background-color: var(--background-color-light);
   --text-color: var(--text-color-light);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --primary-color: #455363;
+    --primary-color: var(--primary-color-dark);
     --background-color: var(--background-color-dark);
     --text-color: var(--text-color-dark);
   }
@@ -33,8 +36,28 @@ body {
 
 @media (prefers-color-scheme: light) {
   :root {
-    --primary-color: #455363;
+    --primary-color: var(--primary-color-light);
     --background-color: var(--background-color-light);
     --text-color: var(--text-color-light);
   }
+}
+
+button.ui-theme-toggle {
+  border: none;
+  background-color: transparent;
+  font-family: inherit;
+  padding: 0;
+  padding-left: 0.5vw;
+  cursor: pointer;
+}
+
+button.ui-theme-toggle:active {
+  background-color: var(--primary-color);
+}
+
+div.settings-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 2vw;
 }
