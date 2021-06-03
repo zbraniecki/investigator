@@ -1,13 +1,16 @@
-mod oracle;
-mod account;
-mod model;
+#[macro_use]
+extern crate diesel;
+extern crate dotenv;
 
-use futures::future;
+pub mod api;
+pub mod commands;
+pub mod db;
+pub mod models;
+
+use std::env;
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    let oracle_server = oracle::server::new_server();
-    let account_server = account::server::new_server();
-    future::try_join(oracle_server, account_server).await?;
-    Ok(())
+async fn main() {
+    let args: Vec<String> = env::args().collect();
+    commands::handle_command(&args).await;
 }
