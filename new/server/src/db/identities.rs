@@ -5,6 +5,7 @@ use diesel::prelude::*;
 pub fn create_identity(conn: &PgConnection, name: &str, password: &str) {
     use crate::db::schema::identities;
 
+    // XXX: Encrypt the password before anyone ever uses this! :)
     let new_identity = NewIdentity { name, password };
 
     diesel::insert_into(identities::table)
@@ -51,6 +52,7 @@ pub fn get_identity_by_name(conn: &PgConnection, get_name: &str) -> Option<Ident
     results.get(0).cloned()
 }
 
+// XXX: This will probably eventually become "authenticate"
 pub fn create_session(conn: &PgConnection, identity_id: i32) {
     use crate::db::schema::sessions;
 

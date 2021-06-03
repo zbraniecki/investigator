@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS market_coins;
+DROP TABLE IF EXISTS markets;

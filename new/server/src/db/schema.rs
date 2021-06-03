@@ -15,6 +15,20 @@ table! {
 }
 
 table! {
+    market_coins (market, coin) {
+        market -> Varchar,
+        coin -> Varchar,
+    }
+}
+
+table! {
+    markets (id) {
+        id -> Varchar,
+        name -> Varchar,
+    }
+}
+
+table! {
     passive_incomes (wallet, coin, kind) {
         wallet -> Varchar,
         coin -> Varchar,
@@ -51,12 +65,16 @@ table! {
     }
 }
 
+joinable!(market_coins -> coins (coin));
+joinable!(market_coins -> markets (market));
 joinable!(passive_incomes -> wallets (wallet));
 joinable!(sessions -> identities (identity));
 
 allow_tables_to_appear_in_same_query!(
     coins,
     identities,
+    market_coins,
+    markets,
     passive_incomes,
     prices,
     sessions,
