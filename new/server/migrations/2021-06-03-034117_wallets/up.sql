@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS wallets (
+  id VARCHAR NOT NULL PRIMARY KEY,
+  name VARCHAR  NOT NULL,
+  url VARCHAR
+);
+
+CREATE TABLE IF NOT EXISTS passive_incomes (
+  wallet VARCHAR NOT NULL,
+  coin VARCHAR NOT NULL,
+  kind VARCHAR NOT NULL,
+  apy DOUBLE PRECISION NOT NULL,
+  apy_upper_bound DOUBLE PRECISION,
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
+  PRIMARY KEY (wallet, coin, kind),
+  FOREIGN KEY (wallet) REFERENCES wallets (id) ON DELETE CASCADE
+);
