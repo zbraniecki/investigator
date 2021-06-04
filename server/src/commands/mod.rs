@@ -1,5 +1,6 @@
 mod assets;
 mod identities;
+mod markets;
 mod prices;
 mod wallets;
 
@@ -41,6 +42,12 @@ pub async fn handle_command(args: &[String]) {
         AddPassiveIncome,
         RemovePassiveIncome,
         ClearPassiveIncomes,
+
+        AddMarket,
+        RemoveMarket,
+        ShowMarkets,
+        FetchMarketAssets,
+
         None,
     }
     let cmd = match args.get(1).map(|s| s.as_str()) {
@@ -62,6 +69,10 @@ pub async fn handle_command(args: &[String]) {
         Some("add_passive_income") => Command::AddPassiveIncome,
         Some("clear_passive_incomes") => Command::ClearPassiveIncomes,
         Some("remove_passive_income") => Command::RemovePassiveIncome,
+        Some("add_market") => Command::AddMarket,
+        Some("remove_market") => Command::RemoveMarket,
+        Some("show_markets") => Command::ShowMarkets,
+        Some("fetch_market_assets") => Command::FetchMarketAssets,
         _ => Command::None,
     };
     println!("Command: {:?}", cmd);
@@ -120,6 +131,18 @@ pub async fn handle_command(args: &[String]) {
         }
         Command::ClearPassiveIncomes => {
             wallets::clear_passive_incomes(&args);
+        }
+        Command::AddMarket => {
+            markets::add_market(&args);
+        }
+        Command::RemoveMarket => {
+            markets::remove_market(&args);
+        }
+        Command::ShowMarkets => {
+            markets::show_markets(&args);
+        }
+        Command::FetchMarketAssets => {
+            markets::fetch_market_assets(&args).await;
         }
         Command::None => {}
     }

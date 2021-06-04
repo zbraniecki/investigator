@@ -33,6 +33,16 @@ pub fn remove_asset(conn: &PgConnection, delete_id: &str) {
         .expect("Error deleting asset");
 }
 
+pub fn get_asset(conn: &PgConnection, asset_id: &str) -> Option<Asset> {
+    use crate::db::schema::assets::dsl::*;
+
+    let results = assets
+        .filter(id.eq(asset_id))
+        .load::<Asset>(conn)
+        .expect("Error loading assets");
+    results.get(0).cloned()
+}
+
 pub fn get_assets(conn: &PgConnection) -> Vec<Asset> {
     use crate::db::schema::assets::dsl::*;
 

@@ -1,6 +1,6 @@
 use crate::db::schema::{asset_classes, assets};
 
-#[derive(Queryable)]
+#[derive(Queryable, Clone, Debug)]
 pub struct Asset {
     pub id: String,
     pub class: String,
