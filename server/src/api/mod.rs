@@ -1,5 +1,5 @@
-mod coins;
+mod assets;
 mod prices;
 
-pub use coins::*;
+pub use assets::*;
 pub use prices::*;

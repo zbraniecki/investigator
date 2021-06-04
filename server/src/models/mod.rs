@@ -1,9 +1,9 @@
-mod coins;
+mod assets;
 mod identities;
 mod prices;
 mod wallets;
 
-pub use coins::*;
+pub use assets::*;
 pub use identities::*;
 pub use prices::*;
 pub use wallets::*;

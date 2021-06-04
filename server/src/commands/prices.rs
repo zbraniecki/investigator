@@ -3,16 +3,16 @@ use crate::api;
 use crate::db;
 use chrono::{NaiveDate, NaiveDateTime};
 
-pub async fn fetch_coin_prices(args: &[String]) {
+pub async fn fetch_asset_prices(args: &[String]) {
     let id = args.get(2).unwrap();
     let target = "usd";
-    let coin_prices = api::fetch_coin_prices(&id, target).await.unwrap();
+    let asset_prices = api::fetch_asset_prices(&id, target).await.unwrap();
 
     let mut result: Vec<(NaiveDate, f64)> = vec![];
 
     let mut current_date = None;
     let mut values = vec![];
-    for (ts, value) in &coin_prices.prices {
+    for (ts, value) in &asset_prices.prices {
         // Something about 13 digits epoch vs 10 digits epoch and the
         // last 3 digits being microseconds? Not sure, but it works for now.
         let dt = NaiveDateTime::from_timestamp(*ts / 1000, 0);
@@ -31,6 +31,6 @@ pub async fn fetch_coin_prices(args: &[String]) {
         values = vec![value];
     }
     let connection = establish_connection();
-    db::clean_coin_prices(&connection, id);
-    db::set_coin_prices(&connection, id, target, &result);
+    db::clean_asset_prices(&connection, id);
+    db::set_asset_prices(&connection, id, target, &result);
 }

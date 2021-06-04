@@ -5,11 +5,11 @@ static PRICES_URL: &str =
     "https://api.coingecko.com/api/v3/coins/{ID}/market_chart/range?vs_currency={CURRENCY}&from={FROM}&to={TO}";
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct CoinPrices {
+pub struct AssetPrices {
     pub prices: Vec<(i64, f64)>,
 }
 
-pub async fn fetch_coin_prices(id: &str, target: &str) -> Result<CoinPrices, ()> {
+pub async fn fetch_asset_prices(id: &str, target: &str) -> Result<AssetPrices, ()> {
     let dt_end: DateTime<Local> = Local::now();
     let dt_start: DateTime<Local> = dt_end - Duration::days(3);
     let ts_end = dt_end.timestamp();
@@ -31,9 +31,9 @@ pub async fn fetch_coin_prices(id: &str, target: &str) -> Result<CoinPrices, ()>
     if let Ok(mut resp) = resp {
         let body = resp.body().await.unwrap();
 
-        let coin_prices: CoinPrices = serde_json::from_slice(&body).unwrap();
+        let asset_prices: AssetPrices = serde_json::from_slice(&body).unwrap();
 
-        Ok(coin_prices)
+        Ok(asset_prices)
     } else {
         Err(())
     }
