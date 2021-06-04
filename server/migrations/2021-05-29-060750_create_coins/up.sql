@@ -1,5 +1,13 @@
-CREATE TABLE IF NOT EXISTS coins (
+CREATE TABLE IF NOT EXISTS asset_classes (
   id VARCHAR NOT NULL PRIMARY KEY,
+  name VARCHAR NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS assets (
+  id VARCHAR NOT NULL,
+  class VARCHAR NOT NULL,
   symbol VARCHAR,
-  name VARCHAR
+  name VARCHAR,
+  PRIMARY KEY (id, class),
+  FOREIGN KEY (class) REFERENCES asset_classes (id) ON DELETE CASCADE
 );

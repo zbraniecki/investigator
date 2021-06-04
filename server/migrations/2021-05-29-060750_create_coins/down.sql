@@ -1,1 +1,2 @@
-DROP TABLE IF EXISTS coins;
+DROP TABLE IF EXISTS assets;
+DROP TABLE IF EXISTS asset_classes;

@@ -3,15 +3,20 @@ use crate::models::Price;
 use chrono::NaiveDate;
 use diesel::prelude::*;
 
-pub fn clean_coin_prices<'a>(conn: &PgConnection, coin_id: &'a str) {
+pub fn clean_asset_prices<'a>(conn: &PgConnection, asset_id: &'a str) {
     use crate::db::schema::prices::dsl::*;
 
-    let _num_deleted = diesel::delete(prices.filter(base.eq(coin_id)))
+    let _num_deleted = diesel::delete(prices.filter(base.eq(asset_id)))
         .execute(conn)
         .expect("Error deleting prices");
 }
 
-pub fn set_coin_prices(conn: &PgConnection, base: &str, target: &str, prices: &[(NaiveDate, f64)]) {
+pub fn set_asset_prices(
+    conn: &PgConnection,
+    base: &str,
+    target: &str,
+    prices: &[(NaiveDate, f64)],
+) {
     use crate::db::schema::prices;
 
     for price in prices {

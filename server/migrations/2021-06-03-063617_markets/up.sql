@@ -3,10 +3,11 @@ CREATE TABLE IF NOT EXISTS markets (
   name VARCHAR  NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS market_coins (
+CREATE TABLE IF NOT EXISTS market_assets (
   market VARCHAR NOT NULL,
-  coin VARCHAR NOT NULL,
-  PRIMARY KEY (market, coin),
+  asset VARCHAR NOT NULL,
+  class VARCHAR NOT NULL,
+  PRIMARY KEY (market, asset, class),
   FOREIGN KEY (market) REFERENCES markets (id) ON DELETE CASCADE,
-  FOREIGN KEY (coin) REFERENCES coins (id) ON DELETE CASCADE
+  FOREIGN KEY (asset, class) REFERENCES assets (id, class) ON DELETE CASCADE
 );

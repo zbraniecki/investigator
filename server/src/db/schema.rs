@@ -1,4 +1,20 @@
 table! {
+    asset_classes (id) {
+        id -> Varchar,
+        name -> Varchar,
+    }
+}
+
+table! {
+    assets (id, class) {
+        id -> Varchar,
+        class -> Varchar,
+        symbol -> Nullable<Varchar>,
+        name -> Nullable<Varchar>,
+    }
+}
+
+table! {
     coins (id) {
         id -> Varchar,
         symbol -> Nullable<Varchar>,
@@ -15,9 +31,10 @@ table! {
 }
 
 table! {
-    market_coins (market, coin) {
+    market_assets (market, asset, class) {
         market -> Varchar,
-        coin -> Varchar,
+        asset -> Varchar,
+        class -> Varchar,
     }
 }
 
@@ -65,15 +82,17 @@ table! {
     }
 }
 
-joinable!(market_coins -> coins (coin));
-joinable!(market_coins -> markets (market));
+joinable!(assets -> asset_classes (class));
+joinable!(market_assets -> markets (market));
 joinable!(passive_incomes -> wallets (wallet));
 joinable!(sessions -> identities (identity));
 
 allow_tables_to_appear_in_same_query!(
+    asset_classes,
+    assets,
     coins,
     identities,
-    market_coins,
+    market_assets,
     markets,
     passive_incomes,
     prices,
