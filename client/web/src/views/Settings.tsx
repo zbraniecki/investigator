@@ -42,9 +42,9 @@ export default () => {
     }
   });
   return (
-    <div class="settings-container">
+    <div className="settings-container">
       Theme:
-      <button class="ui-theme-toggle" onClick={toggleTheme}>{icon}</button>
+      <button className="ui-theme-toggle" onClick={toggleTheme}>{icon}</button>
     </div>
   );
 }
