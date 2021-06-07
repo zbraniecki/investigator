@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export enum Theme {
   Automatic,
@@ -6,7 +6,7 @@ export enum Theme {
   Dark,
 }
 
-let theme = localStorage.getItem("theme");
+let theme = localStorage.getItem('theme');
 if (theme == undefined) {
   theme = Theme.Automatic;
 } else {
@@ -21,13 +21,13 @@ export const uiSlice = createSlice({
   },
   reducers: {},
   extraReducers: {
-    "ui/set-theme": (state, { payload }) => {
+    'ui/set-theme': (state, { payload }) => {
       state.theme = payload;
     },
-  }
+  },
 });
 
-export const getDisplayValues = state => state.ui.displayValues;
-export const getTheme = state => state.ui.theme;
+export const getDisplayValues = (state) => state.ui.displayValues;
+export const getTheme = (state) => state.ui.theme;
 
 export default uiSlice.reducer;

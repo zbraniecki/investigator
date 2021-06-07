@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Theme,
   getTheme,
 } from '../store/ui';
-import { useSelector, useDispatch } from 'react-redux'
 
 export default () => {
   const theme = useSelector(getTheme);
   const dispatch = useDispatch();
- 
+
   function toggleTheme() {
     let newTheme;
     switch (theme) {
@@ -22,22 +22,21 @@ export default () => {
         newTheme = Theme.Automatic;
         break;
     }
-    dispatch({ type: "ui/set-theme", payload: newTheme});
+    dispatch({ type: 'ui/set-theme', payload: newTheme });
   }
 
-  let icon =
-    theme == Theme.Dark ? "🌑" :
-    theme == Theme.Light ? "🔆" : "🌓";
+  const icon = theme == Theme.Dark ? '🌑'
+    : theme == Theme.Light ? '🔆' : '🌓';
   useEffect(() => {
     switch (theme) {
       case Theme.Light:
-        document.documentElement.setAttribute("data-theme", "light");
+        document.documentElement.setAttribute('data-theme', 'light');
         break;
       case Theme.Dark:
-        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute('data-theme', 'dark');
         break;
       case Theme.Automatic:
-        document.documentElement.removeAttribute("data-theme");
+        document.documentElement.removeAttribute('data-theme');
         break;
     }
   });
@@ -47,4 +46,4 @@ export default () => {
       <button className="ui-theme-toggle" onClick={toggleTheme}>{icon}</button>
     </div>
   );
-}
+};
