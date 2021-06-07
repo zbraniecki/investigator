@@ -2,6 +2,7 @@
 extern crate diesel;
 extern crate dotenv;
 
+mod asset;
 mod identity;
 
 // pub mod api;

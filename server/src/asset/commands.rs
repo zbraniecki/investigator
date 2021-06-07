@@ -2,7 +2,7 @@ use super::db;
 use crate::db::establish_connection;
 
 pub fn get_prefix() -> &'static str {
-    "identity"
+    "asset"
 }
 
 pub fn get_list() -> Vec<&'static str> {
@@ -20,26 +20,25 @@ pub fn handle_command(cmd: &str, args: &[String]) {
 
 pub fn create(args: &[String]) {
     let connection = establish_connection();
-    let name = args.get(2).unwrap();
-    let password = args.get(3).unwrap();
-    db::identity::create(&connection, name, password);
+    let id = args.get(2).unwrap();
+    db::asset::create(&connection, id, None, None);
 }
 
 pub fn delete(args: &[String]) {
-    let name = args.get(2).unwrap();
     let connection = establish_connection();
-    let identity = db::identity::get_by_name(&connection, &name).unwrap();
-    db::identity::delete(&connection, identity.id);
+    let id = args.get(2).unwrap();
+    db::asset::delete(&connection, id);
 }
 
 pub fn filter(_args: &[String]) {
     let connection = establish_connection();
-    let identities = db::identity::filter(&connection);
-    for identity in identities {
-        println!("ID: {}", identity.id);
-        println!("----------");
-        println!("Name: {}", identity.name);
-        let sessions = db::session::get(&connection, identity.id);
-        println!("{:#?}", sessions);
+    let assets = db::asset::filter(&connection);
+    for asset in assets {
+        println!("ID: {}", asset.id);
+        println!("Symbol: {}", asset.symbol.unwrap_or("-".to_string()));
+        println!("Name: {}\n", asset.name.unwrap_or("-".to_string()));
+        // let prices = db::fetch_prices(&connection, &asset.id, "usd");
+        // println!("{:#?}", prices);
+        // println!("----------");
     }
 }
