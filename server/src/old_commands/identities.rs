@@ -29,3 +29,14 @@ pub fn show_identities(_args: &[String]) {
         println!("{:#?}", sessions);
     }
 }
+
+pub fn get_identity_by_name(conn: &PgConnection, get_name: &str) -> Option<Identity> {
+    use crate::db::schema::identities::dsl::*;
+
+    let results = identities
+        .filter(name.eq(get_name))
+        .load::<Identity>(conn)
+        .expect("Error loading coins");
+    results.get(0).cloned()
+}
+
