@@ -45,32 +45,32 @@ pub fn fetch(conn: &PgConnection, base_id: &str, target_id: &str) -> Option<Vec<
     Some(results)
 }
 
-pub fn get_current_price<'a>(
-    conn: &PgConnection,
-    base_query: &'a str,
-    target_query: &'a str,
-) -> Option<Price> {
-    use crate::db::schema::prices::dsl::*;
-    use chrono::{DateTime, Local, NaiveDateTime};
+// pub fn get_current_price<'a>(
+//     conn: &PgConnection,
+//     base_query: &'a str,
+//     target_query: &'a str,
+// ) -> Option<Price> {
+//     use crate::db::schema::prices::dsl::*;
+//     use chrono::{DateTime, Local, NaiveDateTime};
 
-    let now: DateTime<Local> = Local::now();
-    let timestamp: NaiveDateTime = NaiveDateTime::from_timestamp(now.timestamp(), 0);
+//     let now: DateTime<Local> = Local::now();
+//     let timestamp: NaiveDateTime = NaiveDateTime::from_timestamp(now.timestamp(), 0);
 
-    if base_query == target_query {
-        return Some(Price {
-            base: base_query.to_string(),
-            target: target_query.to_string(),
-            ts: timestamp,
-            value: 1.0,
-        });
-    }
+//     if base_query == target_query {
+//         return Some(Price {
+//             base: base_query.to_string(),
+//             target: target_query.to_string(),
+//             ts: timestamp,
+//             value: 1.0,
+//         });
+//     }
 
-    let results = prices
-        .filter(base.eq(base_query))
-        .filter(target.eq(target_query))
-        .order(ts.desc())
-        .limit(1)
-        .load::<Price>(conn)
-        .expect("Error loading prices");
-    results.get(0).cloned()
-}
+//     let results = prices
+//         .filter(base.eq(base_query))
+//         .filter(target.eq(target_query))
+//         .order(ts.desc())
+//         .limit(1)
+//         .load::<Price>(conn)
+//         .expect("Error loading prices");
+//     results.get(0).cloned()
+// }

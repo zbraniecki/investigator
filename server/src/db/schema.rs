@@ -70,9 +70,9 @@ table! {
 table! {
     services (id) {
         id -> Varchar,
-        name -> Nullable<Varchar>,
+        name -> Varchar,
         url -> Nullable<Varchar>,
-        owner -> Int4,
+        owner -> Nullable<Int4>,
     }
 }
 
@@ -109,7 +109,7 @@ table! {
         name -> Varchar,
         url -> Nullable<Varchar>,
         service -> Nullable<Varchar>,
-        owner -> Int4,
+        owner -> Nullable<Int4>,
     }
 }
 

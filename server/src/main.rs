@@ -5,6 +5,7 @@ extern crate dotenv;
 mod asset;
 mod identity;
 mod price;
+mod service;
 
 mod commands;
 pub mod db;

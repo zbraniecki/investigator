@@ -1,6 +1,7 @@
 use crate::asset;
 use crate::identity;
 use crate::price;
+use crate::service;
 
 macro_rules! try_handle {
     ( $prefix:expr, $cmd:expr, $args:expr, $module:path ) => {{
@@ -46,6 +47,8 @@ pub async fn handle_command(args: &[String]) {
             || try_handle!(prefix, cmd, args, asset::commands::category)
             || try_handle!(prefix, cmd, args, asset::commands::tag)
             || try_handle_async!(prefix, cmd, args, price::commands)
+            || try_handle!(prefix, cmd, args, service::commands::service)
+            || try_handle!(prefix, cmd, args, service::commands::wallet)
         {
             return;
         }
@@ -56,6 +59,8 @@ pub async fn handle_command(args: &[String]) {
     add_commands!(available_commands, asset::commands::category);
     add_commands!(available_commands, asset::commands::tag);
     add_commands!(available_commands, price::commands);
+    add_commands!(available_commands, service::commands::service);
+    add_commands!(available_commands, service::commands::wallet);
 
     println!("{:#?}", available_commands);
 }
