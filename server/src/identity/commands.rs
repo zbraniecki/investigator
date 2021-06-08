@@ -15,10 +15,10 @@ pub fn handle_command(cmd: &str, args: &[String]) -> bool {
         "delete" => delete(args),
         "filter" => filter(args),
         _ => {
-            return true;
+            return false;
         }
     }
-    false
+    true
 }
 
 pub fn create(args: &[String]) {

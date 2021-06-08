@@ -19,7 +19,7 @@ pub fn handle_command(cmd: &str, args: &[String]) -> bool {
             return false;
         }
     }
-    return true;
+    true
 }
 
 pub fn create(args: &[String]) {

@@ -1,3 +1,4 @@
+use super::super::api;
 use super::super::db;
 use crate::db::establish_connection;
 
@@ -6,19 +7,20 @@ pub fn get_prefix() -> &'static str {
 }
 
 pub fn get_list() -> Vec<&'static str> {
-    vec!["create", "read", "update", "delete", "filter"]
+    vec!["create", "read", "update", "delete", "filter", "fetchInfo"]
 }
 
-pub fn handle_command(cmd: &str, args: &[String]) -> bool {
+pub async fn handle_command(cmd: &str, args: &[String]) -> bool {
     match cmd {
         "create" => create(args),
         "delete" => delete(args),
         "filter" => filter(args),
+        "fetchInfo" => fetch_info(args).await,
         _ => {
             return false;
         }
     }
-    return true;
+    true
 }
 
 pub fn create(args: &[String]) {
@@ -40,8 +42,15 @@ pub fn filter(_args: &[String]) {
         println!("ID: {}", asset.id);
         println!("Symbol: {}", asset.symbol.unwrap_or("-".to_string()));
         println!("Name: {}\n", asset.name.unwrap_or("-".to_string()));
-        // let prices = db::fetch_prices(&connection, &asset.id, "usd");
-        // println!("{:#?}", prices);
-        // println!("----------");
+        let prices = crate::price::db::fetch(&connection, &asset.id, "usd");
+        println!("{:#?}", prices);
+        println!("----------");
     }
+}
+
+pub async fn fetch_info(args: &[String]) {
+    let id = args.get(2).unwrap();
+    let asset_info = api::fetch_info(&id).await.unwrap();
+    let connection = establish_connection();
+    db::asset::set_info(&connection, id, &asset_info);
 }

@@ -1,3 +1,4 @@
+use super::super::api::AssetInfo;
 use super::super::models::Asset;
 use super::super::models::NewAsset;
 use diesel::prelude::*;
@@ -39,4 +40,13 @@ pub fn filter(conn: &PgConnection) -> Vec<Asset> {
         .load::<Asset>(conn)
         .expect("Error loading assets");
     results
+}
+
+pub fn set_info(conn: &PgConnection, asset_id: &str, asset_info: &AssetInfo) {
+    use crate::db::schema::assets::dsl::*;
+
+    diesel::update(assets.find(asset_id))
+        .set((symbol.eq(&asset_info.symbol), name.eq(&asset_info.name)))
+        .execute(conn)
+        .expect(&format!("Unable to find asset {}", asset_id));
 }

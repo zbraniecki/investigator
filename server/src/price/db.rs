@@ -1,5 +1,4 @@
-use crate::models::NewPrice;
-use crate::models::Price;
+use super::models::{NewPrice, Price};
 use chrono::NaiveDate;
 use diesel::prelude::*;
 
@@ -34,7 +33,7 @@ pub fn set_asset_prices(
     }
 }
 
-pub fn fetch_prices(conn: &PgConnection, base_id: &str, target_id: &str) -> Option<Vec<Price>> {
+pub fn fetch(conn: &PgConnection, base_id: &str, target_id: &str) -> Option<Vec<Price>> {
     use crate::db::schema::prices::dsl::*;
 
     let results = prices
@@ -45,6 +44,7 @@ pub fn fetch_prices(conn: &PgConnection, base_id: &str, target_id: &str) -> Opti
         .expect("Error loading prices");
     Some(results)
 }
+
 pub fn get_current_price<'a>(
     conn: &PgConnection,
     base_query: &'a str,

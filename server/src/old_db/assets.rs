@@ -53,15 +53,6 @@ pub fn get_assets(conn: &PgConnection) -> Vec<Asset> {
     results
 }
 
-pub fn set_asset_info(conn: &PgConnection, asset_id: &str, class_id: &str, asset_info: &AssetInfo) {
-    use crate::db::schema::assets::dsl::*;
-
-    diesel::update(assets.find((asset_id, class_id)))
-        .set((symbol.eq(&asset_info.symbol), name.eq(&asset_info.name)))
-        .execute(conn)
-        .expect(&format!("Unable to find asset {}", asset_id));
-}
-
 pub fn create_asset_class(conn: &PgConnection, id: &str, name: &str) {
     use crate::db::schema::asset_classes;
 

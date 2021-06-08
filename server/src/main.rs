@@ -4,11 +4,10 @@ extern crate dotenv;
 
 mod asset;
 mod identity;
+mod price;
 
-// pub mod api;
 mod commands;
 pub mod db;
-// pub mod models;
 
 use std::env;
 
