@@ -9,13 +9,16 @@ pub fn get_list() -> Vec<&'static str> {
     vec!["create", "read", "update", "delete", "filter"]
 }
 
-pub fn handle_command(cmd: &str, args: &[String]) {
+pub fn handle_command(cmd: &str, args: &[String]) -> bool {
     match cmd {
         "create" => create(args),
         "delete" => delete(args),
         "filter" => filter(args),
-        _ => {}
+        _ => {
+            return true;
+        }
     }
+    false
 }
 
 pub fn create(args: &[String]) {

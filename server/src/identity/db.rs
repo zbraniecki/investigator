@@ -1,5 +1,5 @@
+use super::models::NewIdentity;
 use super::models::{Identity, Session};
-use super::models::{NewIdentity, NewSession};
 use diesel::prelude::*;
 
 pub mod identity {

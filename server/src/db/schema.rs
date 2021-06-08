@@ -1,7 +1,7 @@
 table! {
     asset_categories (id) {
         id -> Varchar,
-        owner -> Int4,
+        owner -> Nullable<Int4>,
     }
 }
 
@@ -15,7 +15,7 @@ table! {
 table! {
     asset_tags (id) {
         id -> Varchar,
-        owner -> Int4,
+        owner -> Nullable<Int4>,
     }
 }
 

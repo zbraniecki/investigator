@@ -1,29 +1,46 @@
 use crate::asset;
 use crate::identity;
 
+macro_rules! try_handle {
+    ( $prefix:expr, $cmd:expr, $args:expr, $module:path ) => {{
+        use $module as base;
+        let prefix = base::get_prefix();
+        if prefix == $prefix {
+            base::handle_command($cmd, $args)
+        } else {
+            false
+        }
+    }};
+}
+
+macro_rules! add_commands {
+    ( $av_cmd:expr, $module:path ) => {{
+        use $module as base;
+        let prefix = base::get_prefix();
+        let cmds = base::get_list();
+        for cmd in cmds {
+            $av_cmd.push(format!("{}_{}", prefix, cmd));
+        }
+    }};
+}
+
 pub async fn handle_command(args: &[String]) {
-    let mut available_commands = vec![];
-
-    let prefix = identity::commands::get_prefix();
-    for cmd in identity::commands::get_list() {
-        available_commands.push(format!("{}_{}", prefix, cmd));
-    }
-
-    let prefix = asset::commands::get_prefix();
-    for cmd in asset::commands::get_list() {
-        available_commands.push(format!("{}_{}", prefix, cmd));
-    }
-
+    #[allow(unused_must_use)]
     if let Some(arg) = args.get(1) {
-        if let Some(cmd) = available_commands.iter().find(|cmd| *cmd == arg) {
-            let (prefix, cmd) = cmd.split_once("_").unwrap();
-            match prefix {
-                "identity" => identity::commands::handle_command(cmd, &args),
-                "asset" => asset::commands::handle_command(cmd, &args),
-                _ => {}
-            }
+        let (prefix, cmd) = arg.rsplit_once("_").unwrap();
+        if try_handle!(prefix, cmd, args, identity::commands)
+            || try_handle!(prefix, cmd, args, asset::commands::asset)
+            || try_handle!(prefix, cmd, args, asset::commands::category)
+            || try_handle!(prefix, cmd, args, asset::commands::tag)
+        {
             return;
         }
     }
+    let mut available_commands = vec![];
+    add_commands!(available_commands, identity::commands);
+    add_commands!(available_commands, asset::commands::asset);
+    add_commands!(available_commands, asset::commands::category);
+    add_commands!(available_commands, asset::commands::tag);
+
     println!("{:#?}", available_commands);
 }
