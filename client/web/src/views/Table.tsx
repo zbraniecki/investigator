@@ -1,7 +1,6 @@
 import React from 'react';
 import Paper from '@material-ui/core/Paper';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -9,7 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
-const useStyles = makeStyles((theme: Theme) => createStyles({
+const useStyles = makeStyles(() => createStyles({
   root: {
     flexGrow: 1,
     height: '100vh',
@@ -22,12 +21,16 @@ function createData(symbol: string, price: number, pricePerc24h: number, mcapPer
   };
 }
 
-export default (props) => {
+interface Props {
+  kind: String,
+}
+
+export default (props: Props) => {
   const classes = useStyles();
 
   const { kind } = props;
   let rows;
-  if (kind == 'markets') {
+  if (kind === 'markets') {
     rows = [
       createData('BTC', 36600, 0.24, 0.25),
       createData('ETH', 2650, 0.12, 0.09),

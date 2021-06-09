@@ -22,6 +22,7 @@ module.exports = {
   ],
   rules: {
     "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": ["error"]
+    "no-param-reassign": ["error", { "props": false }],
+    "@typescript-eslint/no-use-before-define": ["error"],
   },
 };

@@ -7,10 +7,10 @@ export enum Theme {
 }
 
 let theme = localStorage.getItem('theme');
-if (theme == undefined) {
+if (theme === undefined) {
   theme = Theme.Automatic;
 } else {
-  theme = parseInt(theme);
+  theme = parseInt(theme, 10);
 }
 
 export const uiSlice = createSlice({

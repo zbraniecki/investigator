@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   Theme,
@@ -21,12 +21,27 @@ export default () => {
       case Theme.Dark:
         newTheme = Theme.Automatic;
         break;
+      default:
+        break;
     }
     dispatch({ type: 'ui/set-theme', payload: newTheme });
   }
 
-  const icon = theme == Theme.Dark ? '🌑'
-    : theme == Theme.Light ? '🔆' : '🌓';
+  let icon;
+  switch (theme) {
+    case Theme.Automatic:
+      icon = '🔆';
+      break;
+    case Theme.Light:
+      icon = '🌓';
+      break;
+    case Theme.Dark:
+      icon = '🌑';
+      break;
+    default:
+      break;
+  }
+
   useEffect(() => {
     switch (theme) {
       case Theme.Light:
@@ -38,12 +53,14 @@ export default () => {
       case Theme.Automatic:
         document.documentElement.removeAttribute('data-theme');
         break;
+      default:
+        break;
     }
   });
   return (
     <div className="settings-container">
       Theme:
-      <button className="ui-theme-toggle" onClick={toggleTheme}>{icon}</button>
+      <button type="button" className="ui-theme-toggle" onClick={toggleTheme}>{icon}</button>
     </div>
   );
 };

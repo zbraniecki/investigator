@@ -1,25 +1,13 @@
 import React from 'react';
-import {
-  Tab, Tabs, TabList, TabPanel,
-} from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tab from '@material-ui/core/Tab';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
 export default () => {
-  const classes = useStyles();
-  const [value, setValue] = React.useState('1');
+  const [value] = React.useState('1');
 
   return (
     <TabContext value={value}>
