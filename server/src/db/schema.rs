@@ -44,17 +44,17 @@ table! {
 
 table! {
     portfolio_assets (portfolio, asset) {
-        portfolio -> Varchar,
+        portfolio -> Int4,
         asset -> Varchar,
     }
 }
 
 table! {
     portfolios (id) {
-        id -> Varchar,
+        id -> Int4,
         slug -> Varchar,
         name -> Nullable<Varchar>,
-        owner -> Int4,
+        owner -> Nullable<Int4>,
     }
 }
 

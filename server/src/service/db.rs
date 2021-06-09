@@ -1,4 +1,4 @@
-use super::models::{Service, NewService, Wallet, NewWallet};
+use super::models::{NewService, NewWallet, Service, Wallet};
 use diesel::prelude::*;
 
 pub mod service {
@@ -7,7 +7,12 @@ pub mod service {
     pub fn create(conn: &PgConnection, id: &str, name: &str) {
         use crate::db::schema::services;
 
-        let new_service = NewService { id, name, url: None, owner: None };
+        let new_service = NewService {
+            id,
+            name,
+            url: None,
+            owner: None,
+        };
 
         diesel::insert_into(services::table)
             .values(&new_service)
@@ -50,7 +55,13 @@ pub mod wallet {
     pub fn create(conn: &PgConnection, id: &str, name: &str) {
         use crate::db::schema::wallets;
 
-        let new_wallet = NewWallet { id, name: Some(name), url: None, service: None, owner: None };
+        let new_wallet = NewWallet {
+            id,
+            name: Some(name),
+            url: None,
+            service: None,
+            owner: None,
+        };
 
         diesel::insert_into(wallets::table)
             .values(&new_wallet)

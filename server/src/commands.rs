@@ -1,5 +1,6 @@
 use crate::asset;
 use crate::identity;
+use crate::portfolio;
 use crate::price;
 use crate::service;
 
@@ -49,6 +50,7 @@ pub async fn handle_command(args: &[String]) {
             || try_handle_async!(prefix, cmd, args, price::commands)
             || try_handle!(prefix, cmd, args, service::commands::service)
             || try_handle!(prefix, cmd, args, service::commands::wallet)
+            || try_handle!(prefix, cmd, args, portfolio::commands)
         {
             return;
         }
@@ -61,6 +63,7 @@ pub async fn handle_command(args: &[String]) {
     add_commands!(available_commands, price::commands);
     add_commands!(available_commands, service::commands::service);
     add_commands!(available_commands, service::commands::wallet);
+    add_commands!(available_commands, portfolio::commands);
 
     println!("{:#?}", available_commands);
 }
