@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   Theme,
   getTheme,
-} from '../store/ui';
+} from '../../store/ui';
 
 export default () => {
   const theme = useSelector(getTheme);

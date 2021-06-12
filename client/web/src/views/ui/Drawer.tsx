@@ -9,17 +9,10 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import SettingsIcon from '@material-ui/icons/Settings';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-
-const menuItems = [
-  ['Markets', <AccountBalanceIcon />],
-  ['Portfolios', <TrendingUpIcon />],
-];
 
 const menuItemsLower = [
   ['Settings', <SettingsIcon />],

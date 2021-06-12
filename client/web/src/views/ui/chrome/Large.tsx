@@ -7,8 +7,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 
-import Markets from './Markets';
-import Drawer from './Drawer';
+// import Markets from './Markets';
+import Drawer from '../Drawer';
 
 const drawerWidth = 240;
 
@@ -128,7 +128,7 @@ export default () => {
       />
       <main className={classes.content}>
         <Toolbar />
-        { selectedTab === 0 ? <Markets /> : <div>Foo</div> }
+        { selectedTab === 0 ? <div>Bar</div> : <div>Foo</div> }
       </main>
     </div>
   );
