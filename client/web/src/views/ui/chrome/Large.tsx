@@ -7,8 +7,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 
-// import Markets from './Markets';
 import Drawer from '../Drawer';
+import SettingsSet from '../SettingsSet';
+import Markets from '../../Markets';
+import Portfolios from '../../Portfolios';
 
 const drawerWidth = 240;
 
@@ -37,53 +39,25 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   hide: {
     display: 'none',
   },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-  },
-  drawerOpen: {
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerClose: {
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: theme.spacing(7) + 1,
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9) + 1,
-    },
-  },
-  toolbar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-  },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
   },
 }));
 
-export default () => {
-  const [selectedTab, setSelectedTab] = React.useState(0);
+interface Props {
+  menuItems: Array<any>,
+  storedTheme: any,
+  onThemeChange: any,
+}
+
+export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
   const classes = useStyles();
+  const [screenIndex, setScreenIndex] = React.useState(0);
   const [open, setOpen] = React.useState(false);
 
-  const handleListItemClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    index: number,
-  ) => {
-    setSelectedTab(index);
+  const handleScreenChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setScreenIndex(newValue);
   };
 
   const handleDrawerOpen = () => {
@@ -93,6 +67,16 @@ export default () => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  let content;
+  switch (screenIndex) {
+    case 0:
+      content = <Markets />;
+      break;
+    default:
+      content = <Portfolios />;
+      break;
+  }
 
   return (
     <div className={classes.root}>
@@ -118,17 +102,22 @@ export default () => {
             Market Investigator
           </Typography>
         </Toolbar>
+        <SettingsSet
+          storedTheme={storedTheme}
+          onThemeChange={onThemeChange}
+        />
       </AppBar>
       <Toolbar />
       <Drawer
-        selectedTab={selectedTab}
-        onDrawerSelection={handleListItemClick}
+        selectedTab={screenIndex}
+        onDrawerSelection={handleScreenChange}
         onDrawerClose={handleDrawerClose}
+        menuItems={menuItems}
         open={open}
       />
       <main className={classes.content}>
         <Toolbar />
-        { selectedTab === 0 ? <div>Bar</div> : <div>Foo</div> }
+        { content }
       </main>
     </div>
   );

@@ -1,40 +1,19 @@
 import React from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import { Provider } from 'react-redux';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import cyan from '@material-ui/core/colors/cyan';
+import store from '../../store/main';
 
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
-import TrendingUpIcon from '@material-ui/icons/TrendingUp';
-import PieChartIcon from '@material-ui/icons/PieChart';
-
-import SmallChrome from './chrome/Small';
-
-const menuItems = [
-  ['Markets', <AccountBalanceIcon />],
-  ['Portfolios', <TrendingUpIcon />],
-  ['Strategies', <PieChartIcon />],
-];
+import UI from './UI';
 
 export default () => {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-
-  const theme = React.useMemo(
-    () => createMuiTheme({
-      palette: {
-        primary: cyan,
-        type: prefersDarkMode ? 'dark' : 'light',
-      },
-    }),
-    [prefersDarkMode],
-  );
-
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)', {
+    noSsr: true,
+  });
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <SmallChrome
-        menuItems={menuItems}
+    <Provider store={store}>
+      <UI
+        prefersDarkMode={prefersDarkMode}
       />
-    </ThemeProvider>
+    </Provider>
   );
 };

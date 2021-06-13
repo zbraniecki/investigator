@@ -87,12 +87,13 @@ interface Props {
   onDrawerClose: function,
   selectedTab: function,
   open: function,
+  menuItems: Array<any>,
 }
 
 export default (props: Props) => {
   const classes = useStyles();
   const {
-    onDrawerSelection, onDrawerClose, selectedTab, open,
+    onDrawerSelection, onDrawerClose, selectedTab, open, menuItems,
   } = props;
   const theme = useTheme();
 

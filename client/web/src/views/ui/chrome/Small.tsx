@@ -6,6 +6,7 @@ import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 
+import SettingsSet from '../SettingsSet';
 import Markets from '../../Markets';
 import Portfolios from '../../Portfolios';
 
@@ -14,9 +15,12 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
+    padding: '0',
   },
   appBar: {
-    height: '6vh',
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    alignItems: 'end',
   },
   box: {
     flex: 1,
@@ -29,9 +33,11 @@ const useStyles = makeStyles({
 
 interface Props {
   menuItems: Array<any>,
+  storedTheme: any,
+  onThemeChange: any,
 }
 
-export default ({ menuItems }: Props) => {
+export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [screenIndex, setScreenIndex] = React.useState(0);
@@ -52,7 +58,12 @@ export default ({ menuItems }: Props) => {
 
   return (
     <Container maxWidth="sm" className={classes.root}>
-      <AppBar position="static" className={classes.appBar} />
+      <AppBar position="static" className={classes.appBar}>
+        <SettingsSet
+          storedTheme={storedTheme}
+          onThemeChange={onThemeChange}
+        />
+      </AppBar>
       <Box className={classes.box}>
         { content }
       </Box>

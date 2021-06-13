@@ -19,15 +19,16 @@ export const uiSlice = createSlice({
     theme: theme || Theme.Automatic,
     displayValues: true,
   },
-  reducers: {},
-  extraReducers: {
-    'ui/set-theme': (state, { payload }) => {
+  reducers: {
+    setTheme: (state, { payload }) => {
       state.theme = payload;
     },
   },
+  extraReducers: {},
 });
 
 export const getDisplayValues = (state) => state.ui.displayValues;
 export const getTheme = (state) => state.ui.theme;
 
+export const { setTheme } = uiSlice.actions;
 export default uiSlice.reducer;

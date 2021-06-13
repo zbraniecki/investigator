@@ -11,7 +11,7 @@ import Table from './utils/Table';
 
 const useStyles = makeStyles({
   tabPanel: {
-    padding: 0,
+    padding: '2vh',
   },
   header: {
     padding: '15px 0',
@@ -25,12 +25,40 @@ const data = {
       symbol: 'S&P500',
       value: 32932,
       change: 0.043,
+      sub: [
+        {
+          key: 'IBM',
+          symbol: 'IBM',
+          value: 12121,
+          change: 0.2,
+        },
+        {
+          key: 'TSLA',
+          symbol: 'TSLA',
+          value: 9212,
+          change: 0.1,
+        },
+      ],
     },
     {
       key: 'Crypto',
       symbol: 'Crypto',
       value: 1231,
       change: -0.21,
+      sub: [
+        {
+          key: 'BTC',
+          symbol: 'BTC',
+          value: 30000,
+          change: 0.2,
+        },
+        {
+          key: 'ETH',
+          symbol: 'ETH',
+          value: 2600,
+          change: 0.2,
+        },
+      ],
     },
   ],
   's&p500': [
@@ -110,7 +138,7 @@ export default () => {
       </Paper>
       <TabPanel value="0" className={classes.tabPanel}>
         <Typography variant="h6" className={classes.header}>
-          Overall
+        &nbsp;
         </Typography>
         <Table data={data.overall} style={tableStyle} />
       </TabPanel>
