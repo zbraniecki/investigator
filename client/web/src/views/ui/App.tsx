@@ -15,6 +15,7 @@ export default () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)', {
     noSsr: true,
   });
+
   return (
     <Provider store={store}>
       <UI

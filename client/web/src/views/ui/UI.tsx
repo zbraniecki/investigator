@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import cyan from '@material-ui/core/colors/cyan';
@@ -12,6 +12,9 @@ import {
   setTheme,
   Theme,
 } from '../../store/ui';
+import {
+  fetchPortfoliosThunk,
+} from '../../store/markets';
 
 import SmallChrome from './chrome/Small';
 import LargeChrome from './chrome/Large';
@@ -71,6 +74,10 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
     }
     dispatch(setTheme(newValue));
   }
+
+  useEffect(() => {
+    dispatch(fetchPortfoliosThunk());
+  }, [dispatch]);
 
   const chrome = smallUI
     ? (

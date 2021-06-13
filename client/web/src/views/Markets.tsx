@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
 import TabContext from '@material-ui/lab/TabContext';
@@ -9,6 +10,10 @@ import Typography from '@material-ui/core/Typography';
 
 import Table from './utils/Table';
 
+import {
+  getPortfolios,
+} from '../store/markets';
+
 const useStyles = makeStyles({
   tabPanel: {
     padding: '2vh',
@@ -18,49 +23,26 @@ const useStyles = makeStyles({
   },
 });
 
+function preparePortfolios(input) {
+  return input.map((p) => {
+    const sub = p.assets.map((a) => ({
+      key: a,
+      symbol: a,
+      value: 0,
+      change: 0.0,
+    }));
+    return {
+      key: p.name,
+      symbol: p.name,
+      value: 0,
+      change: 0.0,
+      sub,
+    };
+  });
+}
+
 const data = {
-  overall: [
-    {
-      key: 'S&P500',
-      symbol: 'S&P500',
-      value: 32932,
-      change: 0.043,
-      sub: [
-        {
-          key: 'IBM',
-          symbol: 'IBM',
-          value: 12121,
-          change: 0.2,
-        },
-        {
-          key: 'TSLA',
-          symbol: 'TSLA',
-          value: 9212,
-          change: 0.1,
-        },
-      ],
-    },
-    {
-      key: 'Crypto',
-      symbol: 'Crypto',
-      value: 1231,
-      change: -0.21,
-      sub: [
-        {
-          key: 'BTC',
-          symbol: 'BTC',
-          value: 30000,
-          change: 0.2,
-        },
-        {
-          key: 'ETH',
-          symbol: 'ETH',
-          value: 2600,
-          change: 0.2,
-        },
-      ],
-    },
-  ],
+  overall: [],
   's&p500': [
     {
       key: 'IBM',
@@ -122,6 +104,8 @@ const tableStyle = {
 export default () => {
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState('0');
+  const portfolios = useSelector(getPortfolios);
+  data.overall = preparePortfolios(portfolios);
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue);

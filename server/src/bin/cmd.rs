@@ -1,15 +1,4 @@
-#[macro_use]
-extern crate diesel;
-extern crate dotenv;
-
-mod asset;
-mod identity;
-mod portfolio;
-mod price;
-mod service;
-
-mod commands;
-pub mod db;
+use investigator_server::*;
 
 use std::env;
 
