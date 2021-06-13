@@ -1,4 +1,5 @@
 // use crate::model;
+use crate::db::establish_connection;
 use actix_cors::Cors;
 use actix_web::{web, HttpResponse, Route};
 use actix_web::{App, HttpServer};
@@ -26,7 +27,7 @@ impl State {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 struct Portfolio {
     name: String,
     assets: Vec<String>,
@@ -42,17 +43,26 @@ pub struct PriceViewQuery {
 }
 
 pub async fn get_view(data: web::Data<State>, query: web::Query<PriceViewQuery>) -> HttpResponse {
-    let prices = Portfolios(vec![
-        Portfolio {
-            name: "S&P500".to_string(),
-            assets: vec!["INTL".to_string(), "TSLA".to_string()],
-        },
-        Portfolio {
-            name: "Crypto".to_string(),
-            assets: vec!["BTC".to_string(), "ETH".to_string()],
-        },
-    ]);
-    let response = serde_json::to_string(&prices).unwrap();
+    let connection = establish_connection();
+    let portfolios = crate::portfolio::db::portfolio::filter(&connection);
+    let result = portfolios
+        .into_iter()
+        .map(|port| {
+            let assets = crate::portfolio::db::portfolio_assets::filter(&connection, port.id);
+
+            let assets = assets.into_iter().map(|a| a.asset).collect();
+            Portfolio {
+                name: "crypto".to_string(),
+                assets,
+            }
+        })
+        .collect::<Vec<_>>();
+    let mut r = vec![Portfolio {
+        name: "S&P500".to_string(),
+        assets: vec!["INTL".to_string(), "TSLA".to_string()],
+    }];
+    r.extend(result);
+    let response = serde_json::to_string(&r).unwrap();
     HttpResponse::Ok()
         .content_type("application/json")
         .body(response)

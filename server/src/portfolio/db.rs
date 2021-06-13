@@ -19,15 +19,15 @@ pub mod portfolio {
             .expect("Error inserting portfolio");
     }
 
-    // pub fn get(conn: &PgConnection, get_id: i32) -> Option<Portfolio> {
-    //     use crate::db::schema::portfolios::dsl::*;
+    pub fn get(conn: &PgConnection, get_id: i32) -> Option<Portfolio> {
+        use crate::db::schema::portfolios::dsl::*;
 
-    //     let results = portfolios
-    //         .filter(id.eq(get_id))
-    //         .load::<Portfolio>(conn)
-    //         .expect("Error loading portfolio");
-    //     results.get(0).cloned()
-    // }
+        let results = portfolios
+            .filter(id.eq(get_id))
+            .load::<Portfolio>(conn)
+            .expect("Error loading portfolio");
+        results.get(0).cloned()
+    }
 
     pub fn delete(conn: &PgConnection, delete_id: i32) {
         use crate::db::schema::portfolios::dsl::*;
@@ -60,6 +60,14 @@ pub mod portfolio_assets {
             .values(&new_portfolio_asset)
             .execute(conn)
             .expect("Error inserting portfolio_asset");
+    }
+
+    pub fn clear(conn: &PgConnection, portfolio_id: i32) {
+        use crate::db::schema::portfolio_assets::dsl::*;
+
+        let _num_deleted = diesel::delete(portfolio_assets.filter(portfolio.eq(portfolio_id)))
+            .execute(conn)
+            .expect("Error deleting assets from portfolio");
     }
 
     pub fn filter(conn: &PgConnection, portfolio_id: i32) -> Vec<PortfolioAsset> {

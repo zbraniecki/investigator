@@ -41,6 +41,15 @@ function preparePortfolios(input) {
   });
 }
 
+function preparePortfolio(input) {
+  return input.map((p) => ({
+    key: p,
+    symbol: p,
+    value: 0,
+    change: 0.0,
+  }));
+}
+
 const data = {
   overall: [],
   's&p500': [
@@ -57,44 +66,7 @@ const data = {
       change: 0.1,
     },
   ],
-  crypto: [
-    {
-      key: 'BTC',
-      symbol: 'BTC',
-      value: 30000,
-      change: 0.2,
-    },
-    {
-      key: 'ETH',
-      symbol: 'ETH',
-      value: 2600,
-      change: 0.2,
-    },
-    {
-      key: 'DOT',
-      symbol: 'DOT',
-      value: 43.12,
-      change: 0.2,
-    },
-    {
-      key: 'ADA',
-      symbol: 'ADA',
-      value: 1.212,
-      change: 0.2,
-    },
-    {
-      key: 'KSM',
-      symbol: 'ADA',
-      value: 23.121,
-      change: 0.2,
-    },
-    {
-      key: 'ICP',
-      symbol: 'ICP',
-      value: 121.992,
-      change: 0.2,
-    },
-  ],
+  crypto: [],
 };
 
 const tableStyle = {
@@ -106,6 +78,11 @@ export default () => {
   const [tabIndex, setTabIndex] = React.useState('0');
   const portfolios = useSelector(getPortfolios);
   data.overall = preparePortfolios(portfolios);
+  for (const p of portfolios) {
+    if (p.name === 'crypto') {
+      data.crypto = preparePortfolio(p.assets);
+    }
+  }
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue);

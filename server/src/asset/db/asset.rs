@@ -22,7 +22,7 @@ pub fn delete(conn: &PgConnection, delete_id: &str) {
         .expect("Error deleting asset");
 }
 
-pub fn _get(conn: &PgConnection, asset_id: &str) -> Option<Asset> {
+pub fn get(conn: &PgConnection, asset_id: &str) -> Option<Asset> {
     use crate::db::schema::assets::dsl::*;
 
     let results = assets

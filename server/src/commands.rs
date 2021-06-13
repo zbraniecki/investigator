@@ -50,7 +50,7 @@ pub async fn handle_command(args: &[String]) {
             || try_handle_async!(prefix, cmd, args, price::commands)
             || try_handle!(prefix, cmd, args, service::commands::service)
             || try_handle!(prefix, cmd, args, service::commands::wallet)
-            || try_handle!(prefix, cmd, args, portfolio::commands)
+            || try_handle_async!(prefix, cmd, args, portfolio::commands)
         {
             return;
         }

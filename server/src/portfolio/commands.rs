@@ -1,3 +1,4 @@
+use super::api;
 use super::db;
 use crate::db::establish_connection;
 
@@ -15,15 +16,17 @@ pub fn get_list() -> Vec<&'static str> {
         "addAsset",
         "removeAsset",
         "clearAssets",
+        "syncAssets",
     ]
 }
 
-pub fn handle_command(cmd: &str, args: &[String]) -> bool {
+pub async fn handle_command(cmd: &str, args: &[String]) -> bool {
     match cmd {
         "create" => create(args),
         "delete" => delete(args),
         "filter" => filter(args),
         "addAsset" => add_asset(args),
+        "syncAssets" => sync_assets(args).await,
         _ => {
             return false;
         }
@@ -61,4 +64,24 @@ pub fn add_asset(args: &[String]) {
     let portfolio: i32 = args.get(2).unwrap().parse().unwrap();
     let asset = args.get(3).unwrap();
     db::portfolio_assets::create(&connection, portfolio, asset);
+}
+
+pub async fn sync_assets(args: &[String]) {
+    let connection = establish_connection();
+    let portfolio_id: i32 = args.get(2).unwrap().parse().unwrap();
+    let portfolio = db::portfolio::get(&connection, portfolio_id).unwrap();
+    let assets = api::fetch_info(&portfolio.slug).await.unwrap();
+    db::portfolio_assets::clear(&connection, portfolio.id);
+
+    for asset in assets {
+        if crate::asset::db::asset::get(&connection, &asset.id).is_none() {
+            crate::asset::db::asset::create(
+                &connection,
+                &asset.id,
+                Some(&asset.symbol),
+                Some(&asset.name),
+            );
+        }
+        db::portfolio_assets::create(&connection, portfolio.id, &asset.id);
+    }
 }
