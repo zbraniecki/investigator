@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import uiReducer from './ui';
-import marketsReducer from './markets';
+import portfolioReducer from './portfolio';
 
 function saveToLocalStorage(state) {
   localStorage.setItem('theme', state.ui.theme);
@@ -10,7 +10,7 @@ function saveToLocalStorage(state) {
 const store = configureStore({
   reducer: {
     ui: uiReducer,
-    markets: marketsReducer,
+    portfolio: portfolioReducer,
   },
 });
 

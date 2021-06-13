@@ -10,3 +10,4 @@ pub mod service;
 
 pub mod commands;
 pub mod db;
+pub mod server;

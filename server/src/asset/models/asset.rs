@@ -1,6 +1,7 @@
 use crate::db::schema::assets;
+use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Clone, Debug)]
+#[derive(Queryable, Clone, Debug, Serialize, Deserialize)]
 pub struct Asset {
     pub id: String,
     pub symbol: Option<String>,

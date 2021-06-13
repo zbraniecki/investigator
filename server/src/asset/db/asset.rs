@@ -32,14 +32,21 @@ pub fn get(conn: &PgConnection, asset_id: &str) -> Option<Asset> {
     results.get(0).cloned()
 }
 
-pub fn filter(conn: &PgConnection) -> Vec<Asset> {
+pub fn filter(conn: &PgConnection, ids: Option<Vec<&str>>) -> Vec<Asset> {
     use crate::db::schema::assets::dsl::*;
 
-    let results = assets
-        .order(id.desc())
-        .load::<Asset>(conn)
-        .expect("Error loading assets");
-    results
+    if let Some(ids) = ids {
+        assets
+            .order(id.desc())
+            .filter(id.eq_any(ids))
+            .load::<Asset>(conn)
+            .expect("Error loading assets")
+    } else {
+        assets
+            .order(id.desc())
+            .load::<Asset>(conn)
+            .expect("Error loading assets")
+    }
 }
 
 pub fn set_info(conn: &PgConnection, asset_id: &str, asset_info: &AssetInfo) {

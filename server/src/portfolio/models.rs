@@ -1,6 +1,7 @@
 use crate::db::schema::{portfolio_assets, portfolios};
+use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Clone, Debug)]
+#[derive(Queryable, Clone, Debug, Serialize, Deserialize)]
 pub struct Portfolio {
     pub id: i32,
     pub slug: String,
@@ -16,7 +17,7 @@ pub struct NewPortfolio<'a> {
     pub owner: Option<i32>,
 }
 
-#[derive(Queryable, Clone, Debug)]
+#[derive(Queryable, Clone, Debug, Serialize, Deserialize)]
 pub struct PortfolioAsset {
     pub portfolio: i32,
     pub asset: String,

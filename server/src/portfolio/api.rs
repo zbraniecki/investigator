@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+static COUNT: usize = 5;
 static INFO_URL: &str =
-    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc&per_page=30&page=1&sparkline=false";
+    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc&per_page={COUNT}&page=1&sparkline=false";
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct PortfolioAssetInfo {
@@ -15,7 +16,7 @@ pub async fn fetch_info(id: &str) -> Result<Vec<PortfolioAssetInfo>, ()> {
     use actix_web::client::Client;
     let client = Client::default();
 
-    let info_url = INFO_URL;
+    let info_url = INFO_URL.replace("{COUNT}", &COUNT.to_string());
 
     let resp = client
         .get(info_url)

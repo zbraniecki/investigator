@@ -13,8 +13,8 @@ import {
   Theme,
 } from '../../store/ui';
 import {
-  fetchPortfoliosThunk,
-} from '../../store/markets';
+  fetchPublicPortfoliosThunk,
+} from '../../store/portfolio';
 
 import SmallChrome from './chrome/Small';
 import LargeChrome from './chrome/Large';
@@ -76,7 +76,7 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
   }
 
   useEffect(() => {
-    dispatch(fetchPortfoliosThunk());
+    dispatch(fetchPublicPortfoliosThunk());
   }, [dispatch]);
 
   const chrome = smallUI

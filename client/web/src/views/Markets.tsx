@@ -11,8 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import Table from './utils/Table';
 
 import {
-  getPortfolios,
-} from '../store/markets';
+  getPublicPortfolios,
+} from '../store/portfolio';
 
 const useStyles = makeStyles({
   tabPanel: {
@@ -26,14 +26,14 @@ const useStyles = makeStyles({
 function preparePortfolios(input) {
   return input.map((p) => {
     const sub = p.assets.map((a) => ({
-      key: a,
-      symbol: a,
+      key: a.id,
+      symbol: a.symbol,
       value: 0,
       change: 0.0,
     }));
     return {
-      key: p.name,
-      symbol: p.name,
+      key: p.portfolio.id,
+      symbol: p.portfolio.slug,
       value: 0,
       change: 0.0,
       sub,
@@ -42,32 +42,13 @@ function preparePortfolios(input) {
 }
 
 function preparePortfolio(input) {
-  return input.map((p) => ({
-    key: p,
-    symbol: p,
+  return input.assets.map((p) => ({
+    key: p.id,
+    symbol: p.symbol,
     value: 0,
     change: 0.0,
   }));
 }
-
-const data = {
-  overall: [],
-  's&p500': [
-    {
-      key: 'IBM',
-      symbol: 'IBM',
-      value: 12121,
-      change: 0.2,
-    },
-    {
-      key: 'TSLA',
-      symbol: 'TSLA',
-      value: 9212,
-      change: 0.1,
-    },
-  ],
-  crypto: [],
-};
 
 const tableStyle = {
   header: null,
@@ -76,45 +57,40 @@ const tableStyle = {
 export default () => {
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState('0');
-  const portfolios = useSelector(getPortfolios);
-  data.overall = preparePortfolios(portfolios);
-  for (const p of portfolios) {
-    if (p.name === 'crypto') {
-      data.crypto = preparePortfolio(p.assets);
-    }
-  }
+  const portfolios = useSelector(getPublicPortfolios);
+  const data = [];
+  data[0] = preparePortfolios(portfolios);
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue);
   };
 
+  const tabs = [
+    'Overall',
+  ];
+
+  portfolios.forEach((p) => {
+    tabs.push(p.portfolio.slug);
+    data.push(preparePortfolio(p));
+  });
+
   return (
     <TabContext value={tabIndex}>
       <Paper>
         <TabList onChange={handleTabChange}>
-          <Tab label="Overall" value="0" />
-          <Tab label="S&P 500" value="1" />
-          <Tab label="Crypto" value="2" />
+          {tabs.map((tab, idx) => (
+            <Tab label={tab} value={idx.toString()} key={idx.toString()} />
+          ))}
         </TabList>
       </Paper>
-      <TabPanel value="0" className={classes.tabPanel}>
-        <Typography variant="h6" className={classes.header}>
-        &nbsp;
-        </Typography>
-        <Table data={data.overall} style={tableStyle} />
-      </TabPanel>
-      <TabPanel value="1" className={classes.tabPanel}>
-        <Typography variant="h6" className={classes.header}>
-          S&P 500
-        </Typography>
-        <Table data={data['s&p500']} style={tableStyle} />
-      </TabPanel>
-      <TabPanel value="2" className={classes.tabPanel}>
-        <Typography variant="h6" className={classes.header}>
-          Crypto
-        </Typography>
-        <Table data={data.crypto} style={tableStyle} />
-      </TabPanel>
+      {data.map((d, idx) => (
+        <TabPanel key={idx.toString()} value={idx.toString()} className={classes.tabPanel}>
+          <Typography variant="h6" className={classes.header}>
+            {d.name}
+          </Typography>
+          <Table data={d} style={tableStyle} />
+        </TabPanel>
+      ))}
     </TabContext>
   );
 };

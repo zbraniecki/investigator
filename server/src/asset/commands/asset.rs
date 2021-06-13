@@ -37,7 +37,7 @@ pub fn delete(args: &[String]) {
 
 pub fn filter(_args: &[String]) {
     let connection = establish_connection();
-    let assets = db::asset::filter(&connection);
+    let assets = db::asset::filter(&connection, None);
     for asset in assets {
         println!("ID: {}", asset.id);
         println!("Symbol: {}", asset.symbol.unwrap_or("-".to_string()));
