@@ -19,6 +19,8 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     display: 'flex',
   },
   appBar: {
+    display: 'flex',
+    flexDirection: 'row',
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -35,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   },
   menuButton: {
     marginRight: 36,
+  },
+  appBarToolbar: {
+    flex: 1,
   },
   hide: {
     display: 'none',
@@ -86,7 +91,7 @@ export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar>
+        <Toolbar className={classes.appBarToolbar}>
           <IconButton
             color="inherit"
             aria-label="open drawer"

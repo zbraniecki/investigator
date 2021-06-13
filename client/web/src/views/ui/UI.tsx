@@ -24,9 +24,10 @@ const menuItems = [
 
 interface Props {
   prefersDarkMode: bool,
+  smallUI: bool,
 }
 
-export default ({ prefersDarkMode }: Props) => {
+export default ({ prefersDarkMode, smallUI }: Props) => {
   const storedTheme = useSelector(getTheme);
   const dispatch = useDispatch();
 
@@ -71,7 +72,7 @@ export default ({ prefersDarkMode }: Props) => {
     dispatch(setTheme(newValue));
   }
 
-  const chrome = true
+  const chrome = smallUI
     ? (
       <LargeChrome
         menuItems={menuItems}
