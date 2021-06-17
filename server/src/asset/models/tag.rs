@@ -3,14 +3,14 @@ use crate::db::schema::{asset_tag_categories, asset_tags, asset_tags_intermediat
 #[derive(Queryable, Clone, Debug)]
 pub struct Tag {
     pub id: String,
-    pub owner: Option<i32>,
+    pub owner: Option<i64>,
 }
 
 #[derive(Insertable)]
 #[table_name = "asset_tags"]
 pub struct NewTag<'a> {
     pub id: &'a str,
-    pub owner: Option<i32>,
+    pub owner: Option<i64>,
 }
 
 #[derive(Queryable, Clone, Debug)]

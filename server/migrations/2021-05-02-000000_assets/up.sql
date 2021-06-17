@@ -6,13 +6,13 @@ CREATE TABLE IF NOT EXISTS assets (
 
 CREATE TABLE IF NOT EXISTS asset_categories (
   id VARCHAR NOT NULL PRIMARY KEY,
-  owner INTEGER,
+  owner bigint,
   FOREIGN KEY (owner) REFERENCES identities (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS asset_tags (
   id VARCHAR NOT NULL PRIMARY KEY,
-  owner INTEGER,
+  owner bigint,
   FOREIGN KEY (owner) REFERENCES identities (id) ON DELETE CASCADE
 );
 

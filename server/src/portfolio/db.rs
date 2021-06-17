@@ -19,7 +19,7 @@ pub mod portfolio {
             .expect("Error inserting portfolio");
     }
 
-    pub fn get(conn: &PgConnection, get_id: i32) -> Option<Portfolio> {
+    pub fn get(conn: &PgConnection, get_id: i64) -> Option<Portfolio> {
         use crate::db::schema::portfolios::dsl::*;
 
         let results = portfolios
@@ -29,7 +29,7 @@ pub mod portfolio {
         results.get(0).cloned()
     }
 
-    pub fn delete(conn: &PgConnection, delete_id: i32) {
+    pub fn delete(conn: &PgConnection, delete_id: i64) {
         use crate::db::schema::portfolios::dsl::*;
 
         let _num_deleted = diesel::delete(portfolios.filter(id.eq(delete_id)))
@@ -51,7 +51,7 @@ pub mod portfolio {
 pub mod portfolio_assets {
     use super::*;
 
-    pub fn create(conn: &PgConnection, portfolio: i32, asset: &str) {
+    pub fn create(conn: &PgConnection, portfolio: i64, asset: &str) {
         use crate::db::schema::portfolio_assets;
 
         let new_portfolio_asset = NewPortfolioAsset { portfolio, asset };
@@ -62,7 +62,7 @@ pub mod portfolio_assets {
             .expect("Error inserting portfolio_asset");
     }
 
-    pub fn clear(conn: &PgConnection, portfolio_id: i32) {
+    pub fn clear(conn: &PgConnection, portfolio_id: i64) {
         use crate::db::schema::portfolio_assets::dsl::*;
 
         let _num_deleted = diesel::delete(portfolio_assets.filter(portfolio.eq(portfolio_id)))
@@ -70,7 +70,7 @@ pub mod portfolio_assets {
             .expect("Error deleting assets from portfolio");
     }
 
-    pub fn filter(conn: &PgConnection, portfolio_id: i32) -> Vec<PortfolioAsset> {
+    pub fn filter(conn: &PgConnection, portfolio_id: i64) -> Vec<PortfolioAsset> {
         use crate::db::schema::portfolio_assets::dsl::*;
 
         let results = portfolio_assets

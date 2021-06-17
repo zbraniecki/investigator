@@ -1,7 +1,7 @@
 table! {
     asset_categories (id) {
         id -> Varchar,
-        owner -> Nullable<Int4>,
+        owner -> Nullable<Int8>,
     }
 }
 
@@ -15,7 +15,7 @@ table! {
 table! {
     asset_tags (id) {
         id -> Varchar,
-        owner -> Nullable<Int4>,
+        owner -> Nullable<Int8>,
     }
 }
 
@@ -35,8 +35,41 @@ table! {
 }
 
 table! {
+    assets_info (asset, reference_asset) {
+        asset -> Varchar,
+        reference_asset -> Varchar,
+        current_price -> Nullable<Float8>,
+        market_cap -> Nullable<Int8>,
+        market_cap_rank -> Nullable<Int8>,
+        total_volume -> Nullable<Int8>,
+        high_24h -> Nullable<Float8>,
+        low_24h -> Nullable<Float8>,
+        price_change_24h -> Nullable<Float8>,
+        market_cap_change_24h -> Nullable<Float8>,
+        market_cap_change_percentage_24h -> Nullable<Float8>,
+        circulating_supply -> Nullable<Float8>,
+        total_supply -> Nullable<Float8>,
+        max_supply -> Nullable<Float8>,
+        ath -> Nullable<Float8>,
+        ath_change_percentage -> Nullable<Float8>,
+        ath_date -> Nullable<Timestamptz>,
+        atl -> Nullable<Float8>,
+        atl_change_percentage -> Nullable<Float8>,
+        atl_date -> Nullable<Timestamptz>,
+        last_updated -> Nullable<Timestamptz>,
+        price_change_percentage_1h -> Nullable<Float8>,
+        price_change_percentage_24h -> Nullable<Float8>,
+        price_change_percentage_7d -> Nullable<Float8>,
+        price_change_percentage_14d -> Nullable<Float8>,
+        price_change_percentage_30d -> Nullable<Float8>,
+        price_change_percentage_200d -> Nullable<Float8>,
+        price_change_percentage_1y -> Nullable<Float8>,
+    }
+}
+
+table! {
     identities (id) {
-        id -> Int4,
+        id -> Int8,
         name -> Varchar,
         password -> Varchar,
     }
@@ -44,17 +77,17 @@ table! {
 
 table! {
     portfolio_assets (portfolio, asset) {
-        portfolio -> Int4,
+        portfolio -> Int8,
         asset -> Varchar,
     }
 }
 
 table! {
     portfolios (id) {
-        id -> Int4,
+        id -> Int8,
         slug -> Varchar,
         name -> Nullable<Varchar>,
-        owner -> Nullable<Int4>,
+        owner -> Nullable<Int8>,
     }
 }
 
@@ -72,14 +105,14 @@ table! {
         id -> Varchar,
         name -> Varchar,
         url -> Nullable<Varchar>,
-        owner -> Nullable<Int4>,
+        owner -> Nullable<Int8>,
     }
 }
 
 table! {
     sessions (id) {
-        id -> Int4,
-        identity -> Int4,
+        id -> Int8,
+        identity -> Int8,
         expires -> Nullable<Timestamp>,
     }
 }
@@ -109,7 +142,7 @@ table! {
         name -> Varchar,
         url -> Nullable<Varchar>,
         service -> Nullable<Varchar>,
-        owner -> Nullable<Int4>,
+        owner -> Nullable<Int8>,
     }
 }
 
@@ -137,6 +170,7 @@ allow_tables_to_appear_in_same_query!(
     asset_tags,
     asset_tags_intermediate,
     assets,
+    assets_info,
     identities,
     portfolio_assets,
     portfolios,

@@ -27,7 +27,7 @@ pub mod identity {
         results.get(0).cloned()
     }
 
-    pub fn delete(conn: &PgConnection, delete_id: i32) {
+    pub fn delete(conn: &PgConnection, delete_id: i64) {
         use crate::db::schema::identities::dsl::*;
 
         let _num_deleted = diesel::delete(identities.filter(id.eq(delete_id)))
@@ -49,7 +49,7 @@ pub mod identity {
 pub mod session {
     use super::*;
 
-    pub fn get(conn: &PgConnection, identity_id: i32) -> Vec<Session> {
+    pub fn get(conn: &PgConnection, identity_id: i64) -> Vec<Session> {
         use crate::db::schema::sessions::dsl::*;
 
         let results = sessions

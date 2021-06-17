@@ -42,7 +42,7 @@ pub fn create(args: &[String]) {
 }
 
 pub fn delete(args: &[String]) {
-    let id: i32 = args.get(2).unwrap().parse().unwrap();
+    let id: i64 = args.get(2).unwrap().parse().unwrap();
     let connection = establish_connection();
     db::portfolio::delete(&connection, id);
 }
@@ -61,14 +61,14 @@ pub fn filter(_args: &[String]) {
 
 pub fn add_asset(args: &[String]) {
     let connection = establish_connection();
-    let portfolio: i32 = args.get(2).unwrap().parse().unwrap();
+    let portfolio: i64 = args.get(2).unwrap().parse().unwrap();
     let asset = args.get(3).unwrap();
     db::portfolio_assets::create(&connection, portfolio, asset);
 }
 
 pub async fn sync_assets(args: &[String]) {
     let connection = establish_connection();
-    let portfolio_id: i32 = args.get(2).unwrap().parse().unwrap();
+    let portfolio_id: i64 = args.get(2).unwrap().parse().unwrap();
     let portfolio = db::portfolio::get(&connection, portfolio_id).unwrap();
     let assets = api::fetch_info(&portfolio.slug).await.unwrap();
     db::portfolio_assets::clear(&connection, portfolio.id);

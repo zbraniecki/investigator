@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS services (
   id VARCHAR NOT NULL PRIMARY KEY,
   name VARCHAR NOT NULL,
   url VARCHAR,
-  owner INTEGER,
+  owner bigint,
   FOREIGN KEY (owner) REFERENCES identities (id) ON DELETE CASCADE
 );
 
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS wallets (
   name VARCHAR  NOT NULL,
   url VARCHAR,
   service VARCHAR,
-  owner INTEGER,
+  owner bigint,
   FOREIGN KEY (owner) REFERENCES identities (id) ON DELETE CASCADE,
   FOREIGN KEY (service) REFERENCES services (id) ON DELETE SET NULL
 );

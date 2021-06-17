@@ -47,6 +47,7 @@ pub async fn handle_command(args: &[String]) {
             || try_handle_async!(prefix, cmd, args, asset::commands::asset)
             || try_handle!(prefix, cmd, args, asset::commands::category)
             || try_handle!(prefix, cmd, args, asset::commands::tag)
+            || try_handle_async!(prefix, cmd, args, asset::commands::info)
             || try_handle_async!(prefix, cmd, args, price::commands)
             || try_handle!(prefix, cmd, args, service::commands::service)
             || try_handle!(prefix, cmd, args, service::commands::wallet)
@@ -60,6 +61,7 @@ pub async fn handle_command(args: &[String]) {
     add_commands!(available_commands, asset::commands::asset);
     add_commands!(available_commands, asset::commands::category);
     add_commands!(available_commands, asset::commands::tag);
+    add_commands!(available_commands, asset::commands::info);
     add_commands!(available_commands, price::commands);
     add_commands!(available_commands, service::commands::service);
     add_commands!(available_commands, service::commands::wallet);

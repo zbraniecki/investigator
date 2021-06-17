@@ -3,7 +3,7 @@ use chrono::prelude::*;
 
 #[derive(Queryable, Clone, Debug)]
 pub struct Identity {
-    pub id: i32,
+    pub id: i64,
     pub name: String,
     pub password: String,
 }
@@ -17,14 +17,14 @@ pub struct NewIdentity<'a> {
 
 #[derive(Queryable, Clone, Debug)]
 pub struct Session {
-    pub id: i32,
-    pub identity: i32,
+    pub id: i64,
+    pub identity: i64,
     pub expires: Option<NaiveDateTime>,
 }
 
 #[derive(Insertable)]
 #[table_name = "sessions"]
 pub struct NewSession {
-    pub identity: i32,
+    pub identity: i64,
     pub expires: Option<NaiveDateTime>,
 }
