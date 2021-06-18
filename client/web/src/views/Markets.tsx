@@ -68,7 +68,7 @@ function preparePortfolio(input) {
       : interpolateColor("000000", "FF0000", Math.abs(change) * 30);
     return {
       key: p.asset.id,
-      symbol: p.asset.symbol,
+      symbol: p.asset.symbol.toLocaleUpperCase(),
       value: cf.format(p.info.current_price),
       change: pf.format(change),
       color: `#${color}`,
