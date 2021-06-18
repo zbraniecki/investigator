@@ -7,7 +7,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Debug)]
 struct PortfolioInfo {
     pub portfolio: super::models::Portfolio,
-    pub assets: Vec<asset::models::Asset>,
+    pub assets: Vec<AssetInfo>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct AssetInfo {
+    pub asset: asset::models::Asset,
+    pub info: asset::models::AssetInfo,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -33,8 +39,16 @@ pub async fn filter(_data: web::Data<State>, _query: web::Query<PriceViewQuery>)
                 .collect::<Vec<_>>();
 
             let assets = crate::asset::db::asset::filter(&connection, Some(asset_ids));
+            let asset_ids: Vec<&str> = assets.iter().map(|a| a.id.as_str()).collect();
+            let infos = crate::asset::db::info::filter(&connection, asset_ids);
 
-            PortfolioInfo { portfolio, assets }
+            let asset_infos = assets.into_iter().map(|asset| {
+                let info = infos.iter().find(|info| info.asset == asset.id).cloned().unwrap();
+                AssetInfo { asset, info }
+            }).collect();
+
+
+            PortfolioInfo { portfolio, assets: asset_infos }
         })
         .collect::<Vec<_>>();
     // let mut r = vec![Portfolio {

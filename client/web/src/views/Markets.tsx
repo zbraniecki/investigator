@@ -14,6 +14,13 @@ import {
   getPublicPortfolios,
 } from '../store/portfolio';
 
+function interpolateColor(c0, c1, f){
+    c0 = c0.match(/.{1,2}/g).map((oct)=>parseInt(oct, 16) * (1-f))
+    c1 = c1.match(/.{1,2}/g).map((oct)=>parseInt(oct, 16) * f)
+    let ci = [0,1,2].map(i => Math.min(Math.round(c0[i]+c1[i]), 255))
+    return ci.reduce((a,v) => ((a << 8) + v), 0).toString(16).padStart(6, "0")
+}
+
 const useStyles = makeStyles({
   tabPanel: {
     padding: '2vh',
@@ -23,14 +30,22 @@ const useStyles = makeStyles({
   },
 });
 
+let pf = new Intl.NumberFormat(undefined, {
+  style: "percent",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+let cf = new Intl.NumberFormat(undefined, {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
 function preparePortfolios(input) {
   return input.map((p) => {
-    const sub = p.assets.map((a) => ({
-      key: a.id,
-      symbol: a.symbol,
-      value: 0,
-      change: 0.0,
-    }));
+    const sub = preparePortfolio(p);
     return {
       key: p.portfolio.id,
       symbol: p.portfolio.slug,
@@ -42,12 +57,23 @@ function preparePortfolios(input) {
 }
 
 function preparePortfolio(input) {
-  return input.assets.map((p) => ({
-    key: p.id,
-    symbol: p.symbol,
-    value: 0,
-    change: 0.0,
-  }));
+  let sorted = Array.from(input.assets);
+  sorted.sort((a, b) => {
+    return a.info.market_cap_rank - b.info.market_cap_rank;
+  });
+  return sorted.map((p) => {
+    let change = p.info.price_change_percentage_24h_in_currency / 100;
+    let color = change > 0 ?
+      interpolateColor("000000", "00FF00", change * 30)
+      : interpolateColor("000000", "FF0000", Math.abs(change) * 30);
+    return {
+      key: p.asset.id,
+      symbol: p.asset.symbol,
+      value: cf.format(p.info.current_price),
+      change: pf.format(change),
+      color: `#${color}`,
+    };
+  });
 }
 
 const tableStyle = {

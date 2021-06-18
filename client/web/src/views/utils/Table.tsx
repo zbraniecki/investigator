@@ -62,7 +62,7 @@ function Row(props: { row: ReturnType<typeof createData> }) {
         </TableCell>
         <TableCell align="right">
           <Typography>{row.value}</Typography>
-          <Typography>{row.change}</Typography>
+          <Typography style={{ color: row.color }}>{row.change}</Typography>
         </TableCell>
       </TableRow>
       { row.sub
@@ -81,7 +81,7 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                           </TableCell>
                           <TableCell align="right">
                             <Typography>{subRow.value}</Typography>
-                            <Typography>{subRow.change}</Typography>
+                            <Typography style={{ color: subRow.color }}>{subRow.change}</Typography>
                           </TableCell>
                         </TableRow>
                       ))}

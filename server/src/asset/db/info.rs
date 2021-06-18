@@ -27,3 +27,13 @@ pub fn get(conn: &PgConnection, asset_id: &str) -> Option<AssetInfo> {
         .expect("Error loading asset info");
     results.get(0).cloned()
 }
+
+pub fn filter(conn: &PgConnection, asset_ids: Vec<&str>) -> Vec<AssetInfo> {
+    use crate::db::schema::assets_info::dsl::*;
+
+    let results = assets_info
+        .filter(asset.eq_any(asset_ids))
+        .load::<AssetInfo>(conn)
+        .expect("Error loading asset info");
+    results
+}
