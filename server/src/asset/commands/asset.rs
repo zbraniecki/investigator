@@ -50,7 +50,7 @@ pub fn filter(_args: &[String]) {
 
 pub async fn fetch_info(args: &[String]) {
     let id = args.get(2).unwrap();
-    let asset_info = api::fetch_info(&id).await.unwrap();
+    let asset_info = api::crypto::fetch_info(&id).await.unwrap();
     let connection = establish_connection();
     db::asset::set_info(&connection, id, &asset_info);
 }

@@ -69,19 +69,41 @@ pub fn add_asset(args: &[String]) {
 pub async fn sync_assets(args: &[String]) {
     let connection = establish_connection();
     let portfolio_id: i64 = args.get(2).unwrap().parse().unwrap();
-    let portfolio = db::portfolio::get(&connection, portfolio_id).unwrap();
-    let assets = api::fetch_info(&portfolio.slug).await.unwrap();
-    db::portfolio_assets::clear(&connection, portfolio.id);
 
-    for asset in assets {
-        if crate::asset::db::asset::get(&connection, &asset.id).is_none() {
-            crate::asset::db::asset::create(
-                &connection,
-                &asset.id,
-                Some(&asset.symbol),
-                Some(&asset.name),
-            );
+    let portfolio = db::portfolio::get(&connection, portfolio_id).unwrap();
+    match portfolio.slug.as_str() {
+        "top30crypto" => {
+            let assets = api::fetch_crypto_info(&portfolio.slug).await.unwrap();
+            db::portfolio_assets::clear(&connection, portfolio.id);
+
+            for asset in assets {
+                if crate::asset::db::asset::get(&connection, &asset.id).is_none() {
+                    crate::asset::db::asset::create(
+                        &connection,
+                        &asset.id,
+                        Some(&asset.symbol),
+                        Some(&asset.name),
+                    );
+                }
+                db::portfolio_assets::create(&connection, portfolio.id, &asset.id);
+            }
+        },
+        "top30stock" => {
+            let assets = api::fetch_stock_info(&portfolio.slug).await.unwrap();
+            db::portfolio_assets::clear(&connection, portfolio.id);
+
+            for asset in assets {
+                if crate::asset::db::asset::get(&connection, &asset.ticker).is_none() {
+                    crate::asset::db::asset::create(
+                        &connection,
+                        &asset.ticker,
+                        Some(&asset.ticker),
+                        Some(&asset.name),
+                    );
+                }
+                db::portfolio_assets::create(&connection, portfolio.id, &asset.ticker);
+            }
         }
-        db::portfolio_assets::create(&connection, portfolio.id, &asset.id);
+        _ => {}
     }
 }

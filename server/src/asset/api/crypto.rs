@@ -1,4 +1,4 @@
-use super::models::AssetInfo as AssetPriceInfo;
+use super::super::models::AssetInfo as AssetPriceInfo;
 use serde::{Deserialize, Serialize};
 
 static INFO_URL: &str =

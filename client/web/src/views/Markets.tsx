@@ -45,7 +45,7 @@ let cf = new Intl.NumberFormat(undefined, {
 
 function preparePortfolios(input) {
   return input.map((p) => {
-    const sub = preparePortfolio(p);
+    const sub = preparePortfolio(p, 10);
     return {
       key: p.portfolio.id,
       symbol: p.portfolio.slug,
@@ -56,11 +56,14 @@ function preparePortfolios(input) {
   });
 }
 
-function preparePortfolio(input) {
+function preparePortfolio(input, max) {
   let sorted = Array.from(input.assets);
   sorted.sort((a, b) => {
     return a.info.market_cap_rank - b.info.market_cap_rank;
   });
+  if (max) {
+    sorted = sorted.slice(0, max);
+  }
   return sorted.map((p) => {
     let change = p.info.price_change_percentage_24h_in_currency / 100;
     let color = change > 0 ?

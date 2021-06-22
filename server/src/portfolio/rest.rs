@@ -13,7 +13,7 @@ struct PortfolioInfo {
 #[derive(Serialize, Deserialize, Debug)]
 struct AssetInfo {
     pub asset: asset::models::Asset,
-    pub info: asset::models::AssetInfo,
+    pub info: Option<asset::models::AssetInfo>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -43,7 +43,7 @@ pub async fn filter(_data: web::Data<State>, _query: web::Query<PriceViewQuery>)
             let infos = crate::asset::db::info::filter(&connection, asset_ids);
 
             let asset_infos = assets.into_iter().map(|asset| {
-                let info = infos.iter().find(|info| info.asset == asset.id).cloned().unwrap();
+                let info = infos.iter().find(|info| info.asset == asset.id).cloned();
                 AssetInfo { asset, info }
             }).collect();
 
@@ -51,11 +51,6 @@ pub async fn filter(_data: web::Data<State>, _query: web::Query<PriceViewQuery>)
             PortfolioInfo { portfolio, assets: asset_infos }
         })
         .collect::<Vec<_>>();
-    // let mut r = vec![Portfolio {
-    //     name: "S&P500".to_string(),
-    //     assets: vec!["INTL".to_string(), "TSLA".to_string()],
-    // }];
-    // r.extend(result);
     let response = serde_json::to_string(&result).unwrap();
     HttpResponse::Ok()
         .content_type("application/json")

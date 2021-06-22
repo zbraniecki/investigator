@@ -1,4 +1,4 @@
-use super::super::api::AssetInfo;
+use super::super::api::crypto::AssetInfo;
 use super::super::models::Asset;
 use super::super::models::NewAsset;
 use diesel::prelude::*;

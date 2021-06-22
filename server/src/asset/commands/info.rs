@@ -24,7 +24,7 @@ pub async fn handle_command(cmd: &str, args: &[String]) -> bool {
 pub async fn fetch(args: &[String]) {
     let connection = establish_connection();
     let id = args.get(2).unwrap();
-    let mut infos = api::fetch_price_info(vec![id.to_string()]).await.unwrap();
+    let mut infos = api::crypto::fetch_price_info(vec![id.to_string()]).await.unwrap();
     infos[0].reference_asset = "usd".to_string();
     db::info::delete(&connection, id);
     db::info::create(&connection, infos[0].clone());
@@ -35,7 +35,7 @@ pub async fn fetch_all(_args: &[String]) {
     let assets = crate::asset::db::asset::filter(&connection, None);
 
     let ids = assets.into_iter().map(|asset| asset.id).collect();
-    let infos = api::fetch_price_info(ids).await.unwrap();
+    let infos = api::crypto::fetch_price_info(ids).await.unwrap();
     for mut info in infos {
         info.reference_asset = "usd".to_string();
         db::info::delete(&connection, &info.asset);
