@@ -30,6 +30,16 @@ pub fn _get(conn: &PgConnection, asset_id: &str) -> Option<Tag> {
     results.get(0).cloned()
 }
 
+pub fn get_for_asset(conn: &PgConnection, asset_id: &str) -> Vec<AssetTag> {
+    use crate::db::schema::asset_tags_intermediate::dsl::*;
+
+    let results = asset_tags_intermediate
+        .filter(asset.eq(asset_id))
+        .load::<AssetTag>(conn)
+        .expect("Error loading asset tags");
+    results
+}
+
 pub fn filter(conn: &PgConnection) -> Vec<Tag> {
     use crate::db::schema::asset_tags::dsl::*;
 

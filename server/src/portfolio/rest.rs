@@ -42,13 +42,18 @@ pub async fn filter(_data: web::Data<State>, _query: web::Query<PriceViewQuery>)
             let asset_ids: Vec<&str> = assets.iter().map(|a| a.id.as_str()).collect();
             let infos = crate::asset::db::info::filter(&connection, asset_ids);
 
-            let asset_infos = assets.into_iter().map(|asset| {
-                let info = infos.iter().find(|info| info.asset == asset.id).cloned();
-                AssetInfo { asset, info }
-            }).collect();
+            let asset_infos = assets
+                .into_iter()
+                .map(|asset| {
+                    let info = infos.iter().find(|info| info.asset == asset.id).cloned();
+                    AssetInfo { asset, info }
+                })
+                .collect();
 
-
-            PortfolioInfo { portfolio, assets: asset_infos }
+            PortfolioInfo {
+                portfolio,
+                assets: asset_infos,
+            }
         })
         .collect::<Vec<_>>();
     let response = serde_json::to_string(&result).unwrap();

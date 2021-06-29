@@ -52,9 +52,12 @@ pub async fn fetch_price_info(ids: Vec<String>) -> Result<Vec<AssetPriceInfo>, (
     if let Ok(mut resp) = resp {
         let body = resp.body().await.unwrap();
 
-        let asset_info: Vec<AssetPriceInfo> = serde_json::from_slice(&body).unwrap();
+        let mut asset_infos: Vec<AssetPriceInfo> = serde_json::from_slice(&body).unwrap();
+        for mut ai in asset_infos.iter_mut() {
+            ai.reference_asset = "usd".to_string();
+        }
 
-        Ok(asset_info)
+        Ok(asset_infos)
     } else {
         Err(())
     }

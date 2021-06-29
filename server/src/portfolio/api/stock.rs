@@ -1,7 +1,15 @@
 use serde::{Deserialize, Serialize};
 
-static TICKERS: &[(&str, &str)] = &[
-    ("aapl", "Apple"),
+static TOP_10_TICKERS: &[(&str, &str)] =
+    &[("aapl", "Apple"), ("msft", "Microsoft"), ("amzn", "Amazon")];
+
+static FIDELITY_TICKERS: &[(&str, &str)] = &[
+    ("lev", "The Lion Electrict Company"),
+    ("chpt", "Chargepoint"),
+    ("tpgy", "TPGY"),
+    ("prnt", "PRNT"),
+    ("clii", "CLII"),
+    ("arkq", "ARKQ"),
 ];
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -11,13 +19,18 @@ pub struct PortfolioAssetInfo {
 }
 
 pub async fn fetch_stock_info(id: &str) -> Result<Vec<PortfolioAssetInfo>, ()> {
-    assert_eq!(id, "top30stock");
+    let tickers = match id {
+        "top30stock" => TOP_10_TICKERS,
+        "fidelity" => FIDELITY_TICKERS,
+        _ => panic!("Unknown portfolio"),
+    };
 
-    let result = TICKERS.iter().map(|(t, n)| {
-        PortfolioAssetInfo {
+    let result = tickers
+        .iter()
+        .map(|(t, n)| PortfolioAssetInfo {
             ticker: t.to_string(),
             name: n.to_string(),
-        }
-    }).collect();
+        })
+        .collect();
     Ok(result)
 }

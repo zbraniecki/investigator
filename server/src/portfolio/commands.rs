@@ -87,8 +87,8 @@ pub async fn sync_assets(args: &[String]) {
                 }
                 db::portfolio_assets::create(&connection, portfolio.id, &asset.id);
             }
-        },
-        "top30stock" => {
+        }
+        "top30stock" | "fidelity" => {
             let assets = api::fetch_stock_info(&portfolio.slug).await.unwrap();
             db::portfolio_assets::clear(&connection, portfolio.id);
 

@@ -1,61 +1,51 @@
-use super::super::models::AssetInfo as AssetPriceInfo;
-use serde::{Deserialize, Serialize};
+use super::super::models::AssetInfo;
+use chrono::{Duration, Utc};
+use yahoo_finance::{history, Timestamped};
 
-static INFO_URL: &str =
-    "https://api.coingecko.com/api/v3/coins/{ID}?tickers=false&market_data=false";
-
-static PRICE_INFO_URL: &str =
-    "https://api.coingecko.com/api/v3/coins/markets?vs_currency={VS}&ids={IDS}&order=market_cap_desc&per_page=5&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d%2C14d%2C30d%2C200d%2C1y";
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct AssetInfo {
-    pub id: String,
-    pub symbol: String,
-    pub name: String,
+pub async fn fetch_info(id: &str) -> Result<(), ()> {
+    panic!();
 }
 
-pub async fn fetch_info(id: &str) -> Result<AssetInfo, ()> {
-    use actix_web::client::Client;
-    let client = Client::default();
-
-    let info_url = INFO_URL.replace("{ID}", id);
-
-    let resp = client
-        .get(info_url)
-        .header("User-Agent", "Actix-web")
-        .send()
-        .await;
-    if let Ok(mut resp) = resp {
-        let body = resp.body().await.unwrap();
-
-        let asset_info: AssetInfo = serde_json::from_slice(&body).unwrap();
-
-        Ok(asset_info)
-    } else {
-        Err(())
+pub async fn fetch_price_info(ids: Vec<String>) -> Result<Vec<AssetInfo>, ()> {
+    let now = Utc::now();
+    let mut result = vec![];
+    for id in ids {
+        let data = history::retrieve_range(&id, now - Duration::days(1), None)
+            .await
+            .unwrap();
+        let bar = data.get(0).unwrap();
+        let date = bar.datetime().format("%b %e %Y");
+        let value = bar.close;
+        result.push(AssetInfo {
+            asset: id.to_string(),
+            reference_asset: "usd".to_string(),
+            current_price: Some(value),
+            market_cap: None,
+            market_cap_rank: None,
+            total_volume: None,
+            high_24h: None,
+            low_24h: None,
+            price_change_24h: None,
+            market_cap_change_24h: None,
+            market_cap_change_percentage_24h: None,
+            circulating_supply: None,
+            total_supply: None,
+            max_supply: None,
+            ath: None,
+            ath_change_percentage: None,
+            ath_date: None,
+            atl: None,
+            atl_change_percentage: None,
+            atl_date: None,
+            last_updated: None,
+            price_change_percentage_1h: None,
+            price_change_percentage_24h: None,
+            price_change_percentage_7d: None,
+            price_change_percentage_14d: None,
+            price_change_percentage_30d: None,
+            price_change_percentage_200d: None,
+            price_change_percentage_1y: None,
+        });
     }
-}
-
-pub async fn fetch_price_info(ids: Vec<String>) -> Result<Vec<AssetPriceInfo>, ()> {
-    use actix_web::client::Client;
-    let client = Client::default();
-
-    let info_url = PRICE_INFO_URL
-        .replace("{VS}", "usd")
-        .replace("{IDS}", &ids.join("%2C"));
-
-    let resp = client
-        .get(info_url)
-        .header("User-Agent", "Actix-web")
-        .send()
-        .await;
-    if let Ok(mut resp) = resp {
-        let body = resp.body().await.unwrap();
-
-        let asset_info: Vec<AssetPriceInfo> = serde_json::from_slice(&body).unwrap();
-
-        Ok(asset_info)
-    } else {
-        Err(())
-    }
+    Ok(result)
 }
