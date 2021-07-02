@@ -20,13 +20,13 @@ pub fn delete(conn: &PgConnection, delete_id: &str) {
         .expect("Error deleting asset category");
 }
 
-pub fn _get(conn: &PgConnection, asset_id: &str) -> Option<Tag> {
+pub fn get(conn: &PgConnection, tag_id: &str) -> Option<Tag> {
     use crate::db::schema::asset_tags::dsl::*;
 
     let results = asset_tags
-        .filter(id.eq(asset_id))
+        .filter(id.eq(tag_id))
         .load::<Tag>(conn)
-        .expect("Error loading asset category");
+        .expect("Error loading asset tag");
     results.get(0).cloned()
 }
 

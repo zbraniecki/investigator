@@ -76,6 +76,8 @@ pub async fn sync_assets(args: &[String]) {
             let assets = api::fetch_crypto_info(&portfolio.slug).await.unwrap();
             db::portfolio_assets::clear(&connection, portfolio.id);
 
+            let tag = crate::asset::db::tag::get(&connection, "crypto").unwrap();
+
             for asset in assets {
                 if crate::asset::db::asset::get(&connection, &asset.id).is_none() {
                     crate::asset::db::asset::create(
@@ -85,12 +87,21 @@ pub async fn sync_assets(args: &[String]) {
                         Some(&asset.name),
                     );
                 }
+                if crate::asset::db::tag::get_for_asset(&connection, &asset.id)
+                    .iter()
+                    .find(|t| t.tag == tag.id)
+                    .is_none()
+                {
+                    crate::asset::db::tag::add_asset(&connection, &tag.id, &asset.id);
+                }
                 db::portfolio_assets::create(&connection, portfolio.id, &asset.id);
             }
         }
-        "top30stock" | "fidelity" => {
+        "top30stock" | "fidelity" | "ej1" | "ej2" => {
             let assets = api::fetch_stock_info(&portfolio.slug).await.unwrap();
             db::portfolio_assets::clear(&connection, portfolio.id);
+
+            let tag = crate::asset::db::tag::get(&connection, "stock").unwrap();
 
             for asset in assets {
                 if crate::asset::db::asset::get(&connection, &asset.ticker).is_none() {
@@ -100,6 +111,13 @@ pub async fn sync_assets(args: &[String]) {
                         Some(&asset.ticker),
                         Some(&asset.name),
                     );
+                }
+                if crate::asset::db::tag::get_for_asset(&connection, &asset.ticker)
+                    .iter()
+                    .find(|t| t.tag == tag.id)
+                    .is_none()
+                {
+                    crate::asset::db::tag::add_asset(&connection, &tag.id, &asset.ticker);
                 }
                 db::portfolio_assets::create(&connection, portfolio.id, &asset.ticker);
             }

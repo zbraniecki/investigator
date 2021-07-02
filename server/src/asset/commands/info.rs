@@ -109,7 +109,8 @@ pub async fn fetch_all(_args: &[String]) {
     if !crypto.is_empty() {
         println!("Fetching latest price info for: {:?}.", crypto);
         let infos = api::crypto::fetch_price_info(crypto.clone()).await.unwrap();
-        for (asset, info) in crypto.into_iter().zip(infos) {
+        for info in infos {
+            let asset = &info.asset;
             db::info::delete(&connection, &asset);
             db::info::create(&connection, info);
         }
