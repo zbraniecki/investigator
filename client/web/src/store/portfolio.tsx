@@ -1,10 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchPortfolios, createPortfolio } from '../api/portfolio';
+import { useDispatch } from 'react-redux';
+import { fetchPortfolios, createPortfolio, deletePortfolio } from '../api/portfolio';
 
 export const fetchPublicPortfoliosThunk = createAsyncThunk('portfolio/fetchPublic', fetchPortfolios);
 const USER_ID = 1;
 export const fetchUserPortfoliosThunk = createAsyncThunk('portfolio/fetchUser', fetchPortfolios.bind(undefined, USER_ID));
 export const createPortfolioThunk = createAsyncThunk('portfolio/create', createPortfolio);
+export const deletePortfolioThunk = createAsyncThunk('portfolio/delete', deletePortfolio);
 
 export const portfolioSlice = createSlice({
   name: 'portfolio',
@@ -18,6 +20,12 @@ export const portfolioSlice = createSlice({
       state.public = action.payload;
     },
     [fetchUserPortfoliosThunk.fulfilled]: (state, action) => {
+      state.user = action.payload;
+    },
+    [createPortfolioThunk.fulfilled]: (state, action) => {
+      state.user = action.payload;
+    },
+    [deletePortfolioThunk.fulfilled]: (state, action) => {
       state.user = action.payload;
     },
   },

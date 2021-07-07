@@ -11,6 +11,7 @@ import Table from './utils/Table';
 import {
   getUserPortfolios,
   createPortfolioThunk,
+  deletePortfolioThunk,
 } from '../store/portfolio';
 
 import {
@@ -44,9 +45,11 @@ export default () => {
   };
 
   const handleCreatePortfolio = () => {
-    useEffect(() => {
-      dispatch(createPortfolioThunk("slug1", "Name1", 1));
-    }, [dispatch]);
+    dispatch(createPortfolioThunk(["slug1", "Name1", 1]));
+  };
+
+  const handleDeletePortfolio = (id) => {
+    dispatch(deletePortfolioThunk(id));
   };
 
   const tabs = [
