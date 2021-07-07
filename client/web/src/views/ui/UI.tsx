@@ -14,6 +14,7 @@ import {
 } from '../../store/ui';
 import {
   fetchPublicPortfoliosThunk,
+  fetchUserPortfoliosThunk,
 } from '../../store/portfolio';
 
 import SmallChrome from './chrome/Small';
@@ -77,6 +78,7 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
 
   useEffect(() => {
     dispatch(fetchPublicPortfoliosThunk());
+    dispatch(fetchUserPortfoliosThunk());
   }, [dispatch]);
 
   const chrome = smallUI

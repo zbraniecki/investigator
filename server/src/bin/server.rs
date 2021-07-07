@@ -4,7 +4,11 @@ use actix_web::{App, HttpServer};
 use investigator_server::{portfolio, server};
 
 pub fn get_views() -> Vec<(&'static str, Route)> {
-    vec![("/portfolio/filter", web::get().to(portfolio::rest::filter))]
+    vec![
+        ("/portfolio/filter", web::get().to(portfolio::rest::filter)),
+        ("/portfolio/create", web::get().to(portfolio::rest::create)),
+        ("/portfolio/delete", web::get().to(portfolio::rest::delete)),
+    ]
 }
 
 #[actix_web::main]

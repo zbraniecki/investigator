@@ -20,14 +20,17 @@ struct AssetInfo {
 struct Portfolios(Vec<PortfolioInfo>);
 
 #[derive(Deserialize)]
-pub struct PriceViewQuery {
+pub struct PortfolioFilterQuery {
     #[serde(default)]
-    _refresh: bool,
+    owner: Option<i64>,
 }
 
-pub async fn filter(_data: web::Data<State>, _query: web::Query<PriceViewQuery>) -> HttpResponse {
+pub async fn filter(
+    _data: web::Data<State>,
+    query: web::Query<PortfolioFilterQuery>,
+) -> HttpResponse {
     let connection = establish_connection();
-    let portfolios = crate::portfolio::db::portfolio::filter(&connection);
+    let portfolios = crate::portfolio::db::portfolio::filter(&connection, query.owner);
     let result = portfolios
         .into_iter()
         .map(|portfolio| {
@@ -60,4 +63,37 @@ pub async fn filter(_data: web::Data<State>, _query: web::Query<PriceViewQuery>)
     HttpResponse::Ok()
         .content_type("application/json")
         .body(response)
+}
+
+#[derive(Deserialize)]
+pub struct PortfolioCreateQuery {
+    #[serde(default)]
+    owner: Option<i64>,
+    name: String,
+    slug: String,
+}
+
+pub async fn create(
+    _data: web::Data<State>,
+    query: web::Query<PortfolioCreateQuery>,
+) -> HttpResponse {
+    let connection = establish_connection();
+    crate::portfolio::db::portfolio::create(&connection, &query.slug, &query.name, query.owner);
+
+    HttpResponse::Ok().finish()
+}
+
+#[derive(Deserialize)]
+pub struct PortfolioDeleteQuery {
+    id: i64,
+}
+
+pub async fn delete(
+    _data: web::Data<State>,
+    query: web::Query<PortfolioDeleteQuery>,
+) -> HttpResponse {
+    let connection = establish_connection();
+    crate::portfolio::db::portfolio::delete(&connection, query.id);
+
+    HttpResponse::Ok().finish()
 }

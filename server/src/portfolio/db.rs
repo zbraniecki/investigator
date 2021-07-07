@@ -4,13 +4,13 @@ use diesel::prelude::*;
 pub mod portfolio {
     use super::*;
 
-    pub fn create(conn: &PgConnection, slug: &str, name: &str) {
+    pub fn create(conn: &PgConnection, slug: &str, name: &str, owner: Option<i64>) {
         use crate::db::schema::portfolios;
 
         let new_portfolio = NewPortfolio {
             slug,
             name: Some(name),
-            owner: None,
+            owner,
         };
 
         diesel::insert_into(portfolios::table)
@@ -37,14 +37,22 @@ pub mod portfolio {
             .expect("Error deleting portfolio");
     }
 
-    pub fn filter(conn: &PgConnection) -> Vec<Portfolio> {
+    pub fn filter(conn: &PgConnection, owner_id: Option<i64>) -> Vec<Portfolio> {
         use crate::db::schema::portfolios::dsl::*;
 
-        let results = portfolios
-            .order(id.desc())
-            .load::<Portfolio>(conn)
-            .expect("Error loading portfolios");
-        results
+        if let Some(owner_id) = owner_id {
+            portfolios
+                .filter(owner.eq(owner_id))
+                .order(id.desc())
+                .load::<Portfolio>(conn)
+                .expect("Error loading portfolios")
+        } else {
+            portfolios
+                .filter(owner.is_null())
+                .order(id.desc())
+                .load::<Portfolio>(conn)
+                .expect("Error loading portfolios")
+        }
     }
 }
 

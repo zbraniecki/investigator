@@ -38,7 +38,8 @@ pub fn create(args: &[String]) {
     let connection = establish_connection();
     let slug = args.get(2).unwrap();
     let name = args.get(3).unwrap();
-    db::portfolio::create(&connection, slug, name);
+    let owner = args.get(4).map(|a| a.parse().unwrap());
+    db::portfolio::create(&connection, slug, name, owner);
 }
 
 pub fn delete(args: &[String]) {
@@ -49,7 +50,7 @@ pub fn delete(args: &[String]) {
 
 pub fn filter(_args: &[String]) {
     let connection = establish_connection();
-    let portfolios = db::portfolio::filter(&connection);
+    let portfolios = db::portfolio::filter(&connection, None);
     for portfolio in portfolios {
         println!("ID: {}", portfolio.id);
         println!("Slug: {}", portfolio.slug);
