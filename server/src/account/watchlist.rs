@@ -1,7 +1,7 @@
-use actix_web::{web, HttpResponse};
 use super::server;
 use crate::model;
-use serde::{Serialize, Deserialize};
+use actix_web::{web, HttpResponse};
+use serde::{Deserialize, Serialize};
 use std::fs;
 
 pub async fn get_view(data: web::Data<server::State>) -> HttpResponse {

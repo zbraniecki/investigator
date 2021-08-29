@@ -1,5 +1,5 @@
-pub mod server;
 pub mod portfolio;
+pub mod server;
 pub mod strategy;
 pub mod watchlist;
 

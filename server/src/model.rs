@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use chrono::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::ops::Range;
 
 // {
@@ -67,7 +67,7 @@ pub struct Target {
 pub struct PriceList {
     // more meta - source etc.
     pub last_updated: DateTime<Utc>,
-    #[serde(rename="price")]
+    #[serde(rename = "price")]
     pub prices: Vec<Price>,
 }
 
@@ -109,13 +109,13 @@ pub enum APY {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum YieldType {
-    #[serde(rename="interest")]
+    #[serde(rename = "interest")]
     Interest,
-    #[serde(rename="staking")]
+    #[serde(rename = "staking")]
     Staking,
-    #[serde(rename="lending")]
+    #[serde(rename = "lending")]
     Lending,
-    #[serde(rename="lp")]
+    #[serde(rename = "lp")]
     LiquidityProvider,
 }
 

@@ -1,6 +1,6 @@
-pub mod server;
-pub mod prices;
 pub mod coins;
+pub mod prices;
+pub mod server;
 pub mod wallets;
 
 use actix_web::{web, Route};

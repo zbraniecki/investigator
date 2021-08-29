@@ -1,8 +1,8 @@
-use actix_web::{web, HttpResponse};
 use super::server;
 use crate::model;
-use std::fs;
+use actix_web::{web, HttpResponse};
 use serde::{Deserialize, Serialize};
+use std::fs;
 
 static COIN_LIST_URL: &str = "https://api.coingecko.com/api/v3/coins/list?include_platform=false";
 

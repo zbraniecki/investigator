@@ -1,9 +1,9 @@
-use actix_web::{web, HttpResponse};
 use super::server;
 use crate::model;
-use serde::{Serialize, Deserialize};
-use std::fs;
+use actix_web::{web, HttpResponse};
 use float_cmp::approx_eq;
+use serde::{Deserialize, Serialize};
+use std::fs;
 
 pub async fn get_view(data: web::Data<server::State>) -> HttpResponse {
     let strategy = data.strategy.lock().unwrap();
@@ -33,17 +33,17 @@ async fn read_strategy() -> Vec<model::Strategy> {
 
         let targets = result.coin;
 
-        let total = targets.iter().fold(0.0, |acc, target| {
-            acc + target.percent
-        });
+        let total = targets.iter().fold(0.0, |acc, target| acc + target.percent);
 
-        assert!( approx_eq!(f64, total, 1.0, ulps = 2), "Total Target should be 1.0. Instead it is: {}", total);
-        vec![
-            model::Strategy {
-                id: "crypto".to_string(),
-                name: "Crypto".to_string(),
-                targets,
-            }
-        ]
+        assert!(
+            approx_eq!(f64, total, 1.0, ulps = 2),
+            "Total Target should be 1.0. Instead it is: {}",
+            total
+        );
+        vec![model::Strategy {
+            id: "crypto".to_string(),
+            name: "Crypto".to_string(),
+            targets,
+        }]
     }
 }

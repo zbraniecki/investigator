@@ -1,7 +1,7 @@
 use crate::model;
+use actix_cors::Cors;
 use actix_web::dev::Server;
 use actix_web::{App, HttpServer};
-use actix_cors::Cors;
 use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
@@ -31,15 +31,13 @@ pub async fn new_server() -> std::io::Result<Server> {
             .allowed_origin("http://localhost:1234")
             .allowed_origin("http://127.0.0.1:1234")
             .supports_credentials();
-        let mut app = App::new()
-            .wrap(cors)
-            .data(state.clone());
+        let mut app = App::new().wrap(cors).data(state.clone());
         for (path, view) in super::get_views() {
             app = app.route(path, view)
         }
         app
     })
     .bind("127.0.0.1:8081")?
-        .run();
+    .run();
     Ok(server)
 }

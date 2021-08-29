@@ -1,8 +1,8 @@
-use actix_web::{web, HttpResponse};
 use super::server;
 use crate::model;
+use actix_web::{web, HttpResponse};
 use chrono::prelude::*;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::fs;
 
 static PRICE_URL: &str = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids={IDS}&order=market_cap_desc&per_page=100&page=1&sparkline=false";
@@ -10,10 +10,13 @@ static PRICE_URL: &str = "https://api.coingecko.com/api/v3/coins/markets?vs_curr
 #[derive(Deserialize)]
 pub struct PriceViewQuery {
     #[serde(default)]
-    refresh: bool
+    refresh: bool,
 }
 
-pub async fn get_view(data: web::Data<server::State>, query: web::Query<PriceViewQuery>) -> HttpResponse {
+pub async fn get_view(
+    data: web::Data<server::State>,
+    query: web::Query<PriceViewQuery>,
+) -> HttpResponse {
     let prices = if query.refresh {
         let mut prices = data.prices.lock().unwrap();
         update_data(&mut prices).await;
@@ -42,9 +45,10 @@ pub async fn get_data() -> model::PriceList {
 }
 
 async fn fetch_prices(coins: &[model::Coin]) -> Result<Vec<model::Price>, ()> {
-    #[derive(Serialize, Deserialize, Clone)]
+    #[derive(Serialize, Deserialize, Clone, Debug)]
     struct ExternalPrice {
         symbol: String,
+        id: String,
         current_price: f64,
         market_cap: f64,
         price_change_percentage_24h: f64,
@@ -53,11 +57,9 @@ async fn fetch_prices(coins: &[model::Coin]) -> Result<Vec<model::Price>, ()> {
     use actix_web::client::Client;
     let client = Client::default();
 
-    let ids = coins
-        .iter()
-        .map(|coin| coin.id.to_string())
-        .collect::<Vec<_>>()
-        .join("%2C");
+    let coin_str: Vec<_> = coins.iter().map(|coin| coin.id.to_string()).collect();
+
+    let ids = coin_str.join("%2C");
     let price_url = PRICE_URL.replace("{IDS}", &ids);
 
     let resp = client
@@ -68,9 +70,38 @@ async fn fetch_prices(coins: &[model::Coin]) -> Result<Vec<model::Price>, ()> {
     if let Ok(mut resp) = resp {
         let body = resp.body().await.unwrap();
 
-        let prices: Vec<ExternalPrice> = serde_json::from_slice(&body).unwrap();
+        let mut prices: Vec<ExternalPrice> = serde_json::from_slice(&body).unwrap();
 
-        Ok(prices
+        let missing_prices: Vec<_> = coin_str
+            .iter()
+            .filter(|c| {
+                prices
+                    .iter()
+                    .find(|r| r.id.as_str() == c.as_str())
+                    .is_none()
+            })
+            .cloned()
+            .collect();
+
+        if !missing_prices.is_empty() {
+            // println!("Missing ones: {:#?}", missing_prices);
+            let ids = missing_prices.join("%2C");
+            let price_url = PRICE_URL.replace("{IDS}", &ids);
+            let resp = client
+                .get(price_url)
+                .header("User-Agent", "Actix-web")
+                .send()
+                .await;
+            if let Ok(mut resp) = resp {
+                let body = resp.body().await.unwrap();
+
+                let prices2: Vec<ExternalPrice> = serde_json::from_slice(&body).unwrap();
+                // println!("{:#?}", prices2);
+                prices.extend(prices2);
+            }
+        }
+
+        let results = prices
             .into_iter()
             .map(|price| model::Price {
                 pair: (price.symbol, "USD".to_string()),
@@ -79,11 +110,12 @@ async fn fetch_prices(coins: &[model::Coin]) -> Result<Vec<model::Price>, ()> {
                 price_change_percentage_24h: price.price_change_percentage_24h,
                 market_cap_change_percentage_24h: price.market_cap_change_percentage_24h,
             })
-            .collect())
+            .collect();
+
+        Ok(results)
     } else {
         Err(())
     }
-
 }
 
 async fn read_prices(coins: &[model::Coin]) -> model::PriceList {
@@ -92,7 +124,10 @@ async fn read_prices(coins: &[model::Coin]) -> model::PriceList {
     if !fs::metadata(path).is_ok() {
         let prices = fetch_prices(coins).await.unwrap_or_default();
         let last_updated: DateTime<Utc> = Utc::now();
-        let price_list = model::PriceList { prices, last_updated };
+        let price_list = model::PriceList {
+            prices,
+            last_updated,
+        };
         let toml_string = toml::to_string(&price_list).unwrap();
         fs::write(path, toml_string).expect("Could not write to file!");
         price_list
@@ -128,7 +163,6 @@ async fn get_supported_coins() -> Vec<model::Coin> {
         .collect()
 }
 
-
 fn read_supported_coins() -> Vec<CoinID> {
     #[derive(Serialize, Deserialize)]
     struct CoinList {
@@ -145,4 +179,3 @@ fn read_supported_coins() -> Vec<CoinID> {
         result.coins
     }
 }
-

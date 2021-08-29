@@ -1,6 +1,6 @@
-mod oracle;
 mod account;
 mod model;
+mod oracle;
 
 use futures::future;
 
