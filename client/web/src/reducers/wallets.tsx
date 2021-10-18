@@ -19,7 +19,7 @@ export const walletsSlice = createSlice({
 export const getWallets = state => state.wallets.list;
 
 export function getWallet(wallets, id) {
-  return wallets.find(wallet => wallet.id == id);
+  return wallets.find(wallet => wallet.id.toLowerCase() == id.toLowerCase());
 }
 
 export default walletsSlice.reducer;

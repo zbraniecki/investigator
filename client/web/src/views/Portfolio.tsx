@@ -49,7 +49,7 @@ function getYield(asset, wallet, wallets) {
   if (!w) {
     return null;
   }
-  let c = w.currency.find(currency => currency.symbol == asset);
+  let c = w.currency.find(currency => currency.symbol.toLowerCase() == asset.toLowerCase());
   if (!c) {
     return null;
   }

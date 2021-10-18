@@ -30,6 +30,9 @@ import {
 function getHoldingValue(portfolio, target, prices) {
   if (target.contains.length == 0) {
     let holding = portfolio.find(holding => holding.symbol == target.symbol);
+    if (!holding) {
+        return 0;
+    }
     let price = getPrice(prices, holding.symbol);
     return holding.quantity * price;
   } else {
