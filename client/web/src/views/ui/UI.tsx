@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import cyan from '@material-ui/core/colors/cyan';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -13,15 +13,17 @@ import {
   Theme,
 } from '../../store/ui';
 import {
-  fetchPublicPortfoliosThunk,
-  fetchUserPortfoliosThunk,
-} from '../../store/portfolio';
+  fetchPublicWatchlistsThunk,
+} from '../../store/watchlists';
+import {
+  fetchAssetsThunk,
+} from '../../store/assets';
 
 import SmallChrome from './chrome/Small';
 import LargeChrome from './chrome/Large';
 
 const menuItems = [
-  ['Markets', <AccountBalanceIcon />],
+  ['Watchlists', <AccountBalanceIcon />],
   ['Portfolios', <TrendingUpIcon />],
   ['Strategies', <PieChartIcon />],
 ];
@@ -50,7 +52,7 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
   }
 
   const theme = React.useMemo(
-    () => createMuiTheme({
+    () => createTheme({
       palette: {
         primary: cyan,
         type: themeName,
@@ -77,8 +79,8 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
   }
 
   useEffect(() => {
-    dispatch(fetchPublicPortfoliosThunk());
-    dispatch(fetchUserPortfoliosThunk());
+    dispatch(fetchPublicWatchlistsThunk());
+    dispatch(fetchAssetsThunk());
   }, [dispatch]);
 
   const chrome = smallUI

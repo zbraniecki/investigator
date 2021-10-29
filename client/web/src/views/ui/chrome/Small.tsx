@@ -7,7 +7,7 @@ import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 
 import SettingsSet from '../SettingsSet';
-import Markets from '../../Markets';
+import Watchlists from '../../Watchlists';
 import Portfolios from '../../Portfolios';
 
 const useStyles = makeStyles({
@@ -49,7 +49,7 @@ export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
   let content;
   switch (screenIndex) {
     case 0:
-      content = <Markets />;
+      content = <Watchlists />;
       break;
     default:
       content = <Portfolios />;

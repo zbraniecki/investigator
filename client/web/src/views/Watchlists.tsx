@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
 import TabContext from '@material-ui/lab/TabContext';
@@ -7,17 +7,18 @@ import TabList from '@material-ui/lab/TabList';
 import TabPanel from '@material-ui/lab/TabPanel';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-
 import Table from './utils/Table';
+import {
+  getPublicWatchlists,
+} from '../store/watchlists';
+import {
+  getAssets,
+} from '../store/assets';
 
 import {
-  getPublicPortfolios,
-} from '../store/portfolio';
+  prepareWatchlist,
+} from './utils/Watchlists.tsx';
 
-import {
-  preparePortfolio, preparePortfolios,
-  interpolateColor,
-} from './utils/Portfolios.tsx';
 
 const useStyles = makeStyles({
   tabPanel: {
@@ -35,22 +36,27 @@ const tableStyle = {
 export default () => {
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState('0');
-  const portfolios = useSelector(getPublicPortfolios);
+  const watchlists = useSelector(getPublicWatchlists);
+  const assets = useSelector(getAssets);
+
+  const dispatch = useDispatch();
   const data = [];
-  data[0] = preparePortfolios(portfolios);
+  const tabs = [];
+
+  for (let list of watchlists) {
+    tabs.push(list.name);
+    data.push(prepareWatchlist(assets, list));
+  }
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue);
   };
 
-  const tabs = [
-    'Overall',
-  ];
 
-  portfolios.forEach((p) => {
-    tabs.push(p.portfolio.slug);
-    data.push(preparePortfolio(p));
-  });
+  // portfolios.forEach((p) => {
+  //   tabs.push(p.portfolio.slug);
+  //   data.push(preparePortfolio(p));
+  // });
 
   return (
     <TabContext value={tabIndex}>

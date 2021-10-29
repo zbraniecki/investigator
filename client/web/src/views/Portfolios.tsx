@@ -45,7 +45,7 @@ export default () => {
   };
 
   const handleCreatePortfolio = () => {
-    dispatch(createPortfolioThunk(["slug1", "Name1", 1]));
+    dispatch(createPortfolioThunk(['slug1', 'Name1', 1]));
   };
 
   const handleDeletePortfolio = (id) => {

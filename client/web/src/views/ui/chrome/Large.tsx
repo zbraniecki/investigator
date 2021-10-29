@@ -9,7 +9,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import Drawer from '../Drawer';
 import SettingsSet from '../SettingsSet';
-import Markets from '../../Markets';
+import Watchlists from '../../Watchlists';
 import Portfolios from '../../Portfolios';
 
 const drawerWidth = 240;
@@ -77,7 +77,7 @@ export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
   let content;
   switch (screenIndex) {
     case 0:
-      content = <Markets />;
+      content = <Watchlists />;
       break;
     default:
       content = <Portfolios />;

@@ -1,4 +1,3 @@
-
 export function interpolateColor(c0, c1, f){
   c0 = c0.match(/.{1,2}/g).map((oct)=>parseInt(oct, 16) * (1 - f));
   c1 = c1.match(/.{1,2}/g).map((oct)=>parseInt(oct, 16) * f);
@@ -52,24 +51,36 @@ export function preparePortfolios(input) {
   });
 }
 
-export function preparePortfolio(input, max) {
-  let sorted = Array.from(input.assets);
-  sorted.sort((a, b) => {
-    return a.info.market_cap_rank - b.info.market_cap_rank;
-  });
-  if (max) {
-    sorted = sorted.slice(0, max);
+function getAsset(allAssets, symbol) {
+  for (let asset of allAssets) {
+    if (asset.pair[0] == symbol) {
+      return asset;
+    }
   }
-  return sorted.map((p) => {
-    let change = p.info.price_change_percentage_24h_in_currency / 100;
+  return null;
+}
+
+export function prepareWatchlist(allAssets, input) {
+  let assets = [];
+  for (let symbol of input.assets) {
+    let asset = getAsset(allAssets, symbol);
+    if (asset) {
+      assets.push(asset);
+    }
+  }
+  assets.sort((a, b) => {
+    return a.market_cap_rank - b.market_cap_rank;
+  });
+  return assets.map((p) => {
+    let change = p.price_change_percentage_24h / 100;
     let color = change > 0 ?
       interpolateColor('000000', '00FF00', change * 30)
       : interpolateColor('000000', 'FF0000', Math.abs(change) * 30);
     return {
-      key: p.asset.id,
-      symbol: p.asset.symbol.toLocaleUpperCase(),
-      value: cf.format(p.info.current_price),
-      current_price: p.info.current_price,
+      key: `${input.id}-${p.pair[0]}`,
+      symbol: p.pair[0].toLocaleUpperCase(),
+      value: cf.format(p.value),
+      current_price: p.value,
       change: pf.format(change),
       price_change: change,
       color: `#${color}`,
