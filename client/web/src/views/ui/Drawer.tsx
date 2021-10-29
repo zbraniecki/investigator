@@ -83,10 +83,10 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 interface Props {
-  onDrawerSelection: function,
-  onDrawerClose: function,
-  selectedTab: function,
-  open: function,
+  onDrawerSelection: (event, index) => undefined,
+  onDrawerClose: (event, index) => undefined,
+  selectedTab: (screenIndex) => undefined,
+  open: () => undefined,
   menuItems: Array<any>,
 }
 

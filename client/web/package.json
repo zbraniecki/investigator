@@ -5,40 +5,30 @@
     "build": "parcel build ./public/index.html"
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/plugin-transform-react-jsx": "^7.14.9",
-    "@babel/preset-env": "^7.15.0",
-    "@babel/preset-react": "^7.14.5",
-    "@typescript-eslint/eslint-plugin": "^4.29.1",
-    "@typescript-eslint/parser": "^4.29.1",
-    "babel-preset-react": "^6.24.1",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-plugin-import": "^2.24.0",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "eslint": "^7.1.0",
+    "eslint-config-airbnb-typescript": "^14.0.1",
+    "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "parcel": "^2.0.0-rc.0",
-    "parcel-bundler": "^1.12.5",
-    "typescript": "^4.3.5"
+    "parcel": "^2.0.0",
+    "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@fontsource/roboto": "^4.5.0",
+    "@fontsource/roboto": "^4.5.1",
     "@material-ui/core": "^4.12.3",
     "@material-ui/data-grid": "^4.0.0-alpha.37",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
-    "@reduxjs/toolkit": "^1.6.1",
+    "@reduxjs/toolkit": "^1.6.2",
     "@types/react": "^17.0.18",
-    "babel": "^6.23.0",
     "clsx": "^1.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-redux": "^7.2.4",
-    "react-tabs": "^3.2.2"
-  },
-  "browserslist": [
-    "last 1 Chrome version",
-    "last 1 Firefox version"
-  ]
+    "react-redux": "^7.2.6",
+    "react-tabs": "^3.2.3",
+    "start": "^5.1.0"
+  }
 }
