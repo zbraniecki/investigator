@@ -55,10 +55,12 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 interface Props {
   menuItems: Array<any>,
   storedTheme: any,
+  storedDisplayValues: any,
   onThemeChange: any,
+  onDisplayValuesChange: any,
 }
 
-export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
+export default ({ menuItems, storedTheme, storedDisplayValues, onThemeChange, onDisplayValuesChange }: Props) => {
   const classes = useStyles();
   const [screenIndex, setScreenIndex] = React.useState(0);
   const [open, setOpen] = React.useState(false);
@@ -81,7 +83,7 @@ export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
       content = <Watchlists />;
       break;
     case 1:
-      content = <Portfolios />;
+      content = <Portfolios displayValues={storedDisplayValues} />;
       break;
     case 2:
       content = <Strategies />;
@@ -117,7 +119,9 @@ export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
         </Toolbar>
         <SettingsSet
           storedTheme={storedTheme}
+          storedDisplayValues={storedDisplayValues}
           onThemeChange={onThemeChange}
+          onDisplayValuesChange={onDisplayValuesChange}
         />
       </AppBar>
       <Toolbar />

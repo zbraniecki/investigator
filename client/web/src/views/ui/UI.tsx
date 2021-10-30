@@ -10,7 +10,9 @@ import PieChartIcon from '@material-ui/icons/PieChart';
 import {
   getTheme,
   setTheme,
+  setDisplayValues,
   Theme,
+  getDisplayValues,
 } from '../../store/ui';
 import {
   fetchPublicWatchlistsThunk,
@@ -48,7 +50,7 @@ interface Props {
 
 function getAsset(allAssets, symbol) {
   if (symbol == "usd") {
-    return { symbol: "usd", value: 1.0 };
+    return { symbol: "usd", value: 1.0, price_change_percentage_24h: 0.0 };
   }
   for (let asset of allAssets) {
     if (asset.pair[0] == symbol) {
@@ -60,6 +62,7 @@ function getAsset(allAssets, symbol) {
 
 export default ({ prefersDarkMode, smallUI }: Props) => {
   const storedTheme = useSelector(getTheme);
+  const storedDisplayValues = useSelector(getDisplayValues);
   const dispatch = useDispatch();
 
   let themeName;
@@ -103,6 +106,11 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
     dispatch(setTheme(newValue));
   }
 
+  function onDisplayValuesChange() {
+    let newValue = !storedDisplayValues;
+    dispatch(setDisplayValues(newValue));
+  }
+
   useEffect(() => {
     dispatch(fetchPublicWatchlistsThunk());
     dispatch(fetchAssetsThunk());
@@ -116,13 +124,16 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
 
   const portfolioValues = portfolios.map((portfolio) => {
     let value = 0;
+    let value24hAgo = 0;
     for (let holding of portfolio.holdings) {
       let asset = getAsset(assets, holding.symbol);
       if (asset) {
-        value += holding.quantity * asset.value;
+        let v = holding.quantity * asset.value;
+        value += v;
+        value24hAgo += v + (v * asset.price_change_percentage_24h/100);
       }
     }
-    return { id: portfolio.id, value };
+    return { id: portfolio.id, value, value24hAgo };
   });
 
   const strategyValues = strategies.map((strategy) => {
@@ -146,14 +157,18 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
       <LargeChrome
         menuItems={menuItems}
         storedTheme={storedTheme}
+        storedDisplayValues={storedDisplayValues}
         onThemeChange={onThemeChange}
+        onDisplayValuesChange={onDisplayValuesChange}
       />
     )
     : (
       <SmallChrome
         menuItems={menuItems}
         storedTheme={storedTheme}
+        storedDisplayValues={storedDisplayValues}
         onThemeChange={onThemeChange}
+        onDisplayValuesChange={onDisplayValuesChange}
       />
     );
 

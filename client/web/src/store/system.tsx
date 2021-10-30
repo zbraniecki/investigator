@@ -22,13 +22,8 @@ export const systemSlice = createSlice({
   extraReducers: {},
 });
 
-export const getPortfolioValue = (state, portfolioId) => {
-  //XXX: This should depend on portfolio id
-  if (Object.keys(state.system.portfolios).length) {
-    return Object.values(state.system.portfolios)[0].value;
-  } else {
-    return 0;
-  };
+export const getPortfolioValues = (state) => {
+  return state.system.portfolios;
 };
 
 export const { setPortfolioValues, setStrategyValues } = systemSlice.actions;

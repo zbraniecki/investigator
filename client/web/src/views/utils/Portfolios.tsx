@@ -45,7 +45,7 @@ function getAsset(allAssets, symbol) {
 }
 
 
-export function preparePortfolio(allAssets, input) {
+export function preparePortfolio(allAssets, input, displayValues) {
   let holdings = [];
   for (let holding of input.holdings) {
     let asset = getAsset(allAssets, holding.symbol);
@@ -71,8 +71,8 @@ export function preparePortfolio(allAssets, input) {
       rank: 42,
       key: `${input.id}-${p.holding.wallet}-${p.holding.quantity}-${p.asset.pair[0]}`,
       symbol: p.asset.pair[0].toLocaleUpperCase(),
-      quantity: fmt.number(p.holding.quantity),
-      value: fmt.currency(p.holding.quantity * p.asset.value),
+      quantity: displayValues ? fmt.number(p.holding.quantity) : `--.--`,
+      value: displayValues ? fmt.currency(p.holding.quantity * p.asset.value) : `$--.--`,
       current_price: p.asset.value,
       change: fmt.percent(change),
       price_change: change,

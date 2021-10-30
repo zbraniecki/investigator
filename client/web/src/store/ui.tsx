@@ -23,6 +23,9 @@ export const uiSlice = createSlice({
     setTheme: (state, { payload }) => {
       state.theme = payload;
     },
+    setDisplayValues: (state, { payload }) => {
+      state.displayValues = payload;
+    },
   },
   extraReducers: {},
 });
@@ -30,5 +33,5 @@ export const uiSlice = createSlice({
 export const getDisplayValues = (state) => state.ui.displayValues;
 export const getTheme = (state) => state.ui.theme;
 
-export const { setTheme } = uiSlice.actions;
+export const { setTheme, setDisplayValues } = uiSlice.actions;
 export default uiSlice.reducer;

@@ -18,7 +18,7 @@ import {
   deletePortfolioThunk,
 } from '../store/portfolios';
 import {
-  getPortfolioValue,
+  getPortfolioValues,
 } from '../store/system';
 
 import {
@@ -54,11 +54,16 @@ const tableStyle = {
   ],
 };
 
-export default () => {
+interface Props {
+  displayValues: bool,
+}
+
+export default ({ displayValues }: Props) => {
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState('0');
   const portfolios = useSelector(getUserPortfolios);
   const assets = useSelector(getAssets);
+  const portfolioValues = useSelector(getPortfolioValues);
 
   const dispatch = useDispatch();
 
@@ -68,11 +73,20 @@ export default () => {
 
   for (let portfolio of portfolios) {
     tabs.push(portfolio.name);
-    data.push(preparePortfolio(assets, portfolio));
+    data.push(preparePortfolio(assets, portfolio, displayValues));
 
-    //XXX: Should we fetch all portfolio values at once?
-    let value = useSelector(getPortfolioValue); // XXX: How to pass portfolio id?
-    values.push(value);
+    if (displayValues) {
+      let value = portfolioValues[portfolio.id];
+      if (value) {
+        let change = (value.value / value.value24hAgo) - 1.0;
+        let v = `${fmt.currency(value.value)} (${fmt.percent(change)})`;
+        values.push(v);
+      } else {
+        values.push("$-.- (-.-%)");
+      }
+    } else {
+      values.push(`$----.-- (--.--%)`);
+    }
   }
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -105,7 +119,7 @@ export default () => {
       {data.map((d, idx) => (
         <TabPanel key={idx.toString()} value={idx.toString()} className={classes.tabPanel}>
           <Typography variant="h6" className={classes.header} align="right">
-            {fmt.currency(values[idx])}
+            {values[idx]}
           </Typography>
           <Table data={d} style={tableStyle} />
         </TabPanel>
