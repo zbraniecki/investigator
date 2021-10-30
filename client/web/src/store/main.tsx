@@ -5,6 +5,7 @@ import portfoliosReducer from './portfolios';
 import watchlistsReducer from './watchlists';
 import strategiesReducer from './strategies';
 import assetsReducer from './assets';
+import systemReducer from './system';
 
 function saveToLocalStorage(state) {
   localStorage.setItem('theme', state.ui.theme);
@@ -17,6 +18,7 @@ const store = configureStore({
     portfolios: portfoliosReducer,
     strategies: strategiesReducer,
     assets: assetsReducer,
+    system: systemReducer,
   },
 });
 

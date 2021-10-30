@@ -17,13 +17,20 @@ import {
 } from '../../store/watchlists';
 import {
   fetchAssetsThunk,
+  getAssets,
 } from '../../store/assets';
 import {
   fetchUserPortfoliosThunk,
+  getUserPortfolios,
 } from '../../store/portfolios';
 import {
   fetchUserStrategiesThunk,
+  getUserStrategies,
 } from '../../store/strategies';
+import {
+  setPortfolioValues,
+  setStrategyValues,
+} from '../../store/system';
 
 import SmallChrome from './chrome/Small';
 import LargeChrome from './chrome/Large';
@@ -37,6 +44,18 @@ const menuItems = [
 interface Props {
   prefersDarkMode: bool,
   smallUI: bool,
+}
+
+function getAsset(allAssets, symbol) {
+  if (symbol == "usd") {
+    return { symbol: "usd", value: 1.0 };
+  }
+  for (let asset of allAssets) {
+    if (asset.pair[0] == symbol) {
+      return asset;
+    }
+  }
+  return null;
 }
 
 export default ({ prefersDarkMode, smallUI }: Props) => {
@@ -90,6 +109,37 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
     dispatch(fetchUserPortfoliosThunk());
     dispatch(fetchUserStrategiesThunk());
   }, [dispatch]);
+
+  const portfolios = useSelector(getUserPortfolios);
+  const assets = useSelector(getAssets);
+  const strategies = useSelector(getUserStrategies);
+
+  const portfolioValues = portfolios.map((portfolio) => {
+    let value = 0;
+    for (let holding of portfolio.holdings) {
+      let asset = getAsset(assets, holding.symbol);
+      if (asset) {
+        value += holding.quantity * asset.value;
+      }
+    }
+    return { id: portfolio.id, value };
+  });
+
+  const strategyValues = strategies.map((strategy) => {
+    let drift = 0;
+    for (let target of strategy.targets) {
+      let asset = getAsset(assets, target.symbol);
+      if (asset) {
+        drift += target.percent;
+      }
+    }
+    return { id: strategy.id, drift };
+  });
+
+  useEffect(() => {
+    dispatch(setPortfolioValues(portfolioValues));
+    dispatch(setStrategyValues(strategyValues));
+  });
 
   const chrome = smallUI
     ? (

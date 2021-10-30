@@ -1,3 +1,4 @@
+import fmt from './Formatters';
 
 export function interpolateColor(c0, c1, f){
   c0 = c0.match(/.{1,2}/g).map((oct)=>parseInt(oct, 16) * (1 - f));
@@ -57,11 +58,11 @@ export function prepareStrategy(allAssets, input) {
     return {
       key: `${input.id}-${p.target.symbol}`,
       symbol: p.asset.pair[0].toLocaleUpperCase(),
-      value: cf.format(p.asset.value),
-      target: pf.format(p.target.percent),
-      percent: pf.format(0.1),
+      value: fmt.currency(p.asset.value),
+      target: fmt.percent(p.target.percent),
+      percent: fmt.percent(0.1),
       current_price: p.asset.value,
-      change: pf.format(change),
+      change: fmt.percent(change),
       price_change: change,
       color: `#${color}`,
     };

@@ -1,3 +1,4 @@
+import fmt from './Formatters';
 
 export function interpolateColor(c0, c1, f){
   c0 = c0.match(/.{1,2}/g).map((oct)=>parseInt(oct, 16) * (1 - f));
@@ -5,24 +6,6 @@ export function interpolateColor(c0, c1, f){
   let ci = [0, 1, 2].map(i => Math.min(Math.round(c0[i] + c1[i]), 255));
   return ci.reduce((a, v) => ((a << 8) + v), 0).toString(16).padStart(6, '0');
 }
-
-let pf = new Intl.NumberFormat(undefined, {
-  style: 'percent',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-
-let nf = new Intl.NumberFormat(undefined, {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
-
-let cf = new Intl.NumberFormat(undefined, {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
 
 export function preparePortfolios(input) {
   return input.map((p) => {
@@ -88,10 +71,10 @@ export function preparePortfolio(allAssets, input) {
       rank: 42,
       key: `${input.id}-${p.holding.wallet}-${p.holding.quantity}-${p.asset.pair[0]}`,
       symbol: p.asset.pair[0].toLocaleUpperCase(),
-      quantity: nf.format(p.holding.quantity),
-      value: cf.format(p.holding.quantity * p.asset.value),
+      quantity: fmt.number(p.holding.quantity),
+      value: fmt.currency(p.holding.quantity * p.asset.value),
       current_price: p.asset.value,
-      change: pf.format(change),
+      change: fmt.percent(change),
       price_change: change,
       color: `#${color}`,
     };

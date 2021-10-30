@@ -8,6 +8,7 @@ import TabPanel from '@material-ui/lab/TabPanel';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Table from './utils/Table';
+import fmt from './utils/Formatters';
 import {
   getAssets,
 } from '../store/assets';
@@ -16,6 +17,9 @@ import {
   createPortfolioThunk,
   deletePortfolioThunk,
 } from '../store/portfolios';
+import {
+  getPortfolioValue,
+} from '../store/system';
 
 import {
   preparePortfolio, preparePortfolios,
@@ -60,10 +64,15 @@ export default () => {
 
   const data = [];
   const tabs = [];
+  const values = [];
 
   for (let portfolio of portfolios) {
     tabs.push(portfolio.name);
     data.push(preparePortfolio(assets, portfolio));
+
+    //XXX: Should we fetch all portfolio values at once?
+    let value = useSelector(getPortfolioValue); // XXX: How to pass portfolio id?
+    values.push(value);
   }
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -83,6 +92,7 @@ export default () => {
   //   data.push(preparePortfolio(p));
   // });
 
+
   return (
     <TabContext value={tabIndex}>
       <Paper>
@@ -94,8 +104,8 @@ export default () => {
       </Paper>
       {data.map((d, idx) => (
         <TabPanel key={idx.toString()} value={idx.toString()} className={classes.tabPanel}>
-          <Typography variant="h6" className={classes.header}>
-            {d.name}
+          <Typography variant="h6" className={classes.header} align="right">
+            {fmt.currency(values[idx])}
           </Typography>
           <Table data={d} style={tableStyle} />
         </TabPanel>
