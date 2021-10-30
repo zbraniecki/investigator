@@ -9,6 +9,7 @@ import AppBar from '@material-ui/core/AppBar';
 import SettingsSet from '../SettingsSet';
 import Watchlists from '../../Watchlists';
 import Portfolios from '../../Portfolios';
+import Strategies from '../../Strategies';
 
 const useStyles = makeStyles({
   root: {
@@ -51,8 +52,14 @@ export default ({ menuItems, storedTheme, onThemeChange }: Props) => {
     case 0:
       content = <Watchlists />;
       break;
-    default:
+    case 1:
       content = <Portfolios />;
+      break;
+    case 2:
+      content = <Strategies />;
+      break;
+    default:
+      content = <Watchlists />;
       break;
   }
 

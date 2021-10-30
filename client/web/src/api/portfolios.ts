@@ -1,9 +1,7 @@
 const BASE_URL = 'http://127.0.0.1:8000/';
 
 export const fetchPortfolios = async (user_id) => {
-  const resp = user_id ?
-    await fetch(`${BASE_URL}portfolio/filter?owner=${user_id}`) :
-    await fetch(`${BASE_URL}portfolio/filter`);
+  const resp = await fetch(`${BASE_URL}account/portfolio?owner=${user_id}`);
   return resp.json();
 };
 

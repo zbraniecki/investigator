@@ -24,34 +24,6 @@ let cf = new Intl.NumberFormat(undefined, {
   maximumFractionDigits: 2,
 });
 
-export function preparePortfolios(input) {
-  return input.map((p) => {
-    const sub = preparePortfolio(p, 10);
-
-    const sum = 0;
-    for (let s of sub) {
-      sum += s.current_price;
-    }
-
-    const old_sum = 0;
-    for (let s of sub) {
-      old_sum += s.current_price * s.price_change;
-    }
-    let change = old_sum / sum;
-    let color = change > 0 ?
-      interpolateColor('000000', '00FF00', change * 30)
-      : interpolateColor('000000', 'FF0000', Math.abs(change) * 30);
-    return {
-      key: p.portfolio.id,
-      symbol: p.portfolio.slug,
-      value: nf.format(sum),
-      change: pf.format(change),
-      color: `#${color}`,
-      sub,
-    };
-  });
-}
-
 function getAsset(allAssets, symbol) {
   for (let asset of allAssets) {
     if (asset.pair[0] == symbol) {
@@ -62,34 +34,32 @@ function getAsset(allAssets, symbol) {
 }
 
 
-export function preparePortfolio(allAssets, input) {
-  let holdings = [];
-  for (let holding of input.holdings) {
-    let asset = getAsset(allAssets, holding.symbol);
+export function prepareStrategy(allAssets, input) {
+  let targets = [];
+  for (let target of input.targets) {
+    let asset = getAsset(allAssets, target.symbol);
     if (asset) {
-      holdings.push({
-        holding,
+      targets.push({
+        target,
         asset,
       });
     }
   }
-  holdings.sort((a, b) => {
-    let valueA = a.asset.value * a.holding.quantity;
-    let valueB = b.asset.value * b.holding.quantity;
-    return valueB - valueA;
+  targets.sort((a, b) => {
+    return b.target.percent - a.target.percent;
   });
 
-  return holdings.map((p) => {
+  return targets.map((p) => {
     let change = p.asset.price_change_percentage_24h / 100;
     let color = change > 0 ?
       interpolateColor('000000', '00FF00', change * 30)
       : interpolateColor('000000', 'FF0000', Math.abs(change) * 30);
     return {
-      rank: 42,
-      key: `${input.id}-${p.holding.wallet}-${p.holding.quantity}-${p.asset.pair[0]}`,
+      key: `${input.id}-${p.target.symbol}`,
       symbol: p.asset.pair[0].toLocaleUpperCase(),
-      quantity: nf.format(p.holding.quantity),
-      value: cf.format(p.holding.quantity * p.asset.value),
+      value: cf.format(p.asset.value),
+      target: pf.format(p.target.percent),
+      percent: pf.format(0.1),
       current_price: p.asset.value,
       change: pf.format(change),
       price_change: change,

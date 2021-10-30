@@ -18,6 +18,12 @@ import {
 import {
   fetchAssetsThunk,
 } from '../../store/assets';
+import {
+  fetchUserPortfoliosThunk,
+} from '../../store/portfolios';
+import {
+  fetchUserStrategiesThunk,
+} from '../../store/strategies';
 
 import SmallChrome from './chrome/Small';
 import LargeChrome from './chrome/Large';
@@ -81,6 +87,8 @@ export default ({ prefersDarkMode, smallUI }: Props) => {
   useEffect(() => {
     dispatch(fetchPublicWatchlistsThunk());
     dispatch(fetchAssetsThunk());
+    dispatch(fetchUserPortfoliosThunk());
+    dispatch(fetchUserStrategiesThunk());
   }, [dispatch]);
 
   const chrome = smallUI

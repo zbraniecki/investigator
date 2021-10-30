@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 import uiReducer from './ui';
-import portfolioReducer from './portfolio';
+import portfoliosReducer from './portfolios';
 import watchlistsReducer from './watchlists';
+import strategiesReducer from './strategies';
 import assetsReducer from './assets';
 
 function saveToLocalStorage(state) {
@@ -13,7 +14,8 @@ const store = configureStore({
   reducer: {
     ui: uiReducer,
     watchlists: watchlistsReducer,
-    portfolio: portfolioReducer,
+    portfolios: portfoliosReducer,
+    strategies: strategiesReducer,
     assets: assetsReducer,
   },
 });

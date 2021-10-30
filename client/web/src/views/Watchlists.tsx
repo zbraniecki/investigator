@@ -30,7 +30,25 @@ const useStyles = makeStyles({
 });
 
 const tableStyle = {
-  header: null,
+  nested: false,
+  header: true,
+  columns: [
+    { label: 'Rank', align: 'left', value: {
+      key: 'rank',
+    } },
+    { label: 'Symbol', align: 'left', value: {
+      key: 'symbol',
+    } },
+    { label: 'Price', align: 'right', value: {
+      key: [
+        'value',
+        {
+          key: 'change',
+          color: 'color',
+        },
+      ],
+    } },
+  ],
 };
 
 export default () => {
@@ -51,12 +69,6 @@ export default () => {
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue);
   };
-
-
-  // portfolios.forEach((p) => {
-  //   tabs.push(p.portfolio.slug);
-  //   data.push(preparePortfolio(p));
-  // });
 
   return (
     <TabContext value={tabIndex}>

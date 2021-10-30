@@ -78,6 +78,7 @@ export function prepareWatchlist(allAssets, input) {
       : interpolateColor('000000', 'FF0000', Math.abs(change) * 30);
     return {
       key: `${input.id}-${p.pair[0]}`,
+      rank: 42,
       symbol: p.pair[0].toLocaleUpperCase(),
       value: cf.format(p.value),
       current_price: p.value,

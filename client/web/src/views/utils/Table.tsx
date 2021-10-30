@@ -40,30 +40,48 @@ interface Props {
   style: any,
 }
 
+function getCellValue(colValue, row, cellKey) {
+  if (typeof colValue.key === 'string') {
+    return row[colValue.key];
+  }
+  return colValue.key.map((key, idx) => {
+    let value = typeof key === 'string' ? row[key] : row[key.key];
+    let k = `${cellKey}-${idx}`;
+    if (typeof key !== 'string') {
+      return <Typography key={k} style={{ color: row[key.color] }}>{value}</Typography>;
+    } else {
+      return <Typography key={k}>{value}</Typography>;
+    }
+  });
+  return 'foo';
+}
+
 function Row(props: { row: ReturnType<typeof createData> }) {
-  const { row } = props;
+  const { row, style } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
 
   return (
     <>
       <TableRow className={row.sub ? classes.rootWithSubs : classes.root}>
-        <TableCell width="10%">
-          { row.sub
-            ? (
-              <IconButton size="small" onClick={() => setOpen(!open)}>
-                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-              </IconButton>
-            )
-            : <></>}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.symbol}
-        </TableCell>
-        <TableCell align="right">
-          <Typography>{row.value}</Typography>
-          <Typography style={{ color: row.color }}>{row.change}</Typography>
-        </TableCell>
+        { style.nested ?
+          <TableCell width="10%">
+            { row.sub
+              ? (
+                <IconButton size="small" onClick={() => setOpen(!open)}>
+                  {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                </IconButton>
+              )
+              : <></>}
+          </TableCell>
+          : <></>}
+        { style.columns.map((col, idx) => {
+          let key = `row.key-${col.label}`;
+          let value = getCellValue(col.value, row, key);
+          return <TableCell component="th" scope="row" align={col.align} key={key}>
+            {value}
+          </TableCell>;
+        })}
       </TableRow>
       { row.sub
         ? (
@@ -103,16 +121,22 @@ export default (props: Props) => {
   const { data, style } = props;
 
   function renderTableHead() {
-    if (style.header === null) {
+    if (!style.header) {
       return <></>;
+    }
+
+    let nestedCell = <></>;
+    if (style.nested) {
+      nestedCell = <TableCell align="left"></TableCell>;
     }
 
     return (
       <TableHead>
         <TableRow>
-          <TableCell>Symbol</TableCell>
-          <TableCell align="right">Symbol</TableCell>
-          <TableCell align="right">Price</TableCell>
+          { nestedCell }
+          {style.columns.map((col, idx) => (
+            <TableCell key={col.label} align={col.align}>{col.label}</TableCell>
+          ))}
         </TableRow>
       </TableHead>
     );
@@ -124,7 +148,7 @@ export default (props: Props) => {
         { renderTableHead() }
         <TableBody>
           {data.map((row) => (
-            <Row key={row.key} row={row} />
+            <Row key={row.key} row={row} style={style} />
           ))}
         </TableBody>
       </Table>

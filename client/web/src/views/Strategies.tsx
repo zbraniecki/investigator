@@ -12,15 +12,11 @@ import {
   getAssets,
 } from '../store/assets';
 import {
-  getUserPortfolios,
-  createPortfolioThunk,
-  deletePortfolioThunk,
-} from '../store/portfolios';
-
+  getUserStrategies,
+} from '../store/strategies';
 import {
-  preparePortfolio, preparePortfolios,
-  interpolateColor,
-} from './utils/Portfolios.tsx';
+  prepareStrategy,
+} from './utils/Strategies.tsx';
 
 const useStyles = makeStyles({
   tabPanel: {
@@ -41,11 +37,11 @@ const tableStyle = {
     { label: 'Symbol', align: 'left', value: {
       key: 'symbol',
     } },
-    { label: 'Quantity', align: 'right', value: {
-      key: 'quantity',
+    { label: 'Target', align: 'right', value: {
+      key: 'target',
     } },
-    { label: 'Value', align: 'right', value: {
-      key: 'value',
+    { label: 'Current', align: 'right', value: {
+      key: 'percent',
     } },
   ],
 };
@@ -53,35 +49,21 @@ const tableStyle = {
 export default () => {
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState('0');
-  const portfolios = useSelector(getUserPortfolios);
+  const strategies = useSelector(getUserStrategies);
   const assets = useSelector(getAssets);
 
   const dispatch = useDispatch();
-
   const data = [];
   const tabs = [];
 
-  for (let portfolio of portfolios) {
-    tabs.push(portfolio.name);
-    data.push(preparePortfolio(assets, portfolio));
+  for (let list of strategies) {
+    tabs.push(list.name);
+    data.push(prepareStrategy(assets, list));
   }
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue);
   };
-
-  // const handleCreatePortfolio = () => {
-  //   dispatch(createPortfolioThunk(['slug1', 'Name1', 1]));
-  // };
-
-  // const handleDeletePortfolio = (id) => {
-  //   dispatch(deletePortfolioThunk(id));
-  // };
-
-  // portfolios.forEach((p) => {
-  //   tabs.push(p.portfolio.slug);
-  //   data.push(preparePortfolio(p));
-  // });
 
   return (
     <TabContext value={tabIndex}>
