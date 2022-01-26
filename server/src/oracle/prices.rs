@@ -18,13 +18,24 @@ pub async fn get_view(
     query: web::Query<PriceViewQuery>,
 ) -> HttpResponse {
     let prices = if query.refresh {
-        let mut prices = data.prices.lock().unwrap();
-        update_data(&mut prices).await;
-        prices
+        if let Ok(mut prices) = data.prices.lock() {
+            update_data(&mut prices).await;
+            Some(prices)
+        } else {
+            None
+        }
     } else {
-        data.prices.lock().unwrap()
+        if let Ok(prices) = data.prices.lock() {
+            Some(prices)
+        } else {
+            None
+        }
     };
-    let response = serde_json::to_string(&*prices).unwrap();
+    let response = if let Some(prices) = prices {
+        serde_json::to_string(&*prices).unwrap()
+    } else {
+        String::from("")
+    };
     HttpResponse::Ok()
         .content_type("application/json")
         .body(response)
@@ -49,15 +60,16 @@ async fn fetch_prices(coins: &[model::Coin]) -> Result<Vec<model::Price>, ()> {
     struct ExternalPrice {
         symbol: String,
         id: String,
-        current_price: f64,
-        market_cap: f64,
-        price_change_percentage_24h: f64,
-        market_cap_change_percentage_24h: f64,
+        current_price: Option<f64>,
+        market_cap: Option<f64>,
+        price_change_percentage_24h: Option<f64>,
+        market_cap_change_percentage_24h: Option<f64>,
     }
     use actix_web::client::Client;
     let client = Client::default();
 
     let coin_str: Vec<_> = coins.iter().map(|coin| coin.id.to_string()).collect();
+    // println!("{:#?}", coin_str);
 
     let ids = coin_str.join("%2C");
     let price_url = PRICE_URL.replace("{IDS}", &ids);
@@ -105,10 +117,10 @@ async fn fetch_prices(coins: &[model::Coin]) -> Result<Vec<model::Price>, ()> {
             .into_iter()
             .map(|price| model::Price {
                 pair: (price.symbol, "USD".to_string()),
-                value: price.current_price,
-                market_cap: price.market_cap,
-                price_change_percentage_24h: price.price_change_percentage_24h,
-                market_cap_change_percentage_24h: price.market_cap_change_percentage_24h,
+                value: price.current_price.unwrap_or(0.0),
+                market_cap: price.market_cap.unwrap_or(0.0),
+                price_change_percentage_24h: price.price_change_percentage_24h.unwrap_or(0.0),
+                market_cap_change_percentage_24h: price.market_cap_change_percentage_24h.unwrap_or(0.0),
             })
             .collect();
 
@@ -155,8 +167,8 @@ async fn get_supported_coins() -> Vec<model::Coin> {
             supported_coins
                 .iter()
                 .find(|c| match c {
-                    CoinID::Symbol(c) => c == &coin.symbol,
-                    CoinID::SymbolAndID((s, id)) => s == &coin.symbol && id == &coin.id,
+                    CoinID::Symbol(c) => c == &coin.id,
+                    CoinID::SymbolAndID((_, id)) => id == &coin.id,
                 })
                 .is_some()
         })
